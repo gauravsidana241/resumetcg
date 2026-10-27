@@ -2,7 +2,7 @@
 
 **Interview prep as a trading card game.** Every line of a resume becomes a pack of collectible cards: open a booster, recall the answer, flip the card, and level it up from Plain to Full Art as you master it.
 
-![Home screen](docs/screenshots/home.png)
+![Home screen](docs/screenshots/home.PNG)
 
 ## Why
 
@@ -12,9 +12,9 @@ Flashcard apps work, but they are dull, and generic decks do not cover _your_ pr
 
 |                                                                  |                                                                     |
 | ---------------------------------------------------------------- | ------------------------------------------------------------------- |
-| ![Sealed booster pack](docs/screenshots/pack-sealed.png)         | ![Cards revealed from a pack](docs/screenshots/pack-reveal.png)     |
+| ![Sealed booster pack](docs/screenshots/pack-sealed.PNG)         | ![Cards revealed from a pack](docs/screenshots/pack-reveal.PNG)     |
 | **Open a pack.** Swipe across the top to tear it.                | **Reveal.** Five cards flip one by one; an Ultra Rare gets a flash. |
-| ![Card front with the question](docs/screenshots/card-front.png) | ![Card back with the answer](docs/screenshots/card-back.png)        |
+| ![Card front with the question](docs/screenshots/card-front.PNG) | ![Card back with the answer](docs/screenshots/card-back.PNG)        |
 | **Recall.** Read the question and answer it in your head.        | **Flip and grade.** Double tap, compare, then Got it or Not yet.    |
 
 - **Swipe up** for the next card. Swiping without grading skips the card and changes nothing.
@@ -45,7 +45,7 @@ Every pack comes from one **set**. There is one set for the resume itself, and o
 
 A card never repeats within one opening, so a product only appears for a set with enough cards: a Bundle needs 15, a Booster Box 30.
 
-![Store with the set picker](docs/screenshots/store-sets.png)
+![Store with the set picker](docs/screenshots/store-sets.PNG)
 
 ### Rarity is difficulty, foil is mastery
 
@@ -74,7 +74,7 @@ In a normal card game, rare cards are hard to get. Here that is flipped: **harde
 
 |                                                  |                                        |
 | ------------------------------------------------ | -------------------------------------- |
-| ![Session summary](docs/screenshots/summary.png) | ![Binder](docs/screenshots/binder.jpg) |
+| ![Session summary](docs/screenshots/summary.PNG) | ![Binder](docs/screenshots/binder.jpg) |
 
 ## Tech stack
 
