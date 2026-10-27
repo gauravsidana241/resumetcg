@@ -1,0 +1,1608 @@
+{
+  "stacks": [
+    { "id": "fynd", "name": "Fynd", "kind": "Experience" },
+    { "id": "wap", "name": "Workflow Platform", "kind": "Project" },
+    { "id": "formhook", "name": "FormHook", "kind": "Project" },
+    { "id": "messaging", "name": "Workflows & Messaging", "kind": "Skills" },
+    { "id": "backend", "name": "Back End", "kind": "Skills" },
+    { "id": "frontend", "name": "Front End & Languages", "kind": "Skills" },
+    { "id": "data", "name": "Data", "kind": "Skills" },
+    { "id": "cloud", "name": "Cloud & DevOps", "kind": "Skills" },
+    { "id": "testing", "name": "Testing & Observability", "kind": "Skills" },
+    { "id": "msc", "name": "MSc: AI & CS", "kind": "Education" },
+    { "id": "built", "name": "Built With", "kind": "This app" }
+  ],
+  "cards": [
+    {
+      "id": "fynd-temporal-why",
+      "stack": "fynd",
+      "type": "tradeoff",
+      "rarity": "rare",
+      "title": "Temporal vs Queues",
+      "icons": ["temporal"],
+      "question": "Why move 9 integrations onto a workflow engine like Temporal instead of chaining jobs on a queue?",
+      "points": [
+        "Durable execution: state is saved as an event history, so a workflow resumes exactly where it stopped after a crash",
+        "Retries, timeouts and backoff are declared per activity, not hand-written for each integration",
+        "Long waits (hours or days) are built in, so no polling jobs or cron glue",
+        "Every run has an inspectable history, which makes debugging and on-call much easier",
+        "Cost: a new mental model, and workflow code must be deterministic"
+      ],
+      "weakness": "Why must Temporal workflow code be deterministic?"
+    },
+    {
+      "id": "fynd-temporal-migration",
+      "stack": "fynd",
+      "type": "story",
+      "rarity": "ultra",
+      "title": "The Temporal Migration",
+      "icons": ["temporal"],
+      "question": "Tell me about leading Fynd's first Temporal rollout: 9 integrations and about 80 workflow stages in 9 to 12 months.",
+      "points": [
+        "Situation: each marketplace integration had grown its own special cases over years",
+        "Task: you led the company's first Temporal adoption and owned the shared workflow model",
+        "Action: be ready to explain the shared model and how you moved integrations over one at a time",
+        "Result: 9 integrations and ~80 stages on one model, replacing per-integration special cases",
+        "Close with one lesson and what you would do differently"
+      ],
+      "weakness": "How did you migrate live sellers without breaking their order flow?"
+    },
+    {
+      "id": "fynd-determinism",
+      "stack": "fynd",
+      "type": "concept",
+      "rarity": "rare",
+      "title": "Determinism",
+      "icons": ["temporal"],
+      "question": "Why must Temporal workflow code be deterministic?",
+      "points": [
+        "After a crash, a worker rebuilds workflow state by replaying the event history",
+        "Replay must issue the same commands in the same order, or Temporal flags a non-determinism error",
+        "So no Date.now(), Math.random() or direct I/O inside workflows",
+        "Side effects go in activities; use the workflow APIs for time and sleep",
+        "Changing running workflows needs versioning (patching)"
+      ],
+      "weakness": "How do you change workflow code while old runs are still in flight?"
+    },
+    {
+      "id": "fynd-activities",
+      "stack": "fynd",
+      "type": "concept",
+      "rarity": "common",
+      "title": "Workflows & Activities",
+      "icons": ["temporal"],
+      "question": "In Temporal, what is the difference between a workflow and an activity?",
+      "points": [
+        "Workflow: the orchestration logic. Deterministic and durable",
+        "Activity: the real work with side effects (API calls, DB writes). Allowed to fail",
+        "Activities are retried by a retry policy with backoff",
+        "Timeouts: start-to-close, schedule-to-close, heartbeat",
+        "Workers poll task queues to run both"
+      ],
+      "weakness": "What is an activity heartbeat for?"
+    },
+    {
+      "id": "fynd-rate-limits",
+      "stack": "fynd",
+      "type": "tradeoff",
+      "rarity": "rare",
+      "title": "Per-Seller Rate Limits",
+      "icons": ["shopify"],
+      "question": "How do you respect Amazon, Flipkart and Shopify rate limits while syncing catalogues of up to 300,000 SKUs?",
+      "points": [
+        "Limits apply per seller credential, so throttle per seller, not globally",
+        "Queue the work and let workers pull only at the allowed rate (token bucket)",
+        "On 429, honour Retry-After and back off exponentially with jitter",
+        "Batch updates into feeds instead of one call per SKU",
+        "Only sync what changed since the last run"
+      ],
+      "weakness": "What is jitter, and why add it to backoff?"
+    },
+    {
+      "id": "fynd-schema-changes",
+      "stack": "fynd",
+      "type": "trap",
+      "rarity": "rare",
+      "title": "Silent Schema Change",
+      "icons": [],
+      "question": "A marketplace quietly changes its API response format. How do you find out before your sellers do?",
+      "points": [
+        "Validate responses at the boundary against a schema and fail loudly",
+        "Contract tests against the OpenAPI spec (Specmatic) catch drift in CI",
+        "Alert on spikes in parse or validation errors per marketplace",
+        "Tolerate unknown extra fields, fail on missing required ones",
+        "Pin API versions where the marketplace supports it"
+      ],
+      "weakness": "Strict or tolerant parsing: which do you pick and why?"
+    },
+    {
+      "id": "fynd-sync-design",
+      "stack": "fynd",
+      "type": "boss",
+      "rarity": "ultra",
+      "title": "Multi-Market Sync",
+      "icons": ["postgres", "node", "shopify"],
+      "question": "Design inventory and order sync for a seller with 300,000 SKUs across Amazon, Flipkart and Shopify.",
+      "points": [
+        "Postgres is the source of truth; track changes so you only push deltas",
+        "One adapter per marketplace behind a shared interface",
+        "A queue per seller and marketplace that respects rate limits and batches feeds",
+        "Idempotent upserts on external IDs, retries with backoff, dead-letter queue",
+        "A reconciliation job compares counts to catch drift; metrics per seller"
+      ],
+      "weakness": "Two marketplaces sell the last unit at the same moment. What happens?"
+    },
+    {
+      "id": "fynd-vdf",
+      "stack": "fynd",
+      "type": "story",
+      "rarity": "rare",
+      "title": "Amazon VDF in 3 Months",
+      "icons": [],
+      "question": "You delivered the company's first Amazon VDF integration in 3 months. Walk me through it.",
+      "points": [
+        "VDF = Vendor Direct Fulfillment: the vendor ships Amazon orders straight to customers",
+        "Started from a design document: scope, order and shipment flows, risks",
+        "Explain how the shared workflow model sped things up",
+        "Milestones that kept it on track from design to production",
+        "Result: first VDF integration live in 3 months"
+      ],
+      "weakness": "What was the riskiest part, and how did you de-risk it?"
+    },
+    {
+      "id": "fynd-pipeline",
+      "stack": "fynd",
+      "type": "boss",
+      "rarity": "ultra",
+      "title": "70k Orders a Day",
+      "icons": ["kafka", "redis"],
+      "question": "Explain your BullMQ and Kafka pipeline: 70,000+ orders and feed updates a day within Amazon's feed limits, without delaying new orders.",
+      "points": [
+        "Kafka carries the durable, replayable stream of order and inventory events",
+        "Consumers turn events into BullMQ jobs, which handle retries and rate limiting",
+        "Priorities: new orders jump ahead of bulk feed updates",
+        "Many updates are batched into one feed submission to stay under limits",
+        "70k a day averages ~0.8 per second, but peaks are bursty, so you buffer"
+      ],
+      "weakness": "Why both Kafka and BullMQ? Couldn't one do both jobs?"
+    },
+    {
+      "id": "fynd-kafka-vs-bullmq",
+      "stack": "fynd",
+      "type": "tradeoff",
+      "rarity": "rare",
+      "title": "Kafka vs BullMQ",
+      "icons": ["kafka", "redis"],
+      "question": "Kafka and BullMQ both move messages. What is each one good at?",
+      "points": [
+        "Kafka: a partitioned log. Many consumer groups, replay, ordering per partition, huge throughput",
+        "Kafka has no per-message retry, delay or priority built in",
+        "BullMQ: a job queue on Redis with per-job retries, delays, priorities and a rate limiter",
+        "Use Kafka to fan events out between services",
+        "Use BullMQ to execute tasks with throttling and retries"
+      ],
+      "weakness": "How does Kafka guarantee ordering?"
+    },
+    {
+      "id": "fynd-testing",
+      "stack": "fynd",
+      "type": "story",
+      "rarity": "rare",
+      "title": "0% to 70% Coverage",
+      "icons": ["jest"],
+      "question": "You introduced the team's first automated tests for 9 integrations that had 0% coverage. How?",
+      "points": [
+        "Situation: no tests, so third-party changes caused regressions",
+        "Jest and Mocha unit tests for mapping and business logic",
+        "Specmatic contract tests generated from the OpenAPI specs",
+        "A 70% coverage gate in Azure DevOps CI so it stayed enforced",
+        "How you got buy-in and chose what to test first (riskiest code)"
+      ],
+      "weakness": "Is 70% a good coverage target? What does coverage not tell you?"
+    },
+    {
+      "id": "fynd-sso-iam",
+      "stack": "fynd",
+      "type": "story",
+      "rarity": "rare",
+      "title": "SSO & Seller Auth",
+      "icons": ["google"],
+      "question": "You set up Google SSO and per-seller IAM authentication for Amazon's APIs across 100+ sellers. Explain both.",
+      "points": [
+        "Google SSO: OpenID Connect on top of OAuth 2.0; Google returns an ID token",
+        "Each seller authorises the app, which stores credentials per seller",
+        "Short-lived access tokens are refreshed from stored refresh tokens",
+        "Credentials are encrypted and strictly scoped to one seller",
+        "Least-privilege IAM roles for API access"
+      ],
+      "weakness": "Where did you store per-seller secrets, and how were they rotated?"
+    },
+    {
+      "id": "fynd-oncall",
+      "stack": "fynd",
+      "type": "story",
+      "rarity": "rare",
+      "title": "On-Call Incident",
+      "icons": [],
+      "question": "Tell me about a production incident you handled on-call.",
+      "points": [
+        "Pick your best one of the 30+ and practise it until it is crisp",
+        "How it was detected and who was affected",
+        "Mitigate first: how you stopped the bleeding",
+        "Root cause, and how you talked to the client throughout",
+        "The RCA you wrote and what changed afterwards"
+      ],
+      "weakness": "What makes a root cause analysis actually useful?"
+    },
+    {
+      "id": "fynd-rca",
+      "stack": "fynd",
+      "type": "concept",
+      "rarity": "common",
+      "title": "Root Cause Analysis",
+      "icons": [],
+      "question": "What goes into a good root cause analysis (postmortem)?",
+      "points": [
+        "Timeline of what happened and when",
+        "Impact: who was affected and for how long",
+        "Root cause, found by asking why repeatedly (5 whys)",
+        "Action items with owners and dates",
+        "Blameless: focus on systems, not people"
+      ],
+      "weakness": "Why should postmortems be blameless?"
+    },
+    {
+      "id": "fynd-workflow-builder",
+      "stack": "fynd",
+      "type": "story",
+      "rarity": "rare",
+      "title": "No-Code Builder",
+      "icons": ["react", "typescript"],
+      "question": "You built a no-code workflow builder used daily by 5+ product managers. Tell me about it.",
+      "points": [
+        "Problem: every new integration needed engineering time",
+        "Built with React, TypeScript and React Flow",
+        "Iterated with the PMs who used it every day",
+        "Result: new integrations needed 50% less engineering help",
+        "Be ready to say how the 50% was measured"
+      ],
+      "weakness": "What feedback from the PMs changed the design the most?"
+    },
+    {
+      "id": "wap-overview",
+      "stack": "wap",
+      "type": "story",
+      "rarity": "rare",
+      "title": "Workflow Platform",
+      "icons": ["react", "temporal"],
+      "question": "Walk me through your Workflow Automation Platform.",
+      "points": [
+        "No-code: users chain API calls on a drag-and-drop React Flow canvas",
+        "4 node types: triggers, conditions, loops and actions",
+        "The graph is saved as JSON and executed on Temporal",
+        "Retries and step-by-step tracing for every run",
+        "100/100 runs of a 20-step workflow passed against an API failing 30% of calls"
+      ],
+      "weakness": "How do you turn a graph on a canvas into something executable?"
+    },
+    {
+      "id": "wap-graph-exec",
+      "stack": "wap",
+      "type": "boss",
+      "rarity": "ultra",
+      "title": "Running the Graph",
+      "icons": ["temporal", "typescript"],
+      "question": "How do you safely execute a user-drawn graph with conditions and loops?",
+      "points": [
+        "Validate first: one trigger, no dangling edges, cycles only through loop nodes",
+        "Walk from the trigger, following edges",
+        "Condition nodes choose which outgoing edge to follow",
+        "Loop nodes get a max-iteration guard so nothing runs forever",
+        "Each action is a Temporal activity with its own retry policy; record inputs and outputs per step"
+      ],
+      "weakness": "How would you add parallel branches?"
+    },
+    {
+      "id": "wap-chaos",
+      "stack": "wap",
+      "type": "story",
+      "rarity": "ultra",
+      "title": "100 out of 100",
+      "icons": ["temporal"],
+      "question": "How did you prove the platform survives failures?",
+      "points": [
+        "A mock API failed 30% of calls at random",
+        "Ran a 20-step workflow 100 times; all 100 completed",
+        "Without retries, all 20 steps succeeding is 0.7^20, about 0.08%",
+        "Retries with backoff on every step made the difference",
+        "Killed the server mid-run; Temporal resumed from the event history"
+      ],
+      "weakness": "What would break if the mock API calls were not idempotent?"
+    },
+    {
+      "id": "wap-react-flow",
+      "stack": "wap",
+      "type": "concept",
+      "rarity": "common",
+      "title": "React Flow",
+      "icons": ["react"],
+      "question": "What is React Flow, and how do custom nodes work?",
+      "points": [
+        "A library for node-based UIs: nodes, edges and handles",
+        "State is arrays of nodes and edges, updated via onNodesChange and onEdgesChange",
+        "Custom nodes are React components registered in a nodeTypes map",
+        "Handles are the connection points on a node",
+        "isValidConnection can block invalid links"
+      ],
+      "weakness": "How do you keep a large canvas fast?"
+    },
+    {
+      "id": "wap-node-types",
+      "stack": "wap",
+      "type": "concept",
+      "rarity": "common",
+      "title": "Four Node Types",
+      "icons": [],
+      "question": "Why triggers, conditions, loops and actions? Why those four?",
+      "points": [
+        "Trigger: starts a run (webhook, schedule or manual)",
+        "Action: does the work, usually an API call",
+        "Condition: branches the flow",
+        "Loop: repeats over a list",
+        "Together they cover sequence, branching and iteration"
+      ],
+      "weakness": "What node type would you add next, and why?"
+    },
+    {
+      "id": "formhook-delivery",
+      "stack": "formhook",
+      "type": "boss",
+      "rarity": "ultra",
+      "title": "Zero Lost Events",
+      "icons": ["redis", "node", "terraform"],
+      "question": "Walk me through how FormHook makes sure no webhook event is lost when an endpoint fails.",
+      "points": [
+        "Each event is saved as a BullMQ job in Redis before any delivery is attempted",
+        "Up to 3 attempts with exponential backoff, giving a flaky endpoint time to recover",
+        "After the last failure the job moves to a dead-letter queue to inspect and replay",
+        "A failure-simulation mode injects errors and timeouts to prove recovery works",
+        "Runs on EC2, provisioned with Terraform for one-command setup and teardown"
+      ],
+      "weakness": "The endpoint got your request but timed out replying. What stops a duplicate delivery?"
+    },
+    {
+      "id": "formhook-duplicates",
+      "stack": "formhook",
+      "type": "trap",
+      "rarity": "rare",
+      "title": "Duplicate Delivery",
+      "icons": [],
+      "question": "The endpoint received your webhook but timed out before replying, so you retry. How do you stop it being processed twice?",
+      "points": [
+        "Exactly-once delivery over a network is not possible; aim for at-least-once",
+        "Send a unique event ID (idempotency key) with every delivery",
+        "The receiver stores seen IDs and ignores repeats",
+        "Retries reuse the same ID",
+        "Document this so receivers know to dedupe"
+      ],
+      "weakness": "How long should a receiver remember event IDs?"
+    },
+    {
+      "id": "formhook-backoff",
+      "stack": "formhook",
+      "type": "concept",
+      "rarity": "common",
+      "title": "Exponential Backoff",
+      "icons": [],
+      "question": "Why use exponential backoff instead of retrying straight away?",
+      "points": [
+        "Gives a failing service time to recover",
+        "Avoids a retry storm hammering a struggling endpoint",
+        "Delays grow: 1s, 2s, 4s, 8s",
+        "Add jitter so clients do not all retry at the same instant",
+        "Cap the max delay and the number of attempts"
+      ],
+      "weakness": "What is the thundering herd problem?"
+    },
+    {
+      "id": "formhook-dlq",
+      "stack": "formhook",
+      "type": "concept",
+      "rarity": "common",
+      "title": "Dead-Letter Queue",
+      "icons": [],
+      "question": "What is a dead-letter queue, and why have one?",
+      "points": [
+        "Holds messages that failed every retry",
+        "Stops a poison message from blocking the queue",
+        "Keeps the data so nothing is silently lost",
+        "Inspect, fix, then replay",
+        "Alert when it starts filling up"
+      ],
+      "weakness": "What is a poison message?"
+    },
+    {
+      "id": "formhook-failure-sim",
+      "stack": "formhook",
+      "type": "tradeoff",
+      "rarity": "rare",
+      "title": "Failure Simulation",
+      "icons": [],
+      "question": "Why build a failure-simulation mode into FormHook itself?",
+      "points": [
+        "Chaos engineering on a small scale: break things on purpose",
+        "Proves retries and the dead-letter queue actually work",
+        "Makes timeouts and errors reproducible in tests",
+        "Cheaper than waiting for a real outage to find bugs",
+        "Must be impossible to switch on by accident in production"
+      ],
+      "weakness": "How do you make sure failure simulation can never run in production?"
+    },
+    {
+      "id": "formhook-signing",
+      "stack": "formhook",
+      "type": "concept",
+      "rarity": "rare",
+      "title": "Signed Webhooks",
+      "icons": [],
+      "question": "How does a webhook receiver know a request really came from you?",
+      "points": [
+        "Sign the body with HMAC using a shared secret and send it in a header",
+        "The receiver recomputes the HMAC and compares",
+        "Use a constant-time comparison",
+        "Include a timestamp and reject old requests to stop replays",
+        "Always over HTTPS"
+      ],
+      "weakness": "Why does the comparison need to be constant-time?"
+    },
+    {
+      "id": "msg-redis",
+      "stack": "messaging",
+      "type": "concept",
+      "rarity": "common",
+      "title": "Redis",
+      "icons": ["redis"],
+      "question": "What is Redis, and why does BullMQ need it?",
+      "points": [
+        "In-memory key-value store: very fast reads and writes, with optional persistence (RDB snapshots, AOF log)",
+        "Rich data structures: strings, hashes, lists, sets, sorted sets, streams",
+        "BullMQ keeps every job and its state in Redis: lists for waiting jobs, sorted sets for delayed ones",
+        "Atomic Lua scripts mean two workers can never grab the same job"
+      ],
+      "weakness": "What happens to your queued jobs if Redis restarts?"
+    },
+    {
+      "id": "msg-redis-restart",
+      "stack": "messaging",
+      "type": "trap",
+      "rarity": "rare",
+      "title": "Redis Restarts",
+      "icons": ["redis"],
+      "question": "Redis restarts. What happens to the jobs in your BullMQ queues?",
+      "points": [
+        "Without persistence, everything in memory is gone",
+        "AOF with fsync every second loses at most about a second of writes",
+        "RDB snapshots lose everything since the last snapshot",
+        "BullMQ needs maxmemory-policy noeviction so Redis never drops job keys",
+        "Use replicas or a managed Redis for high availability"
+      ],
+      "weakness": "Why must maxmemory-policy be noeviction for BullMQ?"
+    },
+    {
+      "id": "msg-kafka-basics",
+      "stack": "messaging",
+      "type": "concept",
+      "rarity": "common",
+      "title": "Kafka Basics",
+      "icons": ["kafka"],
+      "question": "Explain Kafka topics, partitions and consumer groups.",
+      "points": [
+        "A topic is a named log split into partitions",
+        "Order is only guaranteed within a partition; the message key picks the partition",
+        "In a consumer group, each partition is read by one consumer, which is how you scale",
+        "Offsets track each group's position and are committed",
+        "Messages are kept for a retention period, so you can replay"
+      ],
+      "weakness": "What happens if you add more consumers than partitions?"
+    },
+    {
+      "id": "msg-kafka-delivery",
+      "stack": "messaging",
+      "type": "trap",
+      "rarity": "ultra",
+      "title": "Delivery Guarantees",
+      "icons": ["kafka"],
+      "question": "At-most-once, at-least-once, exactly-once: how does each happen in Kafka?",
+      "points": [
+        "Commit the offset before processing: at-most-once (a crash loses the message)",
+        "Commit after processing: at-least-once (a crash causes duplicates)",
+        "Exactly-once inside Kafka: idempotent producer plus transactions",
+        "End to end, side effects outside Kafka still need idempotent consumers",
+        "Most real systems choose at-least-once plus idempotency"
+      ],
+      "weakness": "Which did your pipeline use, and how did you handle duplicates?"
+    },
+    {
+      "id": "msg-bullmq",
+      "stack": "messaging",
+      "type": "concept",
+      "rarity": "common",
+      "title": "BullMQ",
+      "icons": ["redis", "node"],
+      "question": "How does BullMQ work?",
+      "points": [
+        "A Queue adds jobs; Workers process them",
+        "Job states: waiting, active, delayed, completed, failed",
+        "Job options: attempts, backoff, priority, delay",
+        "Per-worker concurrency and a built-in rate limiter (max jobs per duration)",
+        "Workers hold a lock on active jobs; if it lapses, the job is marked stalled and retried"
+      ],
+      "weakness": "What is a stalled job, and what causes one?"
+    },
+    {
+      "id": "msg-temporal",
+      "stack": "messaging",
+      "type": "concept",
+      "rarity": "common",
+      "title": "Temporal",
+      "icons": ["temporal"],
+      "question": "Explain Temporal in one minute.",
+      "points": [
+        "A durable execution platform: you write workflows as ordinary code",
+        "The Temporal server stores every workflow's event history",
+        "Your workers run the workflow and activity code",
+        "Retries and timeouts are configuration, not hand-written loops",
+        "Signals push data into a running workflow; queries read its state"
+      ],
+      "weakness": "Signal vs query: what is the difference?"
+    },
+    {
+      "id": "msg-event-driven",
+      "stack": "messaging",
+      "type": "tradeoff",
+      "rarity": "rare",
+      "title": "Event-Driven",
+      "icons": ["kafka"],
+      "question": "Event-driven architecture vs direct API calls: pros and cons?",
+      "points": [
+        "Producers and consumers are decoupled and scale on their own",
+        "Queues absorb traffic spikes",
+        "A consumer being down does not block the producer",
+        "Costs: eventual consistency and harder debugging",
+        "You must handle ordering, duplicates and event schema changes"
+      ],
+      "weakness": "How do you debug a request that hops through 4 services and 2 queues?"
+    },
+    {
+      "id": "msg-outbox",
+      "stack": "messaging",
+      "type": "trap",
+      "rarity": "ultra",
+      "title": "The Dual Write",
+      "icons": ["postgres", "kafka"],
+      "question": "You save an order to Postgres, then publish an event to Kafka. The publish fails after the commit. Now what?",
+      "points": [
+        "The dual-write problem: two systems, no shared transaction",
+        "Transactional outbox: write the event to an outbox table in the same DB transaction",
+        "A relay publishes outbox rows to Kafka (polling, or CDC such as Debezium)",
+        "Delivery is at-least-once, so consumers must be idempotent",
+        "Mark or delete outbox rows once published"
+      ],
+      "weakness": "Why not publish to Kafka first and then write to the database?"
+    },
+    {
+      "id": "be-event-loop",
+      "stack": "backend",
+      "type": "concept",
+      "rarity": "ultra",
+      "title": "The Event Loop",
+      "icons": ["node"],
+      "question": "Explain the Node.js event loop.",
+      "points": [
+        "JavaScript runs on one thread; I/O is non-blocking via libuv",
+        "Phases: timers, pending callbacks, poll (I/O), check (setImmediate), close",
+        "Microtasks (process.nextTick, then promises) run between callbacks",
+        "libuv's thread pool handles fs, crypto and DNS work",
+        "CPU-heavy code blocks everything: move it to worker threads or a job queue"
+      ],
+      "weakness": "In what order do setTimeout(0), setImmediate, Promise.then and process.nextTick run?"
+    },
+    {
+      "id": "be-blocking",
+      "stack": "backend",
+      "type": "trap",
+      "rarity": "common",
+      "title": "One Slow Request",
+      "icons": ["node"],
+      "question": "One CPU-heavy request makes your whole Node API slow. Why, and how do you fix it?",
+      "points": [
+        "It blocks the single event-loop thread, so every request waits",
+        "Move the work to worker_threads",
+        "Or push it to a background job queue",
+        "Or split it into chunks that yield back to the loop",
+        "Monitor event-loop lag to catch it"
+      ],
+      "weakness": "Cluster mode vs worker threads: what is the difference?"
+    },
+    {
+      "id": "be-express",
+      "stack": "backend",
+      "type": "concept",
+      "rarity": "common",
+      "title": "Express Middleware",
+      "icons": ["express"],
+      "question": "How does Express middleware work?",
+      "points": [
+        "Functions (req, res, next) that run in the order they are registered",
+        "next() passes control on; next(err) jumps to error handlers",
+        "Error handlers take 4 arguments (err, req, res, next)",
+        "Used for parsing, auth, logging, CORS",
+        "Express 5 forwards rejected promises; Express 4 needs you to call next(err)"
+      ],
+      "weakness": "Give an example where middleware order breaks something."
+    },
+    {
+      "id": "be-rest",
+      "stack": "backend",
+      "type": "concept",
+      "rarity": "common",
+      "title": "REST Design",
+      "icons": ["openapi"],
+      "question": "What makes an API RESTful?",
+      "points": [
+        "Resources are nouns in URLs: /orders/42",
+        "HTTP methods carry meaning: GET, POST, PUT, PATCH, DELETE",
+        "Meaningful status codes: 200, 201, 400, 401, 403, 404, 409, 429, 500",
+        "Stateless: each request carries everything needed",
+        "Plus pagination, versioning and an OpenAPI spec"
+      ],
+      "weakness": "PUT vs PATCH?"
+    },
+    {
+      "id": "be-idempotency",
+      "stack": "backend",
+      "type": "concept",
+      "rarity": "rare",
+      "title": "Idempotency",
+      "icons": [],
+      "question": "What is idempotency, and why does it matter for retries?",
+      "points": [
+        "Doing it N times has the same effect as doing it once",
+        "GET, PUT and DELETE are idempotent; POST is not",
+        "Idempotency keys: the client sends a key, the server stores and replays the result",
+        "Essential with retries and at-least-once delivery",
+        "Upserts on external IDs make syncs idempotent"
+      ],
+      "weakness": "Where do you store idempotency keys, and for how long?"
+    },
+    {
+      "id": "be-oauth",
+      "stack": "backend",
+      "type": "concept",
+      "rarity": "rare",
+      "title": "OAuth 2.0",
+      "icons": ["google"],
+      "question": "Walk through the OAuth 2.0 authorization code flow.",
+      "points": [
+        "App redirects the user to the auth server with client_id, scopes, redirect_uri and state",
+        "User logs in and consents; the auth server redirects back with a code",
+        "The backend exchanges the code (plus secret or PKCE verifier) for tokens",
+        "Short-lived access token; refresh token to get new ones",
+        "OpenID Connect adds an ID token for identity, which is how Google SSO works"
+      ],
+      "weakness": "What is PKCE, and what attack does it stop?"
+    },
+    {
+      "id": "be-authn-authz",
+      "stack": "backend",
+      "type": "concept",
+      "rarity": "common",
+      "title": "AuthN vs AuthZ",
+      "icons": [],
+      "question": "Authentication vs authorization?",
+      "points": [
+        "Authentication: who are you? (login, SSO, tokens)",
+        "Authorization: what are you allowed to do? (roles, permissions, row-level rules)",
+        "OAuth 2.0 is delegated authorization; OIDC adds authentication",
+        "401 Unauthorized really means not authenticated",
+        "403 Forbidden means authenticated but not allowed"
+      ],
+      "weakness": "Is a JWT for authentication or authorization?"
+    },
+    {
+      "id": "be-websockets",
+      "stack": "backend",
+      "type": "tradeoff",
+      "rarity": "rare",
+      "title": "Real-Time Options",
+      "icons": ["socketio"],
+      "question": "WebSockets vs polling vs Server-Sent Events: when do you use each?",
+      "points": [
+        "Polling: simple, but wasteful and laggy",
+        "SSE: one-way server-to-client over plain HTTP, with auto-reconnect",
+        "WebSockets: full-duplex over one persistent connection",
+        "WebSockets suit chat, live collaboration and games",
+        "Scaling WebSockets needs sticky sessions or a pub/sub layer like Redis"
+      ],
+      "weakness": "How do you scale WebSockets across several servers?"
+    },
+    {
+      "id": "be-microservices",
+      "stack": "backend",
+      "type": "tradeoff",
+      "rarity": "ultra",
+      "title": "Monolith or Micro?",
+      "icons": ["docker", "kubernetes"],
+      "question": "When would you NOT use microservices?",
+      "points": [
+        "Small team or early product: a monolith ships faster",
+        "Every service adds deploys, networking and monitoring overhead",
+        "Distributed failures and cross-service consistency are hard",
+        "A modular monolith is a good middle ground",
+        "Split when parts need independent scaling, deploys or teams"
+      ],
+      "weakness": "How do services share data without sharing a database?"
+    },
+    {
+      "id": "be-openapi",
+      "stack": "backend",
+      "type": "concept",
+      "rarity": "common",
+      "title": "OpenAPI",
+      "icons": ["openapi"],
+      "question": "What is OpenAPI, and how did you use it?",
+      "points": [
+        "A machine-readable spec of a REST API: paths, schemas, auth",
+        "Generates docs, client SDKs and server stubs",
+        "Specmatic uses it as the source of truth for contract tests",
+        "Design-first (spec first) vs code-first (generate from code)"
+      ],
+      "weakness": "Design-first or code-first: which do you prefer, and why?"
+    },
+    {
+      "id": "be-rate-limiting",
+      "stack": "backend",
+      "type": "concept",
+      "rarity": "rare",
+      "title": "Rate Limiting",
+      "icons": ["redis"],
+      "question": "Fixed window vs sliding window vs token bucket rate limiting?",
+      "points": [
+        "Fixed window: simple, but allows bursts at window edges",
+        "Sliding window: smoother and fairer",
+        "Token bucket: refills at a steady rate and allows bursts up to the bucket size",
+        "Across many servers, keep the counters in Redis",
+        "Reply 429 with a Retry-After header"
+      ],
+      "weakness": "How would you rate limit across 5 API servers?"
+    },
+    {
+      "id": "fe-rerenders",
+      "stack": "frontend",
+      "type": "concept",
+      "rarity": "rare",
+      "title": "Re-renders",
+      "icons": ["react"],
+      "question": "What triggers a React re-render, and how do you avoid unnecessary ones?",
+      "points": [
+        "Triggers: state change, parent re-render, context value change",
+        "Reconciliation diffs the new tree against the old; keys identify list items",
+        "memo, useMemo and useCallback skip work when inputs are unchanged",
+        "Keep state close to where it is used; split big contexts",
+        "React Compiler can memoize automatically"
+      ],
+      "weakness": "Why is an array index a bad key?"
+    },
+    {
+      "id": "fe-useeffect",
+      "stack": "frontend",
+      "type": "concept",
+      "rarity": "common",
+      "title": "useEffect",
+      "icons": ["react"],
+      "question": "What is useEffect for, and what are common mistakes?",
+      "points": [
+        "Syncing with things outside React: subscriptions, timers, fetching, the DOM",
+        "The dependency array controls when it re-runs",
+        "Return a cleanup function to undo the effect",
+        "Mistake: computing derived state in an effect instead of during render",
+        "Mistake: missing dependencies, or loops that set state every run"
+      ],
+      "weakness": "Why does my effect run twice in development?"
+    },
+    {
+      "id": "fe-ts-basics",
+      "stack": "frontend",
+      "type": "concept",
+      "rarity": "common",
+      "title": "TS Types",
+      "icons": ["typescript"],
+      "question": "TypeScript: interface vs type, and what is a generic?",
+      "points": [
+        "Both describe object shapes",
+        "Interfaces can be extended and merged",
+        "Type aliases also handle unions, intersections and mapped types",
+        "Generics are type parameters: function first<T>(items: T[]): T",
+        "Prefer unknown over any: it forces you to check before use"
+      ],
+      "weakness": "unknown vs any?"
+    },
+    {
+      "id": "fe-ts-narrowing",
+      "stack": "frontend",
+      "type": "concept",
+      "rarity": "rare",
+      "title": "Narrowing",
+      "icons": ["typescript"],
+      "question": "What are discriminated unions and type narrowing?",
+      "points": [
+        "A union where every member has a shared literal field, like kind",
+        "Checking that field (switch or if) narrows to one member",
+        "Exhaustiveness: assign the leftover to never to catch missed cases",
+        "Other guards: typeof, in, instanceof",
+        "Custom guards: function isOrder(x): x is Order"
+      ],
+      "weakness": "How do you make the compiler catch a switch that misses a case?"
+    },
+    {
+      "id": "fe-rendering-modes",
+      "stack": "frontend",
+      "type": "tradeoff",
+      "rarity": "rare",
+      "title": "CSR, SSR, SSG, ISR",
+      "icons": ["nextjs"],
+      "question": "In Next.js, what are CSR, SSR, SSG and ISR, and when do you use each?",
+      "points": [
+        "CSR: the browser renders; slower first paint and weaker SEO",
+        "SSR: the server renders each request; always fresh",
+        "SSG: HTML built once at build time; fastest",
+        "ISR: static pages re-generated in the background on a timer",
+        "App Router adds React Server Components"
+      ],
+      "weakness": "What is hydration?"
+    },
+    {
+      "id": "fe-redux",
+      "stack": "frontend",
+      "type": "tradeoff",
+      "rarity": "common",
+      "title": "Do I Need Redux?",
+      "icons": ["redux"],
+      "question": "When do you need Redux instead of React state or context?",
+      "points": [
+        "Local state for local concerns",
+        "Context for rarely-changing globals: theme, current user",
+        "Redux Toolkit for complex shared state, devtools and middleware",
+        "Server data is often better in a fetching library like TanStack Query",
+        "Redux: one store, actions, pure reducers"
+      ],
+      "weakness": "Why must reducers be pure?"
+    },
+    {
+      "id": "fe-vue-react",
+      "stack": "frontend",
+      "type": "tradeoff",
+      "rarity": "rare",
+      "title": "Vue vs React",
+      "icons": ["vue", "react"],
+      "question": "Vue 3 vs React: what are the key differences?",
+      "points": [
+        "Vue tracks reactive dependencies with proxies and updates only what changed",
+        "React re-runs components and diffs the output",
+        "Vue uses templates by default; React uses JSX",
+        "Vue's setup() runs once; React hooks run on every render",
+        "Both are component-based with similar ecosystems"
+      ],
+      "weakness": "How does Vue's reactivity know what to update?"
+    },
+    {
+      "id": "fe-vite-webpack",
+      "stack": "frontend",
+      "type": "tradeoff",
+      "rarity": "common",
+      "title": "Vite vs Webpack",
+      "icons": ["vite", "webpack"],
+      "question": "Why is Vite so much faster than Webpack in development?",
+      "points": [
+        "Webpack bundles the whole app before it can serve it",
+        "Vite serves native ES modules, and the browser asks for files as needed",
+        "Dependencies are pre-bundled once",
+        "Hot updates replace only the changed module",
+        "Production builds are still bundled for speed"
+      ],
+      "weakness": "Why does Vite still bundle for production?"
+    },
+    {
+      "id": "fe-tailwind",
+      "stack": "frontend",
+      "type": "concept",
+      "rarity": "common",
+      "title": "Tailwind CSS",
+      "icons": ["tailwind"],
+      "question": "What is Tailwind, and what is the main criticism of it?",
+      "points": [
+        "Utility-first: small single-purpose classes like p-4 and flex",
+        "A design scale keeps spacing and colours consistent",
+        "Only the classes you use end up in the CSS",
+        "Criticism: long class lists in markup",
+        "Fix: extract repeated patterns into components"
+      ],
+      "weakness": "How do you avoid repeating the same long class list everywhere?"
+    },
+    {
+      "id": "fe-closures",
+      "stack": "frontend",
+      "type": "concept",
+      "rarity": "common",
+      "title": "Closures",
+      "icons": ["javascript"],
+      "question": "What is a closure? Give a real use.",
+      "points": [
+        "A function remembers variables from the scope where it was created",
+        "Private state and factory functions",
+        "Event handlers and callbacks",
+        "Memoization caches",
+        "In React, closures cause stale state bugs"
+      ],
+      "weakness": "What is a stale closure in React, and how do you fix it?"
+    },
+    {
+      "id": "fe-promises",
+      "stack": "frontend",
+      "type": "concept",
+      "rarity": "rare",
+      "title": "Promise Combinators",
+      "icons": ["javascript"],
+      "question": "Promise.all vs allSettled vs race vs any?",
+      "points": [
+        "all: resolves when all succeed, rejects on the first failure",
+        "allSettled: waits for every promise and reports each status",
+        "race: settles with whichever settles first",
+        "any: resolves with the first success",
+        "For 300,000 items, limit concurrency (batches or p-limit)"
+      ],
+      "weakness": "How do you run 10,000 API calls but only 10 at a time?"
+    },
+    {
+      "id": "data-sql-nosql",
+      "stack": "data",
+      "type": "tradeoff",
+      "rarity": "rare",
+      "title": "Postgres vs MongoDB",
+      "icons": ["postgres", "mongodb"],
+      "question": "Postgres vs MongoDB: how do you choose?",
+      "points": [
+        "Postgres: schemas, joins, constraints, ACID transactions",
+        "MongoDB: flexible documents, nested data, built-in sharding",
+        "Postgres JSONB gives you some document flexibility too",
+        "Decide by access patterns and how much consistency you need",
+        "Orders and inventory are relational and need transactions"
+      ],
+      "weakness": "When would MongoDB clearly be the better choice?"
+    },
+    {
+      "id": "data-indexes",
+      "stack": "data",
+      "type": "concept",
+      "rarity": "common",
+      "title": "Indexes",
+      "icons": ["postgres"],
+      "question": "How does a database index work, and what does it cost?",
+      "points": [
+        "Usually a B-tree: a sorted structure, so lookups are O(log n) instead of a full scan",
+        "Composite index column order matters (leftmost prefix rule)",
+        "Costs: slower writes and extra storage",
+        "Check with EXPLAIN ANALYZE",
+        "Partial and covering indexes for special cases"
+      ],
+      "weakness": "With an index on (a, b), does WHERE b = ? use it?"
+    },
+    {
+      "id": "data-acid",
+      "stack": "data",
+      "type": "concept",
+      "rarity": "rare",
+      "title": "ACID & Isolation",
+      "icons": ["postgres"],
+      "question": "What does ACID mean, and what are isolation levels?",
+      "points": [
+        "Atomic, Consistent, Isolated, Durable",
+        "Read committed is Postgres's default",
+        "Repeatable read and serializable are stricter",
+        "Anomalies: dirty reads, non-repeatable reads, phantoms",
+        "SELECT ... FOR UPDATE locks rows you are about to change"
+      ],
+      "weakness": "What is a phantom read?"
+    },
+    {
+      "id": "data-oversell",
+      "stack": "data",
+      "type": "boss",
+      "rarity": "ultra",
+      "title": "The Last Unit",
+      "icons": ["postgres"],
+      "question": "One unit left, two orders at the same instant. Design it so you never oversell.",
+      "points": [
+        "Atomic conditional update: UPDATE stock SET qty = qty - 1 WHERE sku = ? AND qty > 0",
+        "Check rows affected: 0 means sold out",
+        "Or lock the row with SELECT ... FOR UPDATE in a transaction",
+        "Or optimistic locking with a version column",
+        "Across marketplaces: keep a safety buffer and sync stock quickly"
+      ],
+      "weakness": "Optimistic vs pessimistic locking: when do you use each?"
+    },
+    {
+      "id": "data-n-plus-one",
+      "stack": "data",
+      "type": "trap",
+      "rarity": "common",
+      "title": "N+1 Queries",
+      "icons": ["sequelize", "mongoose"],
+      "question": "What is the N+1 query problem in Sequelize or Mongoose?",
+      "points": [
+        "1 query for a list, then 1 more query per item",
+        "Caused by ORMs lazy-loading relations",
+        "Fix: eager loading (include in Sequelize, populate in Mongoose)",
+        "Or a single join, or batching (DataLoader)",
+        "Spot it in query logs or APM traces"
+      ],
+      "weakness": "How would you spot N+1 queries in production?"
+    },
+    {
+      "id": "data-orm",
+      "stack": "data",
+      "type": "tradeoff",
+      "rarity": "common",
+      "title": "ORM vs Raw SQL",
+      "icons": ["sequelize"],
+      "question": "ORM (Sequelize, Mongoose) vs raw SQL?",
+      "points": [
+        "ORM: productivity, models, validation, migrations",
+        "ORM hides the queries, which can surprise you on performance",
+        "Raw SQL: full control for complex or hot queries",
+        "A mix is common: ORM by default, raw SQL for hot paths",
+        "Query builders sit in the middle"
+      ],
+      "weakness": "What is a migration, and why version it?"
+    },
+    {
+      "id": "data-bulk-upsert",
+      "stack": "data",
+      "type": "concept",
+      "rarity": "rare",
+      "title": "300k Upserts",
+      "icons": ["postgres"],
+      "question": "Syncing 300,000 SKUs into Postgres: how do you write that efficiently?",
+      "points": [
+        "Batch writes (multi-row INSERT or COPY), never row by row",
+        "INSERT ... ON CONFLICT (sku) DO UPDATE for upserts",
+        "Skip unchanged rows (compare a hash or updated_at)",
+        "Commit in chunks of a few thousand rows",
+        "A unique index on the conflict key"
+      ],
+      "weakness": "Why not do all 300,000 rows in one giant transaction?"
+    },
+    {
+      "id": "data-pagination",
+      "stack": "data",
+      "type": "concept",
+      "rarity": "common",
+      "title": "Pagination",
+      "icons": [],
+      "question": "Offset vs cursor pagination?",
+      "points": [
+        "OFFSET scans and throws away rows, so deep pages get slow",
+        "Offsets also skip or repeat rows when data changes",
+        "Cursor (keyset): WHERE id > last_id ORDER BY id LIMIT n",
+        "Fast and stable with an index",
+        "Trade-off: no jumping straight to page 50"
+      ],
+      "weakness": "How do you build a cursor when sorting by a non-unique column like created_at?"
+    },
+    {
+      "id": "cloud-docker",
+      "stack": "cloud",
+      "type": "concept",
+      "rarity": "common",
+      "title": "Docker",
+      "icons": ["docker"],
+      "question": "Container vs VM, and what is inside a Docker image?",
+      "points": [
+        "Containers share the host kernel, isolated with namespaces and cgroups",
+        "Much lighter than VMs, which each run a full OS",
+        "An image is a stack of read-only layers built from a Dockerfile",
+        "Layers are cached, so instruction order matters",
+        "Multi-stage builds keep images small"
+      ],
+      "weakness": "Why copy package.json and run npm install before copying the source?"
+    },
+    {
+      "id": "cloud-k8s",
+      "stack": "cloud",
+      "type": "concept",
+      "rarity": "rare",
+      "title": "Kubernetes",
+      "icons": ["kubernetes"],
+      "question": "What are Pods, Deployments, Services and Ingress in Kubernetes?",
+      "points": [
+        "Pod: the smallest unit, one or more containers",
+        "Deployment: keeps N replicas running and does rolling updates",
+        "Service: a stable address that load-balances across pods",
+        "Ingress: routes HTTP traffic into services",
+        "ConfigMaps and Secrets for configuration"
+      ],
+      "weakness": "Liveness probe vs readiness probe?"
+    },
+    {
+      "id": "cloud-helm",
+      "stack": "cloud",
+      "type": "concept",
+      "rarity": "common",
+      "title": "Helm",
+      "icons": ["helm"],
+      "question": "What does Helm add on top of Kubernetes?",
+      "points": [
+        "A package manager for Kubernetes",
+        "Charts are templated manifests",
+        "values.yaml files per environment",
+        "Releases can be upgraded and rolled back"
+      ],
+      "weakness": "How do you keep secrets out of values files?"
+    },
+    {
+      "id": "cloud-terraform",
+      "stack": "cloud",
+      "type": "concept",
+      "rarity": "rare",
+      "title": "Terraform",
+      "icons": ["terraform"],
+      "question": "How does Terraform work, and what is state?",
+      "points": [
+        "Declarative infrastructure as code",
+        "plan shows the diff; apply makes the changes",
+        "The state file maps your config to real resources",
+        "Teams use remote state with locking",
+        "destroy tears it all down, as in FormHook"
+      ],
+      "weakness": "What happens if two people run terraform apply at the same time?"
+    },
+    {
+      "id": "cloud-ci",
+      "stack": "cloud",
+      "type": "concept",
+      "rarity": "common",
+      "title": "CI/CD",
+      "icons": ["gitlab", "jenkins"],
+      "question": "What should a CI/CD pipeline do?",
+      "points": [
+        "On every push or PR: install, lint, test, coverage gate, build",
+        "Produce artifacts or container images",
+        "Deploy to environments, with approvals for production",
+        "Fail fast and cache dependencies",
+        "You used Azure DevOps, GitLab CI and Jenkins"
+      ],
+      "weakness": "Continuous delivery vs continuous deployment?"
+    },
+    {
+      "id": "cloud-aws",
+      "stack": "cloud",
+      "type": "concept",
+      "rarity": "common",
+      "title": "S3 & EC2",
+      "icons": [],
+      "question": "What are AWS S3 and EC2, and when do you use each?",
+      "points": [
+        "EC2: virtual servers you manage (OS, patching, scaling)",
+        "S3: object storage, very durable and cheap",
+        "S3 for files, static assets and backups",
+        "Security groups control network access to EC2",
+        "IAM roles let EC2 reach S3 without hardcoded keys"
+      ],
+      "weakness": "How does an EC2 instance get S3 access without keys in the code?"
+    },
+    {
+      "id": "cloud-scaling",
+      "stack": "cloud",
+      "type": "boss",
+      "rarity": "ultra",
+      "title": "10x Overnight",
+      "icons": ["kubernetes", "redis", "postgres"],
+      "question": "Your API traffic grows 10x overnight. What breaks first, and what do you do?",
+      "points": [
+        "Find the bottleneck with metrics: CPU, DB connections, queue depth",
+        "Stateless app servers scale out behind a load balancer",
+        "Database: connection pooling, indexes, read replicas, caching in Redis",
+        "Queues absorb spikes; rate limits and backpressure protect the core",
+        "Third-party API limits do not scale with you"
+      ],
+      "weakness": "Why is the database usually the hardest part to scale?"
+    },
+    {
+      "id": "test-contract",
+      "stack": "testing",
+      "type": "concept",
+      "rarity": "rare",
+      "title": "Contract Testing",
+      "icons": ["openapi"],
+      "question": "What is contract testing (Specmatic), and how is it different from integration testing?",
+      "points": [
+        "Checks that both sides agree on the API contract (the OpenAPI spec)",
+        "Specmatic generates tests from the spec and can stub the provider",
+        "Catches breaking changes without running the whole system",
+        "Faster and more focused than end-to-end tests",
+        "Consumer-driven vs provider-driven contracts"
+      ],
+      "weakness": "If the contract itself is wrong, what will contract tests catch?"
+    },
+    {
+      "id": "test-pyramid",
+      "stack": "testing",
+      "type": "concept",
+      "rarity": "common",
+      "title": "Test Pyramid",
+      "icons": ["jest"],
+      "question": "What is the testing pyramid?",
+      "points": [
+        "Many fast unit tests at the base",
+        "Fewer integration tests in the middle",
+        "A few slow end-to-end tests at the top",
+        "Balances speed, cost and confidence",
+        "For integrations: unit tests for mapping logic, contract tests for APIs"
+      ],
+      "weakness": "When do mocks give you false confidence?"
+    },
+    {
+      "id": "test-coverage",
+      "stack": "testing",
+      "type": "trap",
+      "rarity": "common",
+      "title": "100% Coverage",
+      "icons": ["jest"],
+      "question": "Does 100% test coverage mean the code is bug-free?",
+      "points": [
+        "No: coverage shows code ran, not that behaviour was checked",
+        "Edge cases and bad inputs can still be missing",
+        "Branch coverage is stricter than line coverage",
+        "Mutation testing measures how good the tests are",
+        "Focus coverage on risky code"
+      ],
+      "weakness": "What is mutation testing?"
+    },
+    {
+      "id": "test-jest-mocha",
+      "stack": "testing",
+      "type": "tradeoff",
+      "rarity": "common",
+      "title": "Jest vs Mocha",
+      "icons": ["jest", "mocha"],
+      "question": "Jest vs Mocha?",
+      "points": [
+        "Jest: all-in-one runner, assertions, mocks, coverage and snapshots",
+        "Mocha: just the runner; add Chai, Sinon and nyc",
+        "Jest runs test files in parallel workers",
+        "Vitest is the natural pick for Vite projects"
+      ],
+      "weakness": "How do you mock a third-party API in Jest?"
+    },
+    {
+      "id": "test-otel",
+      "stack": "testing",
+      "type": "concept",
+      "rarity": "rare",
+      "title": "OpenTelemetry",
+      "icons": ["opentelemetry"],
+      "question": "What is OpenTelemetry: traces, metrics and logs?",
+      "points": [
+        "A vendor-neutral standard and SDKs for telemetry",
+        "Traces: spans across services, linked by a propagated trace ID",
+        "Metrics: counters, gauges, histograms",
+        "Logs correlated with traces by trace ID",
+        "Exporters send data to backends such as Grafana"
+      ],
+      "weakness": "How does a trace ID follow a message through Kafka?"
+    },
+    {
+      "id": "test-alerting",
+      "stack": "testing",
+      "type": "concept",
+      "rarity": "common",
+      "title": "Dashboards & Alerts",
+      "icons": ["grafana"],
+      "question": "What would you put on a Grafana dashboard, and alert on, for an integration service?",
+      "points": [
+        "Golden signals: latency, traffic, errors, saturation",
+        "Queue depth and the age of the oldest job",
+        "429 and 5xx rates per marketplace",
+        "Sync lag per seller",
+        "Alert on user-facing symptoms; avoid noisy alerts"
+      ],
+      "weakness": "What makes an alert actionable?"
+    },
+    {
+      "id": "msc-bias-variance",
+      "stack": "msc",
+      "type": "concept",
+      "rarity": "rare",
+      "title": "Bias vs Variance",
+      "icons": ["scikitlearn"],
+      "question": "Explain bias vs variance, and overfitting.",
+      "points": [
+        "High bias: too simple, underfits (bad on train and test)",
+        "High variance: too complex, overfits (great on train, bad on test)",
+        "A big gap between train and validation error signals overfitting",
+        "Fixes: more data, regularization (L2, dropout), simpler model, early stopping",
+        "Cross-validation gives a more reliable estimate"
+      ],
+      "weakness": "How do you detect overfitting during training?"
+    },
+    {
+      "id": "msc-splits",
+      "stack": "msc",
+      "type": "concept",
+      "rarity": "common",
+      "title": "Train, Val, Test",
+      "icons": ["scikitlearn"],
+      "question": "Why separate train, validation and test sets?",
+      "points": [
+        "Train: fit the model",
+        "Validation: tune hyperparameters and choose models",
+        "Test: one final, unbiased estimate; touch it once",
+        "Data leakage makes results look better than reality",
+        "k-fold cross-validation when data is scarce"
+      ],
+      "weakness": "Give an example of data leakage."
+    },
+    {
+      "id": "msc-backprop",
+      "stack": "msc",
+      "type": "concept",
+      "rarity": "rare",
+      "title": "Backpropagation",
+      "icons": ["pytorch"],
+      "question": "Explain backpropagation and gradient descent.",
+      "points": [
+        "Forward pass computes predictions and the loss",
+        "Backprop applies the chain rule to get gradients layer by layer, backwards",
+        "Gradient descent moves weights against the gradient, scaled by the learning rate",
+        "Mini-batch SGD and Adam in practice",
+        "Vanishing gradients: helped by ReLU, residual connections, normalization"
+      ],
+      "weakness": "What happens if the learning rate is too high or too low?"
+    },
+    {
+      "id": "msc-attention",
+      "stack": "msc",
+      "type": "concept",
+      "rarity": "ultra",
+      "title": "Attention",
+      "icons": ["pytorch"],
+      "question": "How does attention work in a Transformer?",
+      "points": [
+        "Tokens become embeddings plus position information",
+        "Each token is projected into a query, key and value",
+        "Attention = softmax(QK^T / sqrt(d)) V: each token weighs every other token",
+        "Multi-head: several attention patterns in parallel",
+        "Stacked with feed-forward layers, residuals and layer norm; parallel, unlike RNNs"
+      ],
+      "weakness": "Why divide by the square root of d?"
+    },
+    {
+      "id": "msc-metrics",
+      "stack": "msc",
+      "type": "concept",
+      "rarity": "common",
+      "title": "Precision & Recall",
+      "icons": [],
+      "question": "Precision, recall and F1: when does accuracy lie?",
+      "points": [
+        "Precision = TP / (TP + FP): of what you flagged, how much was right",
+        "Recall = TP / (TP + FN): of what was there, how much you found",
+        "F1 is their harmonic mean",
+        "With 99% negatives, predicting all negative scores 99% accuracy",
+        "Choose by the cost of false positives vs false negatives"
+      ],
+      "weakness": "Spam filter: optimise precision or recall?"
+    },
+    {
+      "id": "msc-retrieval",
+      "stack": "msc",
+      "type": "tradeoff",
+      "rarity": "rare",
+      "title": "Keyword vs Dense",
+      "icons": [],
+      "question": "Information retrieval: BM25 keyword search vs dense embeddings?",
+      "points": [
+        "TF-IDF: term frequency times inverse document frequency",
+        "BM25 adds term saturation and document length normalization",
+        "Dense embeddings capture meaning; search by nearest neighbour",
+        "Hybrid search combines both and is common in practice",
+        "Evaluate with precision@k, MAP, nDCG"
+      ],
+      "weakness": "When does keyword search beat embeddings?"
+    },
+    {
+      "id": "msc-serving",
+      "stack": "msc",
+      "type": "tradeoff",
+      "rarity": "rare",
+      "title": "Model Serving",
+      "icons": ["onnx", "nvidia"],
+      "question": "ONNX Runtime, TensorRT and Triton: what does each one do?",
+      "points": [
+        "ONNX: a portable model format; ONNX Runtime runs it on many kinds of hardware",
+        "TensorRT: NVIDIA's GPU optimizer (layer fusion, FP16 and INT8)",
+        "Triton Inference Server: serves models over HTTP or gRPC",
+        "Triton adds dynamic batching and hosts many models at once",
+        "Typical path: train in PyTorch, export to ONNX, optimize, serve"
+      ],
+      "weakness": "What does quantization trade away?"
+    },
+    {
+      "id": "msc-frameworks",
+      "stack": "msc",
+      "type": "tradeoff",
+      "rarity": "common",
+      "title": "PyTorch vs TF",
+      "icons": ["pytorch", "tensorflow"],
+      "question": "PyTorch vs TensorFlow?",
+      "points": [
+        "PyTorch: eager and Pythonic; the research default",
+        "TensorFlow and Keras: strong production tooling (Serving, Lite)",
+        "Both compile graphs when needed (torch.compile, tf.function)",
+        "Both export to ONNX"
+      ],
+      "weakness": "What does model.eval() change in PyTorch?"
+    },
+    {
+      "id": "msc-big-o",
+      "stack": "msc",
+      "type": "concept",
+      "rarity": "common",
+      "title": "Big-O Basics",
+      "icons": ["python"],
+      "question": "Big-O of common operations: hash map, sorted array, heap, sorting?",
+      "points": [
+        "Hash map: O(1) average lookup and insert, O(n) worst case",
+        "Sorted array: O(log n) binary search, O(n) insert",
+        "Heap: O(log n) push and pop, O(1) peek",
+        "Comparison sorting: O(n log n)"
+      ],
+      "weakness": "When does a hash map degrade to O(n)?"
+    },
+    {
+      "id": "built-leitner",
+      "stack": "built",
+      "type": "concept",
+      "rarity": "common",
+      "title": "Leitner System",
+      "icons": [],
+      "question": "How does this app decide when you see a card again?",
+      "points": [
+        "Five boxes, shown as foils from Plain to Full Art",
+        "Got it: up one box. Not yet: back to box 1",
+        "Higher boxes wait longer before the next review",
+        "Harder rarities get shorter waits, so you see them more",
+        "Spacing reviews out beats cramming (the spacing effect)"
+      ],
+      "weakness": "Why does reviewing just before you forget work so well?"
+    },
+    {
+      "id": "built-rls",
+      "stack": "built",
+      "type": "concept",
+      "rarity": "rare",
+      "title": "Row Level Security",
+      "icons": ["supabase", "postgres"],
+      "question": "What is Row Level Security in Postgres, and how does Supabase use it?",
+      "points": [
+        "Policies on a table decide which rows each user can see or change",
+        "USING filters reads; WITH CHECK validates writes",
+        "auth.uid() comes from the user's JWT",
+        "That is why the publishable key can be public",
+        "Wrap auth.uid() in a SELECT so it is evaluated once per query"
+      ],
+      "weakness": "Why does an UPDATE policy also need WITH CHECK?"
+    },
+    {
+      "id": "built-supabase-firebase",
+      "stack": "built",
+      "type": "tradeoff",
+      "rarity": "rare",
+      "title": "Supabase vs Firebase",
+      "icons": ["supabase"],
+      "question": "Why did you build this app on Supabase instead of Firebase?",
+      "points": [
+        "Supabase is Postgres: SQL, joins, constraints, RLS",
+        "Firebase Firestore is a NoSQL document store",
+        "Supabase is open source and self-hostable: low lock-in",
+        "Firebase has built-in offline sync and never pauses",
+        "SQL skills carry over to almost any backend job"
+      ],
+      "weakness": "How would you add offline support to this app?"
+    },
+    {
+      "id": "built-streak-sql",
+      "stack": "built",
+      "type": "boss",
+      "rarity": "ultra",
+      "title": "The Streak Query",
+      "icons": ["postgres"],
+      "question": "Write the SQL that computes a daily streak from a table of pack openings.",
+      "points": [
+        "Get the distinct local dates with at least one opening",
+        "Gaps and islands: date minus row_number() is constant for consecutive days",
+        "Group by that value to get each run of days",
+        "Take the run that ends today or yesterday",
+        "Its length is the current streak"
+      ],
+      "weakness": "How do time zones break a naive streak query?"
+    },
+    {
+      "id": "built-security-invoker",
+      "stack": "built",
+      "type": "trap",
+      "rarity": "rare",
+      "title": "Definer vs Invoker",
+      "icons": ["postgres"],
+      "question": "SECURITY DEFINER vs SECURITY INVOKER functions in Postgres?",
+      "points": [
+        "Definer runs with the function owner's rights and bypasses RLS",
+        "Invoker runs as the caller, so RLS still applies",
+        "Definer functions in an exposed schema can be called by anyone",
+        "Prefer invoker; if you need definer, check auth.uid() inside",
+        "Always set search_path on functions"
+      ],
+      "weakness": "Why set search_path on a function?"
+    },
+    {
+      "id": "built-pwa",
+      "stack": "built",
+      "type": "concept",
+      "rarity": "common",
+      "title": "PWA",
+      "icons": ["pwa"],
+      "question": "What makes a web app a Progressive Web App?",
+      "points": [
+        "A web manifest: name, icons, standalone display",
+        "A service worker for caching and offline",
+        "Served over HTTPS",
+        "Installable to the home screen like a native app"
+      ],
+      "weakness": "What can a service worker do that a normal page cannot?"
+    },
+    {
+      "id": "built-card-flip",
+      "stack": "built",
+      "type": "concept",
+      "rarity": "common",
+      "title": "The Card Flip",
+      "icons": ["framer"],
+      "question": "How does the 3D card flip in this app work?",
+      "points": [
+        "perspective on the parent gives depth",
+        "transform-style: preserve-3d keeps children in 3D space",
+        "backface-visibility: hidden hides each face when turned away",
+        "The back face starts rotated 180 degrees",
+        "Rotating the container shows one face, then the other"
+      ],
+      "weakness": "Why animate transform instead of width or top?"
+    },
+    {
+      "id": "built-pack-builder",
+      "stack": "built",
+      "type": "tradeoff",
+      "rarity": "rare",
+      "title": "The Pack Builder",
+      "icons": ["postgres"],
+      "question": "How does the pack builder pick cards, and why do hard cards show up more?",
+      "points": [
+        "Five slots: Common, Flex, Rare, Rare, Ultra Rare",
+        "Each slot takes the right rarity: due cards first, then new ones",
+        "Flex takes the most overdue card of any rarity",
+        "Falls back to other rarities when a slot runs dry",
+        "Harder rarities have shorter review waits, so they come back sooner"
+      ],
+      "weakness": "How would you test the pack builder?"
+    }
+  ]
+}
