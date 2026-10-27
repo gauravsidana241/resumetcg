@@ -6,6 +6,7 @@ export const TYPE_META: Record<CardType, { label: string; color: string; glyph: 
   tradeoff: { label: 'Trade-off', color: '#a855f7', glyph: 'T' },
   trap: { label: 'Trap', color: '#ef4444', glyph: '!' },
   boss: { label: 'Boss', color: '#e11d48', glyph: 'B' },
+  syntax: { label: 'Syntax', color: '#14b8a6', glyph: '{' },
 }
 
 export const RARITY_META: Record<Rarity, { label: string; symbol: string; xp: number }> = {

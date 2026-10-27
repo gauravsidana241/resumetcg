@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { motion } from 'motion/react'
-import type { AnswerResult, PulledCard } from '../types'
+import type { AnswerResult, CardSet, PulledCard } from '../types'
 import { PackOpening } from './PackOpening'
 import { StudySession } from './StudySession'
 
 interface Props {
+  set: CardSet
   packs: PulledCard[][]
   onFinish: (results: AnswerResult[]) => void
 }
@@ -12,12 +13,12 @@ interface Props {
 type Phase = 'opening' | 'study' | 'between'
 
 // Opens and studies each pack in a single, bundle or box in turn
-export function PackRun({ packs, onFinish }: Props) {
+export function PackRun({ set, packs, onFinish }: Props) {
   const [packIndex, setPackIndex] = useState(0)
   const [phase, setPhase] = useState<Phase>('opening')
   const [results, setResults] = useState<AnswerResult[]>([])
 
-  const label = packs.length > 1 ? `Pack ${packIndex + 1} of ${packs.length}` : 'Booster pack'
+  const label = packs.length > 1 ? `${set.name} · ${packIndex + 1} of ${packs.length}` : set.name
   const isLast = packIndex + 1 >= packs.length
 
   function finishPack(packResults: AnswerResult[]) {
@@ -28,7 +29,7 @@ export function PackRun({ packs, onFinish }: Props) {
   }
 
   if (phase === 'opening') {
-    return <PackOpening key={packIndex} pack={packs[packIndex]} label={label} onDone={() => setPhase('study')} />
+    return <PackOpening key={packIndex} set={set} pack={packs[packIndex]} label={label} onDone={() => setPhase('study')} />
   }
 
   if (phase === 'study') {

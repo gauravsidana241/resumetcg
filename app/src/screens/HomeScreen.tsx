@@ -1,19 +1,22 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type CSSProperties } from 'react'
 import { motion } from 'motion/react'
 import { FlameIcon, LogoutIcon } from '../components/Icons'
+import { cards as allCards, sets, stacks } from '../data/catalog'
 import { getHome } from '../lib/api'
+import { AUTH_ENABLED } from '../lib/config'
 import { CARDS_PER_PACK, PRODUCTS } from '../lib/meta'
 import { supabase } from '../lib/supabase'
-import type { HomeStats } from '../types'
+import type { CardSet, HomeStats } from '../types'
 
 interface Props {
-  onOpen: (packs: number) => Promise<void>
+  onOpen: (packs: number, set: CardSet) => Promise<void>
 }
 
 export function HomeScreen({ onOpen }: Props) {
   const [stats, setStats] = useState<HomeStats | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [opening, setOpening] = useState<number | null>(null)
+  const [set, setSet] = useState<CardSet>(sets[0])
 
   useEffect(() => {
     getHome()
@@ -25,7 +28,7 @@ export function HomeScreen({ onOpen }: Props) {
     setOpening(packs)
     setError(null)
     try {
-      await onOpen(packs)
+      await onOpen(packs, set)
     } catch {
       setError('Could not open that pack. Try again.')
       setOpening(null)
@@ -40,13 +43,16 @@ export function HomeScreen({ onOpen }: Props) {
         <h1 className="font-display text-2xl font-bold tracking-tight">
           <span className="text-shine">Resume</span> TCG
         </h1>
-        <button
-          onClick={() => supabase.auth.signOut()}
-          className="grid h-10 w-10 place-items-center rounded-full glass text-white/60 hover:text-white"
-          aria-label="Sign out"
-        >
-          <LogoutIcon className="h-4.5 w-4.5" />
-        </button>
+        {/* signing out of an anonymous session would lose its progress */}
+        {AUTH_ENABLED && (
+          <button
+            onClick={() => supabase.auth.signOut()}
+            className="grid h-10 w-10 place-items-center rounded-full glass text-white/60 hover:text-white"
+            aria-label="Sign out"
+          >
+            <LogoutIcon className="h-4.5 w-4.5" />
+          </button>
+        )}
       </header>
 
       <StreakCard stats={stats} />
@@ -75,30 +81,37 @@ export function HomeScreen({ onOpen }: Props) {
 
       <section className="flex flex-col gap-3">
         <h2 className="font-display text-lg font-bold">Store</h2>
+        <SetPicker selected={set} stats={stats} onSelect={setSet} />
         {error && <p className="text-sm text-rose-300">{error}</p>}
         {PRODUCTS.map((product, i) => {
           const cards = product.packs * CARDS_PER_PACK
+          // a card never repeats within one opening, so small sets cannot fill big products
+          const tooSmall = cards > setSize(set)
           return (
             <motion.button
               key={product.id}
               onClick={() => open(product.packs)}
-              disabled={opening !== null}
+              disabled={opening !== null || tooSmall}
               className="flex items-center gap-4 rounded-2xl glass p-4 text-left transition hover:bg-white/[0.07] active:scale-[0.98] disabled:opacity-60"
               initial={{ y: 16, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.05 * i }}
             >
-              <PackStack count={Math.min(product.packs, 3)} />
+              <PackStack count={Math.min(product.packs, 3)} set={set} />
               <div className="flex-1">
                 <p className="font-display text-base font-bold">{product.name}</p>
                 <p className="text-xs text-white/60">
                   {product.packs} {product.packs === 1 ? 'pack' : 'packs'} · {cards} cards · ~{cards} min
                 </p>
-                <p className="mt-0.5 text-xs text-white/40">{product.blurb}</p>
+                <p className="mt-0.5 text-xs text-white/40">
+                  {tooSmall ? `Needs ${cards} cards; this set has ${setSize(set)}` : product.blurb}
+                </p>
               </div>
-              <span className="rounded-full bg-white px-3.5 py-1.5 font-display text-sm font-bold text-black">
-                {opening === product.packs ? '...' : 'Open'}
-              </span>
+              {!tooSmall && (
+                <span className="rounded-full bg-white px-3.5 py-1.5 font-display text-sm font-bold text-black">
+                  {opening === product.packs ? '...' : 'Open'}
+                </span>
+              )}
             </motion.button>
           )
         })}
@@ -154,19 +167,66 @@ function Stat({ label, value, hint, accent }: { label: string; value?: number; h
   )
 }
 
+function setSize(set: CardSet): number {
+  const ids = new Set(stacks.filter((s) => s.set === set.id).map((s) => s.id))
+  return allCards.filter((c) => ids.has(c.stack)).length
+}
+
+function SetPicker({
+  selected,
+  stats,
+  onSelect,
+}: {
+  selected: CardSet
+  stats: HomeStats | null
+  onSelect: (set: CardSet) => void
+}) {
+  const counts = stats?.sets?.[selected.id]
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none]">
+        {sets.map((s) => (
+          <button
+            key={s.id}
+            onClick={() => onSelect(s)}
+            className={`flex-none rounded-full px-3.5 py-2 text-sm font-medium transition ${
+              s.id === selected.id ? 'text-white shadow-lg' : 'glass text-white/70'
+            }`}
+            style={s.id === selected.id ? { background: `linear-gradient(120deg, ${s.from}, ${s.to})` } : undefined}
+          >
+            {s.name}
+          </button>
+        ))}
+      </div>
+      <p className="text-xs text-white/55">
+        {selected.tagline}
+        {counts && ` · ${counts.due} due · ${counts.total - counts.seen} new`}
+      </p>
+    </div>
+  )
+}
+
 // a small fanned stack of booster packs as the product art
-function PackStack({ count }: { count: number }) {
+function PackStack({ count, set }: { count: number; set: CardSet }) {
   return (
     <div className="relative h-16 w-14 flex-none">
       {Array.from({ length: count }, (_, i) => (
         <div
           key={i}
-          className="absolute inset-y-0 w-10 rounded-md border border-white/20 bg-gradient-to-br from-violet-600 via-indigo-950 to-pink-700 shadow-lg"
-          style={{ left: i * 6, transform: `rotate(${(i - (count - 1) / 2) * 8}deg)` }}
+          className="absolute inset-y-0 w-10 rounded-md border border-white/20 shadow-lg"
+          style={
+            {
+              left: i * 6,
+              transform: `rotate(${(i - (count - 1) / 2) * 8}deg)`,
+              background: `linear-gradient(140deg, ${set.from}, #1e1b4b 50%, ${set.to})`,
+            } as CSSProperties
+          }
         >
           <div className="h-2 rounded-t-md border-b border-dashed border-white/40 bg-white/10" />
-          <p className="mt-3 text-center font-display text-[8px] font-bold leading-tight">
-            R<br />TCG
+          <p className="mt-3 text-center font-display text-[7px] font-bold leading-tight">
+            {set.title[0].slice(0, 4)}
+            <br />
+            {set.title[1].slice(0, 4)}
           </p>
         </div>
       ))}

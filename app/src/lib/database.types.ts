@@ -8,9 +8,9 @@ export type Database = {
   public: {
     Tables: {
       cards: {
-        Row: { active: boolean; id: string; rarity: string; stack: string }
-        Insert: { active?: boolean; id: string; rarity: string; stack: string }
-        Update: { active?: boolean; id?: string; rarity?: string; stack?: string }
+        Row: { active: boolean; id: string; rarity: string; set_id: string; stack: string }
+        Insert: { active?: boolean; id: string; rarity: string; set_id?: string; stack: string }
+        Update: { active?: boolean; id?: string; rarity?: string; set_id?: string; stack?: string }
         Relationships: []
       }
       pack_opens: {
@@ -103,7 +103,7 @@ export type Database = {
     Functions: {
       get_home: { Args: { p_tz?: string }; Returns: Json }
       open_packs: {
-        Args: { p_packs: number; p_tz?: string }
+        Args: { p_packs: number; p_set?: string; p_tz?: string }
         Returns: { card_box: number; card_key: string; pack_no: number; slot_no: number }[]
       }
       record_answer: { Args: { p_card_id: string; p_got_it: boolean }; Returns: Json }

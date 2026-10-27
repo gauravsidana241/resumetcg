@@ -201,6 +201,14 @@ body {
     #090b11;
 }
 
+.art-compact {
+  height: 24%;
+}
+
+.art-compact .art-icon {
+  width: 56px !important;
+}
+
 .art-icon {
   color: white;
   filter: drop-shadow(0 0 18px color-mix(in oklab, var(--type) 80%, white));
@@ -221,6 +229,42 @@ body {
   border-radius: 8px;
   background: rgb(255 255 255 / 0.04);
   border-top: 1px solid rgb(255 255 255 / 0.1);
+}
+
+.code-block {
+  flex: none;
+  margin: 0;
+  padding: 7px 9px;
+  border-radius: 7px;
+  overflow: hidden;
+  white-space: pre;
+  font-family: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  font-size: 10px;
+  line-height: 1.5;
+  color: #e2e8f0;
+  background: rgb(0 0 0 / 0.45);
+  border: 1px solid rgb(255 255 255 / 0.08);
+}
+
+.tok-keyword {
+  color: #c4b5fd;
+}
+
+.tok-type {
+  color: #67e8f9;
+}
+
+.tok-string {
+  color: #86efac;
+}
+
+.tok-number {
+  color: #fcd34d;
+}
+
+.tok-comment {
+  color: #7c8597;
+  font-style: italic;
 }
 
 .weakness {
@@ -445,7 +489,7 @@ body {
   overflow: hidden;
   background:
     linear-gradient(115deg, transparent 30%, rgb(255 255 255 / 0.35) 45%, transparent 60%) 0 0 / 250% 100%,
-    linear-gradient(160deg, #6d28d9, #1e1b4b 45%, #be185d);
+    linear-gradient(160deg, var(--pack-from, #6d28d9), #1e1b4b 45%, var(--pack-to, #be185d));
   animation: pack-sheen 3.5s ease-in-out infinite;
 }
 

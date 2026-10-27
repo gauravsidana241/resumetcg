@@ -4,8 +4,8 @@ import { supabase } from './supabase'
 
 const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
 
-export async function openPacks(count: number): Promise<PulledCard[][]> {
-  const { data, error } = await supabase.rpc('open_packs', { p_packs: count, p_tz: tz })
+export async function openPacks(count: number, setId: string): Promise<PulledCard[][]> {
+  const { data, error } = await supabase.rpc('open_packs', { p_packs: count, p_tz: tz, p_set: setId })
   if (error) throw error
 
   const packs: PulledCard[][] = []

@@ -4,13 +4,14 @@ import { BoosterPack } from '../components/BoosterPack'
 import { CardSleeve, Scaled } from '../components/Scaled'
 import { TcgCard } from '../components/TcgCard'
 import { vibrate } from '../lib/meta'
-import { foilForBox, type PulledCard } from '../types'
+import { foilForBox, type CardSet, type PulledCard } from '../types'
 
 const REVEAL_START_MS = 900
 const REVEAL_STEP_MS = 380
 const ULTRA_PAUSE_MS = 500
 
 interface Props {
+  set: CardSet
   pack: PulledCard[]
   label: string
   onDone: () => void
@@ -18,7 +19,7 @@ interface Props {
 
 type Phase = 'sealed' | 'torn' | 'revealing' | 'ready'
 
-export function PackOpening({ pack, label, onDone }: Props) {
+export function PackOpening({ set, pack, label, onDone }: Props) {
   const [phase, setPhase] = useState<Phase>('sealed')
   const [revealed, setRevealed] = useState(0)
   const [flash, setFlash] = useState(false)
@@ -60,7 +61,7 @@ export function PackOpening({ pack, label, onDone }: Props) {
     <div className="flex min-h-dvh flex-col items-center justify-center gap-10 px-4">
       {phase === 'sealed' || phase === 'torn' ? (
         <>
-          <BoosterPack label={label} torn={phase === 'torn'} onTear={tear} />
+          <BoosterPack set={set} label={label} torn={phase === 'torn'} onTear={tear} />
           <motion.p
             className="text-sm text-white/60"
             animate={{ opacity: phase === 'torn' ? 0 : 1 }}

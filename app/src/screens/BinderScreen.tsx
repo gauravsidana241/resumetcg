@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { CloseIcon } from '../components/Icons'
 import { CardSleeve, Scaled } from '../components/Scaled'
 import { CARD_WIDTH, TcgCard } from '../components/TcgCard'
-import { cards, stacks } from '../data/catalog'
+import { cards, sets, stacks } from '../data/catalog'
 import { getProgress } from '../lib/api'
 import { RARITY_META } from '../lib/meta'
 import { FOIL_NAMES, foilForBox, type Card, type CardProgress } from '../types'
@@ -15,6 +15,8 @@ export function BinderScreen() {
   const [progress, setProgress] = useState<Map<string, CardProgress> | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [stackId, setStackId] = useState(stacks[0].id)
+  const stack = stacks.find((s) => s.id === stackId)!
+  const setStacks = stacks.filter((s) => s.set === stack.set)
   const [open, setOpen] = useState<Card | null>(null)
   const gridRef = useRef<HTMLDivElement>(null)
   const [gridWidth, setGridWidth] = useState(0)
@@ -43,7 +45,6 @@ export function BinderScreen() {
   const mastery = (ids: Card[]) =>
     ids.length ? Math.round((ids.filter((c) => (progress?.get(c.id)?.box ?? 0) >= 3).length / ids.length) * 100) : 0
   const collected = progress ? cards.filter((c) => progress.has(c.id)).length : 0
-  const stack = stacks.find((s) => s.id === stackId)!
   const openProgress = open ? progress?.get(open.id) : undefined
 
   return (
@@ -57,16 +58,36 @@ export function BinderScreen() {
       </header>
 
       <div className="flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none]">
-        {stacks.map((s) => {
-          const active = s.id === stackId
+        {sets.map((s) => {
+          const active = s.id === stack.set
+          const inSet = cards.filter((c) => stacks.find((st) => st.id === c.stack)?.set === s.id)
           return (
             <button
               key={s.id}
               ref={(el) => {
                 if (active) el?.scrollIntoView({ inline: 'center', block: 'nearest' })
               }}
-              onClick={() => setStackId(s.id)}
+              onClick={() => setStackId(stacks.find((st) => st.set === s.id)!.id)}
               className={`flex-none rounded-full px-3.5 py-2 text-sm font-medium transition ${
+                active ? 'text-white shadow-lg' : 'glass text-white/70'
+              }`}
+              style={active ? { background: `linear-gradient(120deg, ${s.from}, ${s.to})` } : undefined}
+            >
+              {s.name}
+              <span className={`ml-1.5 text-xs ${active ? 'text-white/70' : 'text-white/40'}`}>{mastery(inSet)}%</span>
+            </button>
+          )
+        })}
+      </div>
+
+      <div className="flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none]">
+        {setStacks.map((s) => {
+          const active = s.id === stackId
+          return (
+            <button
+              key={s.id}
+              onClick={() => setStackId(s.id)}
+              className={`flex-none rounded-full px-3 py-1.5 text-xs font-medium transition ${
                 active ? 'bg-white text-black' : 'glass text-white/70'
               }`}
             >

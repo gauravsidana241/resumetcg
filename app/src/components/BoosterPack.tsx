@@ -1,18 +1,21 @@
+import type { CSSProperties } from 'react'
 import { motion } from 'motion/react'
 import { getIcon } from '../lib/icons'
-
-const COVER_ICONS = ['react', 'node', 'postgres', 'kafka', 'temporal', 'redis']
+import type { CardSet } from '../types'
 
 interface Props {
+  set: CardSet
   label: string
   torn: boolean
   onTear: () => void
 }
 
-export function BoosterPack({ label, torn, onTear }: Props) {
+export function BoosterPack({ set, label, torn, onTear }: Props) {
+  const [line1, line2] = set.title
   return (
     <motion.div
       className="booster"
+      style={{ '--pack-from': set.from, '--pack-to': set.to } as CSSProperties}
       animate={torn ? {} : { y: [0, -8, 0], rotate: [-1, 1, -1] }}
       transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
     >
@@ -38,12 +41,13 @@ export function BoosterPack({ label, torn, onTear }: Props) {
         animate={torn ? { y: 420, opacity: 0, rotate: -4 } : {}}
         transition={{ duration: 0.55, ease: 'easeIn', delay: 0.2 }}
       >
-        <div className="grid grid-cols-3 gap-3 opacity-80">
-          {COVER_ICONS.map((slug) => {
+        <div className={`grid gap-3 opacity-80 ${set.icons.length > 1 ? 'grid-cols-3' : ''}`}>
+          {set.icons.map((slug) => {
             const icon = getIcon(slug)
+            const size = set.icons.length > 1 ? 'h-7 w-7' : 'h-16 w-16'
             return (
               icon && (
-                <svg key={slug} viewBox="0 0 24 24" className="h-7 w-7 drop-shadow-[0_0_8px_rgba(255,255,255,0.6)]">
+                <svg key={slug} viewBox="0 0 24 24" className={`${size} drop-shadow-[0_0_8px_rgba(255,255,255,0.6)]`}>
                   <path d={icon.path} fill="white" />
                 </svg>
               )
@@ -51,8 +55,14 @@ export function BoosterPack({ label, torn, onTear }: Props) {
           })}
         </div>
         <div>
-          <p className="font-display text-3xl font-bold leading-none tracking-tight text-shine">RESUME</p>
-          <p className="font-display text-3xl font-bold leading-none tracking-tight">TCG</p>
+          <p
+            className={`font-display font-bold leading-none tracking-tight text-shine ${
+              line1.length > 7 ? 'text-2xl' : 'text-3xl'
+            }`}
+          >
+            {line1}
+          </p>
+          <p className="font-display text-3xl font-bold leading-none tracking-tight">{line2}</p>
         </div>
         <div className="rounded-full bg-black/30 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-white/80">
           {label}

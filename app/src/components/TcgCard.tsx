@@ -1,6 +1,7 @@
 import { useRef, useState, type CSSProperties, type PointerEvent } from 'react'
 import { motion, useSpring } from 'motion/react'
 import { stackName } from '../data/catalog'
+import { CodeBlock } from './CodeBlock'
 import { getIcon } from '../lib/icons'
 import { RARITY_META, TYPE_META } from '../lib/meta'
 import { FOIL_NAMES, type Card, type CardType, type Foil } from '../types'
@@ -99,7 +100,7 @@ export function TcgCard({ card, foil, flipped: flippedProp, onFlip, still = fals
                 <span className="orb">{type.glyph}</span>
               </header>
 
-              <div className="art">
+              <div className={card.code ? 'art art-compact' : 'art'}>
                 <CardArt card={card} />
                 {card.rarity === 'ultra' && <Sparkles />}
                 <div className="holo-art" />
@@ -109,9 +110,14 @@ export function TcgCard({ card, foil, flipped: flippedProp, onFlip, still = fals
                 {stackName(card.stack)} · {rarity.label}
               </p>
 
-              <div className="attack flex-1">
-                <span className="orb orb-sm mt-0.5">{type.glyph}</span>
-                <p className="text-[16.5px] font-medium leading-snug">{card.question}</p>
+              <div className="attack flex-1 flex-col">
+                <div className="flex gap-2">
+                  <span className="orb orb-sm mt-0.5">{type.glyph}</span>
+                  <p className={`font-medium leading-snug ${card.code ? 'text-[14.5px]' : 'text-[16.5px]'}`}>
+                    {card.question}
+                  </p>
+                </div>
+                {card.code && <CodeBlock code={card.code} />}
               </div>
 
               <CardFooter card={card} foil={foil} />
@@ -131,6 +137,8 @@ export function TcgCard({ card, foil, flipped: flippedProp, onFlip, still = fals
                 </h2>
                 <span className="orb">{type.glyph}</span>
               </header>
+
+              {card.answer && <CodeBlock code={card.answer} />}
 
               <ul className="flex flex-col gap-2 flex-1 overflow-hidden">
                 {card.points.map((point) => (
@@ -207,6 +215,7 @@ const TYPE_ART: Record<CardType, string> = {
   tradeoff: 'M12 3v18M7 21h10M4 7h16M7 7l-3 7a3 3 0 0 0 6 0zM17 7l-3 7a3 3 0 0 0 6 0z',
   trap: 'M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01',
   boss: 'M2 20h20M3 7l5 5 4-7 4 7 5-5-2 11H5z',
+  syntax: 'M8 6 2 12l6 6M16 6l6 6-6 6M14 4l-4 16',
 }
 
 function CardFooter({ card, foil }: { card: Card; foil: Foil }) {

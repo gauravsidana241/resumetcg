@@ -1,16 +1,29 @@
 export type Rarity = 'common' | 'rare' | 'ultra'
 
-export type CardType = 'concept' | 'story' | 'tradeoff' | 'trap' | 'boss'
+export type CardType = 'concept' | 'story' | 'tradeoff' | 'trap' | 'boss' | 'syntax'
 
 // Leitner box 1-5 shown as a foil finish
 export type Foil = 0 | 1 | 2 | 3 | 4
 
 export const FOIL_NAMES = ['Plain', 'Silver', 'Gold', 'Holo', 'Full Art'] as const
 
+// A set is what you open packs from: the resume, or a syntax refresher
+export interface CardSet {
+  id: string
+  name: string
+  tagline: string
+  // the two lines printed on the booster pack
+  title: [string, string]
+  icons: string[]
+  from: string
+  to: string
+}
+
 export interface Stack {
   id: string
   name: string
   kind: string
+  set: string
 }
 
 export interface Card {
@@ -22,6 +35,9 @@ export interface Card {
   title: string
   icons: string[]
   question: string
+  // optional code shown under the question, and as the answer on the back
+  code?: string
+  answer?: string
   points: string[]
   // the follow-up an interviewer is likely to throw at you
   weakness: string
@@ -51,6 +67,7 @@ export interface HomeStats {
   mastered: number
   xp_total: number
   xp_today: number
+  sets: Record<string, { total: number; seen: number; due: number }>
 }
 
 export interface CardProgress {
