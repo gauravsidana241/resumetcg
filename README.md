@@ -12,7 +12,7 @@ Flashcard apps work, but they are dull, and generic decks do not cover _your_ pr
 
 |                                                                  |                                                                     |
 | ---------------------------------------------------------------- | ------------------------------------------------------------------- |
-| ![Sealed booster pack](docs/screenshots/pack-sealed.PNG)         | ![Cards revealed from a pack](docs/screenshots/pack-reveal.PNG)     |
+| ![Sealed booster pack](docs/screenshots/pack-sealed.PNG)         | ![Cards revealed from a pack](docs/screenshots/pack-reveal.png)     |
 | **Open a pack.** Swipe across the top to tear it.                | **Reveal.** Five cards flip one by one; an Ultra Rare gets a flash. |
 | ![Card front with the question](docs/screenshots/card-front.PNG) | ![Card back with the answer](docs/screenshots/card-back.PNG)        |
 | **Recall.** Read the question and answer it in your head.        | **Flip and grade.** Double tap, compare, then Got it or Not yet.    |
