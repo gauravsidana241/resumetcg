@@ -6,16 +6,16 @@
 
 ## Why
 
-Flashcard apps work, but they are dull, and generic decks do not cover *your* projects. Resume TCG builds the deck from one resume, so every card is something an interviewer could actually ask, and wraps spaced repetition in the feel of opening Pokémon-style packs.
+Flashcard apps work, but they are dull, and generic decks do not cover _your_ projects. Resume TCG builds the deck from one resume, so every card is something an interviewer could actually ask, and wraps spaced repetition in the feel of opening Pokémon-style packs.
 
 ## How it plays
 
-| | |
-|---|---|
-| ![Sealed booster pack](docs/screenshots/pack-sealed.png) | ![Cards revealed from a pack](docs/screenshots/pack-reveal.png) |
-| **Open a pack.** Swipe across the top to tear it. | **Reveal.** Five cards flip one by one; an Ultra Rare gets a flash. |
-| ![Card front with the question](docs/screenshots/card-front.png) | ![Card back with the answer](docs/screenshots/card-back.png) |
-| **Recall.** Read the question and answer it in your head. | **Flip and grade.** Double tap, compare, then Got it or Not yet. |
+|                                                                  |                                                                     |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------- |
+| ![Sealed booster pack](docs/screenshots/pack-sealed.png)         | ![Cards revealed from a pack](docs/screenshots/pack-reveal.png)     |
+| **Open a pack.** Swipe across the top to tear it.                | **Reveal.** Five cards flip one by one; an Ultra Rare gets a flash. |
+| ![Card front with the question](docs/screenshots/card-front.png) | ![Card back with the answer](docs/screenshots/card-back.png)        |
+| **Recall.** Read the question and answer it in your head.        | **Flip and grade.** Double tap, compare, then Got it or Not yet.    |
 
 - **Swipe up** for the next card. Swiping without grading skips the card and changes nothing.
 - A card you miss comes back once at the end of the pack as a **Second chance**.
@@ -25,23 +25,23 @@ Flashcard apps work, but they are dull, and generic decks do not cover *your* pr
 
 Packs always hold **5 cards in fixed slots: Common, Flex, Rare, Rare, Ultra Rare**. You choose how much to study by how much you open:
 
-| Product | Packs | Cards | Time |
-|---|---|---|---|
-| Single Pack | 1 | 5 | ~5 min |
-| Bundle | 3 | 15 | ~15 min |
-| Booster Box | 6 | 30 | ~30 min |
+| Product     | Packs | Cards | Time    |
+| ----------- | ----- | ----- | ------- |
+| Single Pack | 1     | 5     | ~5 min  |
+| Bundle      | 3     | 15    | ~15 min |
+| Booster Box | 6     | 30    | ~30 min |
 
 Every pack comes from one **set**. There is one set for the resume itself, and one per skill group, where each group gathers the skills that belong together:
 
-| Set | Covers | Cards |
-|---|---|---|
-| **Resume** | Fynd, Workflow Platform, FormHook, and this app (Built With) | 34 |
-| **JavaScript & TypeScript** | TypeScript, JavaScript, React, Next.js, Vue, Redux, Tailwind, Node.js, Express, Vite, Webpack, Jest, Mocha | 15 |
-| **Python & ML** | Machine learning, deep learning, PyTorch, TensorFlow, retrieval, model serving | 9 |
-| **Data & Databases** | SQL, PostgreSQL, MySQL, MongoDB, Sequelize, Mongoose | 8 |
-| **APIs & Distributed Systems** | REST, OpenAPI, OAuth 2.0, WebSockets, microservices, event-driven design, Kafka, Temporal, BullMQ, Redis | 16 |
-| **Cloud & DevOps** | Docker, Kubernetes, Helm, Terraform, Google Cloud, AWS, CI/CD, Git, Bash | 7 |
-| **Quality & Observability** | Contract testing, testing strategy, OpenTelemetry, Grafana | 5 |
+| Set                            | Covers                                                                                                     | Cards |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------------- | ----- |
+| **Resume**                     | Fynd, Workflow Platform, FormHook, and this app (Built With)                                               | 34    |
+| **JavaScript & TypeScript**    | TypeScript, JavaScript, React, Next.js, Vue, Redux, Tailwind, Node.js, Express, Vite, Webpack, Jest, Mocha | 15    |
+| **Python & ML**                | Machine learning, deep learning, PyTorch, TensorFlow, retrieval, model serving                             | 9     |
+| **Data & Databases**           | SQL, PostgreSQL, MySQL, MongoDB, Sequelize, Mongoose                                                       | 8     |
+| **APIs & Distributed Systems** | REST, OpenAPI, OAuth 2.0, WebSockets, microservices, event-driven design, Kafka, Temporal, BullMQ, Redis   | 16    |
+| **Cloud & DevOps**             | Docker, Kubernetes, Helm, Terraform, Google Cloud, AWS, CI/CD, Git, Bash                                   | 7     |
+| **Quality & Observability**    | Contract testing, testing strategy, OpenTelemetry, Grafana                                                 | 5     |
 
 A card never repeats within one opening, so a product only appears for a set with enough cards: a Bundle needs 15, a Booster Box 30.
 
@@ -55,15 +55,15 @@ In a normal card game, rare cards are hard to get. Here that is flipped: **harde
 - **Foil** is earned. Each card sits in a Leitner box from 1 to 5, shown as **Plain, Silver, Gold, Holo, Full Art**. Got it moves the card up a box; Not yet sends it back to Plain.
 - Harder rarities wait less between reviews, so you see them more often:
 
-| Foil | Common | Rare | Ultra Rare |
-|---|---|---|---|
-| Plain | next pack | next pack | next pack |
-| Silver | 2 days | 1 day | 1 day |
-| Gold | 5 days | 3 days | 2 days |
-| Holo | 14 days | 7 days | 4 days |
-| Full Art | 30 days | 21 days | 10 days |
+| Foil     | Common    | Rare      | Ultra Rare |
+| -------- | --------- | --------- | ---------- |
+| Plain    | next pack | next pack | next pack  |
+| Silver   | 2 days    | 1 day     | 1 day      |
+| Gold     | 5 days    | 3 days    | 2 days     |
+| Holo     | 14 days   | 7 days    | 4 days     |
+| Full Art | 30 days   | 21 days   | 10 days    |
 
-![The same card at every foil level](docs/screenshots/foils.png)
+![The same card at every foil level](docs/screenshots/foils.jpg)
 
 ### Progress
 
@@ -72,18 +72,18 @@ In a normal card game, rare cards are hard to get. Here that is flipped: **harde
 - **Interview ready:** the share of cards at Gold or better.
 - **Binder:** your collection per stack. Cards you have not pulled yet stay face down.
 
-| | |
-|---|---|
-| ![Session summary](docs/screenshots/summary.png) | ![Binder](docs/screenshots/binder.png) |
+|                                                  |                                        |
+| ------------------------------------------------ | -------------------------------------- |
+| ![Session summary](docs/screenshots/summary.png) | ![Binder](docs/screenshots/binder.jpg) |
 
 ## Tech stack
 
-| Layer | Choice |
-|---|---|
-| Front end | React 19, TypeScript, Vite |
+| Layer              | Choice                                                 |
+| ------------------ | ------------------------------------------------------ |
+| Front end          | React 19, TypeScript, Vite                             |
 | Styling and motion | Tailwind CSS 4, Motion (card flip, tilt, pack tearing) |
-| Back end | Supabase: Postgres, Row Level Security, Auth |
-| App shell | PWA (installable, full screen on a phone) |
+| Back end           | Supabase: Postgres, Row Level Security, Auth           |
+| App shell          | PWA (installable, full screen on a phone)              |
 
 The game logic lives in Postgres functions rather than the client:
 
@@ -151,19 +151,3 @@ app/
 - **Answer modes.** Type or speak an answer and get AI feedback, plus a timed Mock Interview mode with no flipping.
 - **Offline play.** Cache packs and sync answers when you are back online.
 - **Card art.** Memes and custom art in the art box, not only logos.
-
-## Screenshots to capture
-
-Save these in `docs/screenshots/` (a phone-sized window, about 390 x 844, looks best):
-
-| File | What to show |
-|---|---|
-| `home.png` | Home screen: streak, stats, Interview ready bar |
-| `store-sets.png` | The store with the set picker on a skill group |
-| `pack-sealed.png` | A sealed booster pack before tearing |
-| `pack-reveal.png` | The fan of revealed cards, ideally with an Ultra Rare |
-| `card-front.png` | A card front during study (a syntax card shows code nicely) |
-| `card-back.png` | The same card flipped, with Got it and Not yet buttons |
-| `foils.png` | One card at several foil levels side by side (Binder or `/#deck`) |
-| `summary.png` | The session summary with XP and foil changes |
-| `binder.png` | The binder with a mix of pulled and face-down cards |
