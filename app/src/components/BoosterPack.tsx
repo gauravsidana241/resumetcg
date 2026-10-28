@@ -67,7 +67,7 @@ export function BoosterPack({ set, label, torn, onTear }: Props) {
         <div className="rounded-full bg-black/30 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-white/80">
           {label}
         </div>
-        <p className="text-[11px] text-white/70">5 cards · 1 Ultra Rare slot</p>
+        <p className="text-[11px] text-white/70">10 cards · 1 Rare or EX slot</p>
         <div className="crimp bottom-0" />
       </motion.div>
     </motion.div>

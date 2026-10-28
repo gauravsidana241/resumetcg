@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { CloseIcon } from '../components/Icons'
 import { CardSleeve, Scaled } from '../components/Scaled'
 import { CARD_WIDTH, TcgCard } from '../components/TcgCard'
-import { cards, sets, stacks } from '../data/catalog'
+import { cards, exVersion, sets, stacks } from '../data/catalog'
 import { getProgress } from '../lib/api'
 import { RARITY_META } from '../lib/meta'
 import { FOIL_NAMES, foilForBox, type Card, type CardProgress } from '../types'
@@ -115,25 +115,31 @@ export function BinderScreen() {
 
       <div ref={gridRef} className="grid px-4" style={{ gridTemplateColumns: `repeat(${COLUMNS}, 1fr)`, gap: GAP }}>
         {scale > 0 &&
-          stackCards.map((card) => {
-            const p = progress?.get(card.id)
-            return p ? (
-              <button key={card.id} onClick={() => setOpen(card)} className="text-left">
-                <Scaled scale={scale}>
-                  <TcgCard card={card} foil={foilForBox(p.box)} still />
-                </Scaled>
-              </button>
-            ) : (
-              <div key={card.id} className="relative opacity-35 grayscale">
-                <Scaled scale={scale}>
-                  <CardSleeve />
-                </Scaled>
-                <p className="absolute inset-x-0 bottom-2 text-center text-[10px] font-semibold text-white">
-                  {RARITY_META[card.rarity].symbol} {card.number}
-                </p>
-              </div>
-            )
-          })}
+          // an EX card joins the binder, after its base card, once you have pulled it
+          stackCards
+            .flatMap((card) => {
+              const ex = exVersion(card)
+              return ex && progress?.has(ex.id) ? [card, ex] : [card]
+            })
+            .map((card) => {
+              const p = progress?.get(card.id)
+              return p ? (
+                <button key={card.id} onClick={() => setOpen(card)} className="text-left">
+                  <Scaled scale={scale}>
+                    <TcgCard card={card} foil={foilForBox(p.box)} still />
+                  </Scaled>
+                </button>
+              ) : (
+                <div key={card.id} className="relative opacity-35 grayscale">
+                  <Scaled scale={scale}>
+                    <CardSleeve />
+                  </Scaled>
+                  <p className="absolute inset-x-0 bottom-2 text-center text-[10px] font-semibold text-white">
+                    {RARITY_META[card.rarity].symbol} {card.number}
+                  </p>
+                </div>
+              )
+            })}
       </div>
 
       <AnimatePresence>

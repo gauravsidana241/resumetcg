@@ -7,8 +7,11 @@ import { vibrate } from '../lib/meta'
 import { foilForBox, type CardSet, type PulledCard } from '../types'
 
 const REVEAL_START_MS = 900
-const REVEAL_STEP_MS = 380
-const ULTRA_PAUSE_MS = 500
+const REVEAL_STEP_MS = 250
+const HIT_PAUSE_MS = 500
+const EX_PAUSE_MS = 1100
+// 10 cards are laid out as two fanned rows of 5
+const PER_ROW = 5
 
 interface Props {
   set: CardSet
@@ -22,9 +25,10 @@ type Phase = 'sealed' | 'torn' | 'revealing' | 'ready'
 export function PackOpening({ set, pack, label, onDone }: Props) {
   const [phase, setPhase] = useState<Phase>('sealed')
   const [revealed, setRevealed] = useState(0)
-  const [flash, setFlash] = useState(false)
-  const scale = typeof window !== 'undefined' && window.innerWidth < 420 ? 0.29 : 0.36
-  const spread = scale * 200
+  const [flash, setFlash] = useState<'hit' | 'ex' | null>(null)
+  const scale = typeof window !== 'undefined' && window.innerWidth < 420 ? 0.29 : 0.34
+  const spread = scale * 215
+  const rowGap = scale * 520
 
   function tear() {
     if (phase !== 'sealed') return
@@ -33,21 +37,21 @@ export function PackOpening({ set, pack, label, onDone }: Props) {
     setTimeout(() => setPhase('revealing'), 650)
   }
 
-  // flip the cards one by one; an Ultra Rare in the last slot gets a pause and a flash
+  // flip the cards one by one; the hit slot comes last with a pause and a flash, an EX with more
   useEffect(() => {
     if (phase !== 'revealing') return
     const timers: number[] = []
     let at = REVEAL_START_MS
     pack.forEach((pulled, i) => {
-      const isUltra = pulled.card.rarity === 'ultra'
-      if (isUltra && i === pack.length - 1) at += ULTRA_PAUSE_MS
+      const special = pulled.slot === 'ex' ? 'ex' : pulled.slot === 'hit' ? 'hit' : null
+      if (special) at += special === 'ex' ? EX_PAUSE_MS : HIT_PAUSE_MS
       timers.push(
         window.setTimeout(() => {
           setRevealed(i + 1)
-          if (isUltra) {
-            setFlash(true)
-            vibrate([20, 40, 20])
-            window.setTimeout(() => setFlash(false), 450)
+          if (special) {
+            setFlash(special)
+            vibrate(special === 'ex' ? [30, 50, 30, 50, 60] : [20, 40, 20])
+            window.setTimeout(() => setFlash(null), special === 'ex' ? 1400 : 450)
           }
         }, at),
       )
@@ -71,24 +75,31 @@ export function PackOpening({ set, pack, label, onDone }: Props) {
         </>
       ) : (
         <>
-          <div className="relative flex h-[60dvh] w-full items-center justify-center">
+          <motion.div
+            className="relative flex h-[64dvh] w-full items-center justify-center"
+            animate={flash === 'ex' ? { x: [0, -8, 8, -6, 6, -3, 0] } : { x: 0 }}
+            transition={{ duration: 0.5 }}
+          >
             {pack.map((pulled, i) => {
-              const offset = i - (pack.length - 1) / 2
+              const row = Math.floor(i / PER_ROW)
+              const inRow = Math.min(PER_ROW, pack.length - row * PER_ROW)
+              const offset = (i % PER_ROW) - (inRow - 1) / 2
               const isRevealed = i < revealed
+              const special = pulled.slot === 'hit' || pulled.slot === 'ex'
               return (
                 <motion.div
                   key={pulled.card.id}
                   className="absolute"
-                  initial={{ y: 260, opacity: 0, x: 0, rotate: 0 }}
+                  initial={{ y: 300, opacity: 0, x: 0, rotate: 0 }}
                   animate={{
-                    y: Math.abs(offset) * 14,
+                    y: (row - 0.5) * rowGap + Math.abs(offset) * 10,
                     opacity: 1,
                     x: offset * spread,
-                    rotate: offset * 7,
-                    scale: isRevealed && pulled.card.rarity === 'ultra' ? 1.12 : 1,
+                    rotate: offset * 6,
+                    scale: isRevealed && special ? (pulled.slot === 'ex' ? 1.3 : 1.12) : 1,
                   }}
-                  transition={{ type: 'spring', stiffness: 110, damping: 15, delay: i * 0.07 }}
-                  style={{ zIndex: i }}
+                  transition={{ type: 'spring', stiffness: 110, damping: 15, delay: i * 0.05 }}
+                  style={{ zIndex: isRevealed && special ? 50 : i }}
                 >
                   {pulled.box === null && isRevealed && (
                     <span className="absolute -top-6 left-1/2 z-10 -translate-x-1/2 rounded-full bg-emerald-400 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-black">
@@ -113,7 +124,12 @@ export function PackOpening({ set, pack, label, onDone }: Props) {
                         style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
                       >
                         <Scaled scale={scale}>
-                          <TcgCard card={pulled.card} foil={foilForBox(pulled.box)} still />
+                          <TcgCard
+                            card={pulled.card}
+                            foil={foilForBox(pulled.box)}
+                            reverse={pulled.slot === 'review'}
+                            still
+                          />
                         </Scaled>
                       </div>
                     </motion.div>
@@ -121,7 +137,7 @@ export function PackOpening({ set, pack, label, onDone }: Props) {
                 </motion.div>
               )
             })}
-          </div>
+          </motion.div>
 
           <motion.button
             onClick={onDone}
@@ -137,12 +153,23 @@ export function PackOpening({ set, pack, label, onDone }: Props) {
       <AnimatePresence>
         {flash && (
           <motion.div
-            className="flash"
+            className={flash === 'ex' ? 'flash flash-ex' : 'flash'}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
           />
+        )}
+        {flash === 'ex' && (
+          <motion.p
+            className="pointer-events-none fixed inset-x-0 top-[18%] z-[60] text-center font-display text-6xl font-bold italic tracking-tight text-shine drop-shadow-[0_0_24px_rgba(249,115,22,0.9)]"
+            initial={{ scale: 0.4, opacity: 0, rotate: -8 }}
+            animate={{ scale: 1, opacity: 1, rotate: -4 }}
+            exit={{ scale: 1.4, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 220, damping: 12 }}
+          >
+            EX PULL!
+          </motion.p>
         )}
       </AnimatePresence>
     </div>

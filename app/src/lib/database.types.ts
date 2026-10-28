@@ -8,9 +8,9 @@ export type Database = {
   public: {
     Tables: {
       cards: {
-        Row: { active: boolean; id: string; rarity: string; set_id: string; stack: string }
-        Insert: { active?: boolean; id: string; rarity: string; set_id?: string; stack: string }
-        Update: { active?: boolean; id?: string; rarity?: string; set_id?: string; stack?: string }
+        Row: { active: boolean; base_id: string | null; id: string; rarity: string; set_id: string; stack: string }
+        Insert: { active?: boolean; base_id?: string | null; id: string; rarity: string; set_id?: string; stack: string }
+        Update: { active?: boolean; base_id?: string | null; id?: string; rarity?: string; set_id?: string; stack?: string }
         Relationships: []
       }
       pack_opens: {
@@ -104,9 +104,9 @@ export type Database = {
       get_home: { Args: { p_tz?: string }; Returns: Json }
       open_packs: {
         Args: { p_packs: number; p_set?: string; p_tz?: string }
-        Returns: { card_box: number; card_key: string; pack_no: number; slot_no: number }[]
+        Returns: { card_box: number; card_key: string; pack_no: number; slot_kind: string; slot_no: number }[]
       }
-      record_answer: { Args: { p_card_id: string; p_got_it: boolean }; Returns: Json }
+      record_answer: { Args: { p_card_id: string; p_got_it: boolean; p_tz?: string }; Returns: Json }
       review_interval: { Args: { p_box: number; p_rarity: string }; Returns: string }
     }
     Enums: { [_ in never]: never }

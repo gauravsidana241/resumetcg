@@ -564,3 +564,274 @@ body {
     animation: none;
   }
 }
+
+/* ---------- EX: the follow-up version of a card ---------- */
+
+[data-rarity="ex"] {
+  --frame: linear-gradient(145deg, #f8fafc, #94a3b8 18%, #e2e8f0 36%, #64748b 54%, #f1f5f9 72%, #94a3b8);
+}
+
+[data-rarity="ex"] .face {
+  box-shadow:
+    0 24px 50px -18px rgb(0 0 0 / 0.85),
+    0 0 34px -2px color-mix(in oklab, var(--type) 80%, transparent),
+    0 0 80px -10px color-mix(in oklab, var(--type) 60%, transparent);
+}
+
+[data-rarity="ex"] .panel {
+  background:
+    radial-gradient(120% 60% at 50% 0%, color-mix(in oklab, var(--type) 40%, transparent), transparent 60%),
+    linear-gradient(
+      165deg,
+      color-mix(in oklab, var(--type) 50%, black) 0%,
+      color-mix(in oklab, var(--type) 12%, #07060a) 48%,
+      color-mix(in oklab, var(--type) 32%, black) 100%
+    );
+}
+
+[data-rarity="ex"] .rarity-symbol {
+  color: color-mix(in oklab, var(--type) 50%, white);
+  text-shadow: 0 0 6px var(--type);
+}
+
+.ex-badge {
+  margin-left: 6px;
+  font-style: italic;
+  font-weight: 800;
+  font-size: 1.15em;
+  letter-spacing: -0.02em;
+  background: linear-gradient(
+    180deg,
+    #ffffff 10%,
+    color-mix(in oklab, var(--type) 35%, white) 45%,
+    var(--type) 90%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-stroke: 0.6px color-mix(in oklab, var(--type) 40%, black);
+  filter: drop-shadow(0 0 6px color-mix(in oklab, var(--type) 80%, transparent));
+}
+
+.ex-rule {
+  flex: none;
+  padding: 5px 9px;
+  border-radius: 7px;
+  font-size: 10px;
+  line-height: 1.35;
+  color: rgb(255 255 255 / 0.8);
+  background: rgb(0 0 0 / 0.35);
+  border: 1px solid color-mix(in oklab, var(--type) 55%, transparent);
+}
+
+/* ---------- Full Art: the logo fills the whole front ---------- */
+
+.full-art .art {
+  position: absolute;
+  inset: 0;
+  height: auto;
+  border: none;
+  border-radius: inherit;
+  box-shadow: none;
+  background:
+    radial-gradient(circle at 50% 42%, color-mix(in oklab, var(--type) 70%, transparent), transparent 70%),
+    repeating-linear-gradient(0deg, rgb(255 255 255 / 0.05) 0 1px, transparent 1px 16px),
+    repeating-linear-gradient(90deg, rgb(255 255 255 / 0.05) 0 1px, transparent 1px 16px),
+    #07080d;
+}
+
+.full-art .art > div,
+.full-art .art > svg {
+  transform: translateY(-8%);
+}
+
+.full-art .art-icon {
+  width: 165px !important;
+  opacity: 0.95;
+  filter: drop-shadow(0 0 40px color-mix(in oklab, var(--type) 90%, white));
+}
+
+.full-art .art-multi .art-icon {
+  width: 110px !important;
+}
+
+/* text sits on dark glass over the art */
+.full-art header,
+.full-art .set-strip,
+.full-art .attack,
+.full-art footer,
+.full-art .ex-rule {
+  position: relative;
+  z-index: 1;
+}
+
+.full-art header {
+  margin: -10px -12px 0;
+  padding: 10px 12px 18px;
+  background: linear-gradient(180deg, rgb(0 0 0 / 0.75), transparent);
+}
+
+.full-art .set-strip {
+  color: rgb(255 255 255 / 0.75);
+  text-shadow: 0 1px 4px black;
+}
+
+.full-art .attack {
+  background: rgb(5 6 10 / 0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgb(255 255 255 / 0.12);
+}
+
+.full-art footer {
+  text-shadow: 0 1px 4px black;
+}
+
+/* the holo now spans the whole card, so keep it subtle and let the art lead */
+[data-foil="4"] .full-art .holo-art {
+  opacity: 0.16;
+}
+
+[data-foil="4"] .full-art .holo-full {
+  opacity: 0.1;
+}
+
+/* ---------- Color logos (Full Art and EX) ---------- */
+
+.art-icon.logo-color {
+  filter: drop-shadow(0 0 14px rgb(255 255 255 / 0.35)) drop-shadow(0 6px 18px rgb(0 0 0 / 0.6));
+}
+
+/* black logos get a light halo so they stay visible on a dark card */
+.art-icon.logo-dark {
+  filter: drop-shadow(0 0 1px white) drop-shadow(0 0 2px white) drop-shadow(0 0 22px rgb(255 255 255 / 0.9));
+}
+
+/* colored logos (Full Art and EX) sit tilted and zoomed in */
+.art-icon.logo-color {
+  transform: rotate(-12deg) scale(1.2);
+}
+
+.full-art .art-icon.logo-color {
+  transform: rotate(-12deg) scale(1.3);
+}
+
+/* ---------- EX: the logo bursts out of the art box ---------- */
+
+[data-rarity="ex"] .art {
+  overflow: visible;
+}
+
+[data-rarity="ex"] .art > div {
+  position: relative;
+  z-index: 3;
+  transform: translateY(45%);
+}
+
+[data-rarity="ex"] .full-art .art > div {
+  transform: translateY(16%);
+}
+
+/* turned in 3D, with a hard shadow so it reads as lifted off the card */
+[data-rarity="ex"] .art-icon.logo-color {
+  transform: perspective(500px) rotateY(-20deg) rotate(-10deg) scale(1.9);
+  filter: drop-shadow(0 16px 12px rgb(0 0 0 / 0.75))
+    drop-shadow(0 0 20px color-mix(in oklab, var(--type) 60%, transparent));
+}
+
+[data-rarity="ex"] .art-icon.logo-color.logo-dark {
+  filter: drop-shadow(0 0 1px white) drop-shadow(0 0 2px white) drop-shadow(0 16px 12px rgb(0 0 0 / 0.75))
+    drop-shadow(0 0 20px color-mix(in oklab, var(--type) 60%, transparent));
+}
+
+[data-rarity="ex"] .art-multi .art-icon.logo-color {
+  transform: perspective(500px) rotateY(-20deg) rotate(-10deg) scale(1.6);
+}
+
+/* on a Full Art EX the logo is already huge, so it only leans out a little */
+[data-rarity="ex"] .full-art .art-icon.logo-color {
+  transform: perspective(500px) rotateY(-20deg) rotate(-10deg) scale(1.1);
+}
+
+/* the text the logo overlaps stays under it */
+[data-rarity="ex"] .set-strip,
+[data-rarity="ex"] .attack {
+  position: relative;
+  z-index: 1;
+}
+
+/* Full Art follows the logo: a brand-tinted background and a brand-colored shimmer instead of rainbow */
+.full-art .art {
+  background:
+    radial-gradient(circle at 50% 40%, color-mix(in oklab, var(--type) 75%, transparent), transparent 70%),
+    repeating-linear-gradient(0deg, rgb(255 255 255 / 0.05) 0 1px, transparent 1px 16px),
+    repeating-linear-gradient(90deg, rgb(255 255 255 / 0.05) 0 1px, transparent 1px 16px),
+    linear-gradient(
+      165deg,
+      color-mix(in oklab, var(--type) 45%, #05060a),
+      color-mix(in oklab, var(--type) 15%, #05060a) 55%,
+      color-mix(in oklab, var(--type) 35%, #05060a)
+    );
+}
+
+[data-foil="4"] .full-art .holo-art,
+[data-foil="4"] .full-art.face .holo-full {
+  opacity: 0.35;
+  mix-blend-mode: overlay;
+  background-image:
+    radial-gradient(circle, rgb(255 255 255 / 0.9) 0 1px, transparent 1.5px),
+    repeating-linear-gradient(
+      115deg,
+      transparent 0%,
+      color-mix(in oklab, var(--type) 60%, white) 3%,
+      transparent 6%,
+      white 8%,
+      transparent 11%
+    );
+  background-size:
+    18px 18px,
+    220% 220%;
+  background-position:
+    0 0,
+    var(--mx) var(--my);
+}
+
+[data-foil="4"] .full-art .holo-art {
+  opacity: 0;
+}
+
+/* ---------- Reverse holo: review-slot cards shine everywhere except the art ---------- */
+
+.reverse-holo {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.28;
+  mix-blend-mode: color-dodge;
+  background-image: repeating-linear-gradient(
+    115deg,
+    #ff7773 0%,
+    #ffed5f 2.5%,
+    #a8ff5f 5%,
+    #83fff7 7.5%,
+    #7894ff 10%,
+    #d875ff 12.5%,
+    #ff7773 15%
+  );
+  background-size: 200% 200%;
+  background-position: var(--mx) var(--my);
+}
+
+/* the art box is positioned after the shine, so it covers it */
+.reverse-holo ~ .art {
+  position: relative;
+}
+
+.flash-ex {
+  background: radial-gradient(circle at 50% 50%, rgb(255 255 255 / 0.95), rgb(249 115 22 / 0.55) 30%, rgb(225 29 72 / 0.25) 55%, transparent 75%);
+}
+
+/* a color logo shown as a white mark, for brands with no Simple Icons version */
+.art-icon.logo-mono {
+  filter: brightness(0) invert(1) drop-shadow(0 0 18px color-mix(in oklab, var(--type) 80%, white));
+}

@@ -1,5 +1,5 @@
 import { getCard } from '../data/catalog'
-import type { AnswerResult, Card, CardProgress, HomeStats, PulledCard } from '../types'
+import type { AnswerResult, Card, CardProgress, HomeStats, PulledCard, SlotKind } from '../types'
 import { supabase } from './supabase'
 
 const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -13,16 +13,23 @@ export async function openPacks(count: number, setId: string): Promise<PulledCar
     const card = getCard(row.card_key)
     // the database may know a card the app bundle no longer ships
     if (!card) continue
-    ;(packs[row.pack_no - 1] ??= []).push({ card, box: row.card_box })
+    ;(packs[row.pack_no - 1] ??= []).push({ card, box: row.card_box, slot: row.slot_kind as SlotKind })
   }
   return packs.filter(Boolean)
 }
 
 export async function recordAnswer(card: Card, gotIt: boolean): Promise<AnswerResult> {
-  const { data, error } = await supabase.rpc('record_answer', { p_card_id: card.id, p_got_it: gotIt })
+  const { data, error } = await supabase.rpc('record_answer', { p_card_id: card.id, p_got_it: gotIt, p_tz: tz })
   if (error) throw error
-  const result = data as { box_before: number | null; box_after: number; xp: number }
-  return { card, gotIt, boxBefore: result.box_before, boxAfter: result.box_after, xp: result.xp }
+  const result = data as { box_before: number | null; box_after: number; xp: number; counted: boolean }
+  return {
+    card,
+    gotIt,
+    boxBefore: result.box_before,
+    boxAfter: result.box_after,
+    xp: result.xp,
+    counted: result.counted,
+  }
 }
 
 export async function getHome(): Promise<HomeStats> {

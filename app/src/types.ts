@@ -1,4 +1,5 @@
-export type Rarity = 'common' | 'rare' | 'ultra'
+// shown as Common / Uncommon / Rare; 'ex' is the follow-up version of a card
+export type Rarity = 'common' | 'rare' | 'ultra' | 'ex'
 
 export type CardType = 'concept' | 'story' | 'tradeoff' | 'trap' | 'boss' | 'syntax'
 
@@ -41,12 +42,20 @@ export interface Card {
   points: string[]
   // the follow-up an interviewer is likely to throw at you
   weakness: string
+  // the answer to the weakness, which makes this card's EX version
+  ex?: { points: string[]; answer?: string }
+  // on an EX card: the title of the card it follows up
+  exOf?: string
 }
+
+// Which pack slot a card filled. Review slots hold cards you have seen before, shown as reverse holo.
+export type SlotKind = 'common' | 'uncommon' | 'review' | 'hit' | 'ex'
 
 // A card as it came out of a pack: box is null when you have never seen it
 export interface PulledCard {
   card: Card
   box: number | null
+  slot: SlotKind
 }
 
 export interface AnswerResult {
@@ -55,6 +64,8 @@ export interface AnswerResult {
   boxBefore: number | null
   boxAfter: number
   xp: number
+  // false when a correct answer came before the card was due: practice, no progress
+  counted: boolean
 }
 
 export interface HomeStats {

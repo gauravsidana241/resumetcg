@@ -7,6 +7,7 @@ import { supabase } from './lib/supabase'
 import { AuthScreen } from './screens/AuthScreen'
 import { BinderScreen } from './screens/BinderScreen'
 import { DeckPreview } from './screens/DeckPreview'
+import { DesignPreview } from './screens/DesignPreview'
 import { HomeScreen } from './screens/HomeScreen'
 import { PackRun } from './screens/PackRun'
 import { SummaryScreen } from './screens/SummaryScreen'
@@ -31,7 +32,7 @@ export default function App() {
   const [screen, setScreen] = useState<Screen>({ name: 'home' })
 
   useEffect(() => {
-    if (window.location.hash === '#deck') return
+    if (window.location.hash === '#deck' || window.location.hash === '#preview') return
     supabase.auth.getSession().then(async ({ data }) => {
       if (data.session || AUTH_ENABLED) {
         setSession(data.session)
@@ -46,6 +47,7 @@ export default function App() {
   }, [])
 
   if (window.location.hash === '#deck') return <DeckPreview />
+  if (window.location.hash === '#preview') return <DesignPreview />
   if (authError) return <AnonymousAuthError message={authError} />
   if (session === undefined || (!session && !AUTH_ENABLED)) return null
   if (!session) return <AuthScreen />

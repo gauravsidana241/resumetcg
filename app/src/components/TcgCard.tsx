@@ -2,8 +2,9 @@ import { useRef, useState, type CSSProperties, type PointerEvent } from 'react'
 import { motion, useSpring } from 'motion/react'
 import { stackName } from '../data/catalog'
 import { CodeBlock } from './CodeBlock'
-import { getIcon } from '../lib/icons'
-import { RARITY_META, TYPE_META } from '../lib/meta'
+import { getColorLogo, isDarkLogo } from '../lib/colorLogos'
+import { brandColor, getIcon } from '../lib/icons'
+import { EX_COLOR, RARITY_META, TYPE_META } from '../lib/meta'
 import { FOIL_NAMES, type Card, type CardType, type Foil } from '../types'
 
 const MAX_TILT = 14
@@ -19,9 +20,11 @@ interface Props {
   onFlip?: () => void
   // fixed 330px width with no gestures, for scaled-down copies
   still?: boolean
+  // review slot: a shine on everything except the art, like a reverse holo
+  reverse?: boolean
 }
 
-export function TcgCard({ card, foil, flipped: flippedProp, onFlip, still = false }: Props) {
+export function TcgCard({ card, foil, flipped: flippedProp, onFlip, still = false, reverse = false }: Props) {
   const [flippedState, setFlippedState] = useState(false)
   const flipped = flippedProp ?? flippedState
   const sceneRef = useRef<HTMLDivElement>(null)
@@ -31,6 +34,11 @@ export function TcgCard({ card, foil, flipped: flippedProp, onFlip, still = fals
 
   const type = TYPE_META[card.type]
   const rarity = RARITY_META[card.rarity]
+  const isEx = card.rarity === 'ex'
+  // Full Art: the logo fills the whole front, with the text laid over it
+  const fullArt = foil === 4
+  // Full Art and EX cards take their colors from the logo's brand
+  const accent = (fullArt || isEx ? brandColor(card.icons) : undefined) ?? (isEx ? EX_COLOR : type.color)
 
   function handleMove(e: PointerEvent<HTMLDivElement>) {
     const el = sceneRef.current
@@ -72,7 +80,9 @@ export function TcgCard({ card, foil, flipped: flippedProp, onFlip, still = fals
       className="tcg-scene"
       data-rarity={card.rarity}
       data-foil={foil}
-      style={{ '--type': type.color, ...(still && { '--card-w': `${CARD_WIDTH}px` }) } as CSSProperties}
+      style={
+        { '--type': accent, ...(still && { '--card-w': `${CARD_WIDTH}px` }) } as CSSProperties
+      }
       {...handlers}
     >
       <motion.div className="tcg" style={{ rotateX, rotateY }}>
@@ -83,8 +93,9 @@ export function TcgCard({ card, foil, flipped: flippedProp, onFlip, still = fals
           transition={{ type: 'spring', stiffness: 120, damping: 16 }}
         >
           {/* Front: the question */}
-          <div className="face front">
+          <div className={fullArt ? 'face front full-art' : 'face front'}>
             <div className="panel">
+              {reverse && !fullArt && <div className="reverse-holo" />}
               <header className="flex items-center gap-2">
                 <span className="type-pill">{type.label}</span>
                 <h2
@@ -93,6 +104,7 @@ export function TcgCard({ card, foil, flipped: flippedProp, onFlip, still = fals
                   }`}
                 >
                   {card.title}
+                  {isEx && <span className="ex-badge">ex</span>}
                 </h2>
                 <span className="font-display text-xs font-semibold text-white/70">
                   XP <span className="text-base text-white">{rarity.xp}</span>
@@ -101,24 +113,33 @@ export function TcgCard({ card, foil, flipped: flippedProp, onFlip, still = fals
               </header>
 
               <div className={card.code ? 'art art-compact' : 'art'}>
-                <CardArt card={card} />
-                {card.rarity === 'ultra' && <Sparkles />}
+                <CardArt card={card} color={fullArt || isEx} />
+                {(card.rarity === 'ultra' || isEx) && <Sparkles />}
                 <div className="holo-art" />
               </div>
+
+              {fullArt && <div className="flex-1" />}
 
               <p className="set-strip">
                 {stackName(card.stack)} · {rarity.label}
               </p>
 
-              <div className="attack flex-1 flex-col">
+              <div className={`attack flex-col ${fullArt ? '' : 'flex-1'}`}>
                 <div className="flex gap-2">
                   <span className="orb orb-sm mt-0.5">{type.glyph}</span>
-                  <p className={`font-medium leading-snug ${card.code ? 'text-[14.5px]' : 'text-[16.5px]'}`}>
+                  {/* code, or a long question next to the ex rule, needs the smaller size to fit */}
+                  <p
+                    className={`font-medium leading-snug ${
+                      card.code || (isEx && card.question.length > 70) ? 'text-[14.5px]' : 'text-[16.5px]'
+                    }`}
+                  >
                     {card.question}
                   </p>
                 </div>
                 {card.code && <CodeBlock code={card.code} />}
               </div>
+
+              {isEx && <ExRule of={card.exOf} />}
 
               <CardFooter card={card} foil={foil} />
             </div>
@@ -149,12 +170,16 @@ export function TcgCard({ card, foil, flipped: flippedProp, onFlip, still = fals
                 ))}
               </ul>
 
-              <div className="weakness">
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-rose-300/90">
-                  Weakness · likely follow-up
-                </p>
-                <p className="text-[12.5px] leading-snug">{card.weakness}</p>
-              </div>
+              {isEx ? (
+                <ExRule of={card.exOf} />
+              ) : (
+                <div className="weakness">
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-rose-300/90">
+                    Weakness · likely follow-up
+                  </p>
+                  <p className="text-[12.5px] leading-snug">{card.weakness}</p>
+                </div>
+              )}
 
               <CardFooter card={card} foil={foil} />
             </div>
@@ -168,8 +193,25 @@ export function TcgCard({ card, foil, flipped: flippedProp, onFlip, still = fals
   )
 }
 
-function CardArt({ card }: { card: Card }) {
-  const icons = card.icons.map(getIcon).filter((icon) => icon !== undefined)
+function ExRule({ of }: { of?: string }) {
+  return (
+    <div className="ex-rule">
+      <span className="font-display font-bold" style={{ color: 'color-mix(in oklab, var(--type) 45%, white)' }}>
+        ex rule
+      </span> The follow-up an interviewer asks after{' '}
+      <span className="font-semibold text-white">{of}</span>.
+    </div>
+  )
+}
+
+// color: real brand logos instead of the white glowing marks, the reward for Full Art and EX
+function CardArt({ card, color }: { card: Card; color: boolean }) {
+  // a logo can come from Simple Icons, Devicon, or both (AWS is only in Devicon)
+  const icons = card.icons.flatMap((slug) => {
+    const icon = getIcon(slug)
+    const logo = getColorLogo(slug)
+    return icon || logo ? [{ slug, icon, logo }] : []
+  })
 
   if (icons.length === 0) {
     return (
@@ -190,19 +232,38 @@ function CardArt({ card }: { card: Card }) {
   }
 
   return (
-    <div className="flex items-center gap-5">
-      {icons.map((icon) => (
-        <svg
-          key={icon.slug}
-          viewBox="0 0 24 24"
-          className="art-icon"
-          style={{ width: icons.length > 1 ? 52 : 92 }}
-          role="img"
-          aria-label={icon.title}
-        >
-          <path d={icon.path} fill="currentColor" />
-        </svg>
-      ))}
+    <div className={`flex items-center gap-5 ${icons.length > 1 ? 'art-multi' : ''}`}>
+      {icons.map(({ slug, icon, logo }) => {
+        const width = icons.length > 1 ? 52 : 92
+        if (logo && (color || !icon)) {
+          // no white mark available: tint the color logo white for the plain foils
+          const look = color ? `logo-color ${isDarkLogo(slug) ? 'logo-dark' : ''}` : 'logo-mono'
+          return (
+            <img
+              key={slug}
+              src={logo}
+              alt={icon?.title ?? slug}
+              draggable={false}
+              className={`art-icon ${look}`}
+              style={{ width }}
+            />
+          )
+        }
+        if (!icon) return null
+        return (
+          <svg
+            key={slug}
+            viewBox="0 0 24 24"
+            className={`art-icon ${color ? 'logo-color' : ''} ${color && isDarkLogo(slug) ? 'logo-dark' : ''}`}
+            style={{ width }}
+            role="img"
+            aria-label={icon.title}
+          >
+            {/* no Devicon version: fall back to the mark in its brand color */}
+            <path d={icon.path} fill={color ? `#${icon.hex}` : 'currentColor'} />
+          </svg>
+        )
+      })}
     </div>
   )
 }

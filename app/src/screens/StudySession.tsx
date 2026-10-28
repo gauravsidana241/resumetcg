@@ -4,11 +4,7 @@ import { ArrowUpIcon, CheckIcon, CloseIcon, RotateIcon } from '../components/Ico
 import { TcgCard } from '../components/TcgCard'
 import { recordAnswer } from '../lib/api'
 import { vibrate } from '../lib/meta'
-import { FOIL_NAMES, foilForBox, type AnswerResult, type PulledCard } from '../types'
-
-interface QueueItem extends PulledCard {
-  retry: boolean
-}
+import { foilForBox, type AnswerResult, type PulledCard } from '../types'
 
 interface Props {
   pack: PulledCard[]
@@ -21,7 +17,6 @@ const SWIPE_DISTANCE = 90
 const SWIPE_VELOCITY = 600
 
 export function StudySession({ pack, label, onDone, onQuit }: Props) {
-  const [queue, setQueue] = useState<QueueItem[]>(() => pack.map((p) => ({ ...p, retry: false })))
   const [index, setIndex] = useState(0)
   const [flipped, setFlipped] = useState(false)
   const [graded, setGraded] = useState<AnswerResult | null>(null)
@@ -29,12 +24,12 @@ export function StudySession({ pack, label, onDone, onQuit }: Props) {
   const [error, setError] = useState<string | null>(null)
   const [results, setResults] = useState<AnswerResult[]>([])
 
-  const item = queue[index]
+  const item = pack[index]
 
   // swiping up without grading skips the card: no progress change
   const next = useCallback(() => {
     if (saving) return
-    if (index + 1 >= queue.length) {
+    if (index + 1 >= pack.length) {
       onDone(results)
       return
     }
@@ -42,7 +37,7 @@ export function StudySession({ pack, label, onDone, onQuit }: Props) {
     setFlipped(false)
     setGraded(null)
     setError(null)
-  }, [index, queue.length, results, saving, onDone])
+  }, [index, pack.length, results, saving, onDone])
 
   const grade = useCallback(
     async (gotIt: boolean) => {
@@ -54,8 +49,6 @@ export function StudySession({ pack, label, onDone, onQuit }: Props) {
         vibrate(gotIt ? 15 : [10, 30, 10])
         setGraded(result)
         setResults((r) => [...r, result])
-        // a missed card comes back once at the end of the pack
-        if (!gotIt && !item.retry) setQueue((q) => [...q, { card: item.card, box: 1, retry: true }])
       } catch {
         setError('Could not save that answer. Check your connection and try again.')
       } finally {
@@ -80,7 +73,8 @@ export function StudySession({ pack, label, onDone, onQuit }: Props) {
 
   if (!item) return null
 
-  const foil = foilForBox(graded ? graded.boxAfter : item.box)
+  // the card keeps the foil it was pulled with; promotions are revealed on the summary
+  const foil = foilForBox(item.box)
 
   return (
     <div className="flex min-h-dvh flex-col items-center px-4 safe-top safe-bottom">
@@ -95,18 +89,18 @@ export function StudySession({ pack, label, onDone, onQuit }: Props) {
         <div className="flex-1">
           <p className="text-xs font-semibold uppercase tracking-widest text-white/50">{label}</p>
           <div className="mt-1.5 flex gap-1">
-            {queue.map((q, i) => (
+            {pack.map((p, i) => (
               <span
-                key={q.card.id + q.retry}
+                key={p.card.id}
                 className={`h-1.5 flex-1 rounded-full transition-colors ${
                   i < index || (i === index && graded) ? 'bg-white' : i === index ? 'bg-white/50' : 'bg-white/15'
-                } ${q.retry ? 'opacity-60' : ''}`}
+                }`}
               />
             ))}
           </div>
         </div>
         <span className="text-sm tabular-nums text-white/60">
-          {index + 1}/{queue.length}
+          {index + 1}/{pack.length}
         </span>
       </header>
 
@@ -126,12 +120,14 @@ export function StudySession({ pack, label, onDone, onQuit }: Props) {
             transition={{ type: 'spring', stiffness: 160, damping: 20 }}
             className="relative"
           >
-            {item.retry && (
-              <span className="absolute -top-7 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-full bg-amber-400 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-black">
-                Second chance
-              </span>
-            )}
-            <TcgCard card={item.card} foil={foil} flipped={flipped} onFlip={() => setFlipped((f) => !f)} />
+            <SlotTag pulled={item} />
+            <TcgCard
+              card={item.card}
+              foil={foil}
+              reverse={item.slot === 'review'}
+              flipped={flipped}
+              onFlip={() => setFlipped((f) => !f)}
+            />
           </motion.div>
         </AnimatePresence>
       </div>
@@ -176,14 +172,18 @@ export function StudySession({ pack, label, onDone, onQuit }: Props) {
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               className={`rounded-full px-4 py-2 font-display text-sm font-bold ${
-                graded.gotIt ? 'bg-emerald-400/20 text-emerald-200' : 'bg-rose-400/15 text-rose-200'
+                !graded.gotIt
+                  ? 'bg-rose-400/15 text-rose-200'
+                  : graded.counted
+                    ? 'bg-emerald-400/20 text-emerald-200'
+                    : 'bg-white/10 text-white/70'
               }`}
             >
-              {graded.gotIt
-                ? `+${graded.xp} XP · ${FOIL_NAMES[foilForBox(graded.boxBefore)]} → ${FOIL_NAMES[foilForBox(graded.boxAfter)]}`
-                : item.retry
-                  ? 'Back to Plain · it will come back next pack'
-                  : 'Back to Plain · you get a second chance at the end'}
+              {!graded.gotIt
+                ? 'Missed · it comes back tomorrow'
+                : graded.counted
+                  ? `+${graded.xp} XP`
+                  : 'Practice · not due yet, so no XP'}
             </motion.p>
             <button onClick={next} className="flex items-center gap-2 text-sm text-white/60 hover:text-white">
               <ArrowUpIcon className="h-4 w-4 animate-bounce" />
@@ -193,5 +193,22 @@ export function StudySession({ pack, label, onDone, onQuit }: Props) {
         )}
       </div>
     </div>
+  )
+}
+
+const SLOT_TAGS: Partial<Record<PulledCard['slot'], { text: string; className: string }>> = {
+  review: { text: 'Review', className: 'bg-sky-300 text-black' },
+  ex: { text: 'EX', className: 'bg-gradient-to-r from-orange-400 to-rose-500 text-white' },
+}
+
+function SlotTag({ pulled }: { pulled: PulledCard }) {
+  const tag = SLOT_TAGS[pulled.slot]
+  if (!tag) return null
+  return (
+    <span
+      className={`absolute -top-7 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${tag.className}`}
+    >
+      {tag.text}
+    </span>
   )
 }

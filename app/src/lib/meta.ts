@@ -9,13 +9,16 @@ export const TYPE_META: Record<CardType, { label: string; color: string; glyph: 
   syntax: { label: 'Syntax', color: '#14b8a6', glyph: '{' },
 }
 
+export const EX_COLOR = '#f97316'
+
 export const RARITY_META: Record<Rarity, { label: string; symbol: string; xp: number }> = {
   common: { label: 'Common', symbol: '●', xp: 10 },
-  rare: { label: 'Rare', symbol: '◆', xp: 20 },
-  ultra: { label: 'Ultra Rare', symbol: '★', xp: 30 },
+  rare: { label: 'Uncommon', symbol: '◆', xp: 20 },
+  ultra: { label: 'Rare', symbol: '★', xp: 30 },
+  ex: { label: 'EX', symbol: '★', xp: 50 },
 }
 
-export const CARDS_PER_PACK = 5
+export const CARDS_PER_PACK = 10
 
 export const PRODUCTS = [
   { id: 'single', name: 'Single Pack', packs: 1, blurb: 'A quick daily pull' },
