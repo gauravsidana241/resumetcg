@@ -26,6 +26,10 @@ for (const card of deck.cards) {
     }
   }
   if (card.ex && (!card.ex.points?.length || card.ex.points.length > 5)) errors.push(`${card.id}: ex needs 1-5 points`)
+  // skill-set cards link to a page that explains the concept in full
+  const isSkill = setOf.get(card.stack) !== 'resume'
+  if (isSkill && !card.learn?.startsWith('https://')) errors.push(`${card.id}: needs an https learn link`)
+  if (!isSkill && card.learn) errors.push(`${card.id}: resume cards have no learn link yet`)
 }
 for (const stack of deck.stacks) {
   if (!setIds.has(stack.set)) errors.push(`stack ${stack.id}: unknown set ${stack.set}`)

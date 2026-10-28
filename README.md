@@ -84,6 +84,15 @@ Every card has an **EX** twin. Its question is the original card's Weakness, and
 
 ![The same card at every foil level](docs/screenshots/foils.jpg)
 
+### Special Art
+
+The rarest pulls in the game: the whole card in one color, engraved, like gold and red etched Pokémon cards. They follow none of the other rules.
+
+- **FA special** (1 in 40 packs): one card in the pack is transformed into a single-color Full Art.
+- **EX-FA special** (1 in 150 packs): the Rare slot becomes an EX in the Full Art layout, even if that EX is still locked.
+- Nine colors, picked at random: Red, Gold, Black, White, Silver, Sapphire, Emerald, Amethyst and Rose.
+- Always revealed last, with its own flash. Every special is kept in the binder's **Specials** row for good.
+
 ### Progress
 
 - **Streak:** open at least one pack a day (in your local time zone).
@@ -134,7 +143,8 @@ Set up the database by running, in order:
 1. `app/supabase/migrations/20261027000000_cards_progress_packs.sql`
 2. `app/supabase/migrations/20261028000000_card_sets.sql`
 3. `app/supabase/migrations/20261028120000_ten_card_packs_and_ex.sql`
-4. `app/supabase/seed.sql`
+4. `app/supabase/migrations/20261029000000_special_art.sql`
+5. `app/supabase/seed.sql`
 
 In the Supabase dashboard, set the Site URL (Authentication, URL Configuration) to where the app runs, so sign-up confirmation links land in the right place. With `VITE_AUTH_ENABLED=false`, turn on anonymous sign-ins instead (Authentication, Sign In / Providers).
 
@@ -143,6 +153,7 @@ In the Supabase dashboard, set the Site URL (Authentication, URL Configuration) 
 All card text lives in [`app/src/data/cards.json`](app/src/data/cards.json): sets, stacks and cards.
 
 - Each card has a question, key points, optional `code` and `answer` snippets, a `weakness`, and an `ex` block that answers the weakness.
+- Skill-set cards also have a `learn` link: a page that explains the concept in full, shown as **Learn more ↗** on the back of the card. The validator rejects skill cards without one.
 - Changing text needs nothing else.
 - Adding, removing or changing the rarity of cards: run `npm run seed:build` (it validates the deck and rewrites `supabase/seed.sql`), then run the seed against the database.
 - Keep card ids stable. Progress is stored per id.

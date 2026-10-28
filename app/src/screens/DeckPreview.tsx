@@ -32,7 +32,8 @@ export function DeckPreview() {
           return [card, ...(ex ? [ex] : [])].map((c) => (
             <div key={c.id} className="flex gap-4" data-card={c.id}>
               <TcgCard card={c} foil={0} still />
-              <TcgCard card={c} foil={0} flipped still />
+              {/* not still, so the back shows its Learn more link */}
+              <TcgCard card={c} foil={0} flipped />
             </div>
           ))
         })}

@@ -4,9 +4,9 @@ import { CloseIcon } from '../components/Icons'
 import { CardSleeve, Scaled } from '../components/Scaled'
 import { CARD_WIDTH, TcgCard } from '../components/TcgCard'
 import { cards, exVersion, sets, stacks } from '../data/catalog'
-import { getProgress } from '../lib/api'
-import { RARITY_META } from '../lib/meta'
-import { FOIL_NAMES, foilForBox, type Card, type CardProgress } from '../types'
+import { getProgress, getSpecialPulls } from '../lib/api'
+import { RARITY_META, SPECIAL_COLORS } from '../lib/meta'
+import { FOIL_NAMES, foilForBox, type Card, type CardProgress, type SpecialColor, type SpecialPull } from '../types'
 
 const COLUMNS = 3
 const GAP = 10
@@ -17,7 +17,9 @@ export function BinderScreen() {
   const [stackId, setStackId] = useState(stacks[0].id)
   const stack = stacks.find((s) => s.id === stackId)!
   const setStacks = stacks.filter((s) => s.set === stack.set)
-  const [open, setOpen] = useState<Card | null>(null)
+  // mono is set when the open card is a Special Art
+  const [open, setOpen] = useState<{ card: Card; mono?: SpecialColor } | null>(null)
+  const [specials, setSpecials] = useState<SpecialPull[]>([])
   const gridRef = useRef<HTMLDivElement>(null)
   const [gridWidth, setGridWidth] = useState(0)
 
@@ -30,6 +32,9 @@ export function BinderScreen() {
         if (first) setStackId(first.id)
       })
       .catch(() => setError('Could not load your collection.'))
+    getSpecialPulls()
+      .then(setSpecials)
+      .catch(() => setSpecials([]))
   }, [])
 
   useLayoutEffect(() => {
@@ -45,7 +50,8 @@ export function BinderScreen() {
   const mastery = (ids: Card[]) =>
     ids.length ? Math.round((ids.filter((c) => (progress?.get(c.id)?.box ?? 0) >= 3).length / ids.length) * 100) : 0
   const collected = progress ? cards.filter((c) => progress.has(c.id)).length : 0
-  const openProgress = open ? progress?.get(open.id) : undefined
+  const openProgress = open && !open.mono ? progress?.get(open.card.id) : undefined
+  const specialsHere = specials.filter((sp) => stacks.find((st) => st.id === sp.card.stack)?.set === stack.set)
 
   return (
     <div className="mx-auto flex max-w-md flex-col gap-4 pb-28 safe-top">
@@ -100,6 +106,28 @@ export function BinderScreen() {
         })}
       </div>
 
+      {specialsHere.length > 0 && (
+        <section className="flex flex-col gap-2 px-4">
+          <p className="font-display text-lg font-bold">Specials</p>
+          <div className="flex gap-3 overflow-x-auto pb-2 [scrollbar-width:none]">
+            {specialsHere.map((sp) => (
+              <button
+                key={`${sp.card.id}-${sp.pulledAt}`}
+                onClick={() => setOpen({ card: sp.card, mono: sp.color })}
+                className="flex flex-none flex-col items-center gap-1 text-left"
+              >
+                <Scaled scale={0.32}>
+                  <TcgCard card={sp.card} foil={4} mono={sp.color} still />
+                </Scaled>
+                <span className="text-[10px] font-semibold" style={{ color: SPECIAL_COLORS[sp.color].hex }}>
+                  {SPECIAL_COLORS[sp.color].name} {sp.kind === 'ex-fa' ? 'EX-FA' : 'FA'}
+                </span>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+
       <div className="px-4">
         <div className="flex items-baseline justify-between">
           <p className="font-display text-lg font-bold">{stack.name}</p>
@@ -124,7 +152,7 @@ export function BinderScreen() {
             .map((card) => {
               const p = progress?.get(card.id)
               return p ? (
-                <button key={card.id} onClick={() => setOpen(card)} className="text-left">
+                <button key={card.id} onClick={() => setOpen({ card })} className="text-left">
                   <Scaled scale={scale}>
                     <TcgCard card={card} foil={foilForBox(p.box)} still />
                   </Scaled>
@@ -152,7 +180,11 @@ export function BinderScreen() {
             onClick={(e) => e.target === e.currentTarget && setOpen(null)}
           >
             <motion.div initial={{ scale: 0.85, y: 30 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.85, opacity: 0 }}>
-              <TcgCard card={open} foil={foilForBox(openProgress?.box ?? null)} />
+              <TcgCard
+                card={open.card}
+                foil={open.mono ? 4 : foilForBox(openProgress?.box ?? null)}
+                mono={open.mono}
+              />
             </motion.div>
             {openProgress && (
               <p className="text-sm text-white/70">

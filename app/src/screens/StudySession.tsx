@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { ArrowUpIcon, CheckIcon, CloseIcon, RotateIcon } from '../components/Icons'
 import { TcgCard } from '../components/TcgCard'
 import { recordAnswer } from '../lib/api'
-import { vibrate } from '../lib/meta'
+import { SPECIAL_COLORS, vibrate } from '../lib/meta'
 import { foilForBox, type AnswerResult, type PulledCard } from '../types'
 
 interface Props {
@@ -16,15 +16,40 @@ interface Props {
 const SWIPE_DISTANCE = 90
 const SWIPE_VELOCITY = 600
 
+// forward: the old card leaves upward and the next rises from below; back is the mirror image
+const SLIDE = {
+  enter: (dir: number) => ({ y: dir > 0 ? 140 : -140, opacity: 0, scale: 0.9 }),
+  center: { y: 0, opacity: 1, scale: 1 },
+  exit: (dir: number) => ({
+    y: dir > 0 ? -720 : 720,
+    opacity: 0,
+    rotate: dir > 0 ? -6 : 6,
+    transition: { duration: 0.35 },
+  }),
+}
+
 export function StudySession({ pack, label, onDone, onQuit }: Props) {
   const [index, setIndex] = useState(0)
+  const [direction, setDirection] = useState(1)
   const [flipped, setFlipped] = useState(false)
-  const [graded, setGraded] = useState<AnswerResult | null>(null)
+  // one answer per card: going back shows the grade, it does not allow grading again
+  const [gradedAt, setGradedAt] = useState<Record<number, AnswerResult>>({})
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [results, setResults] = useState<AnswerResult[]>([])
 
   const item = pack[index]
+  const graded = gradedAt[index] ?? null
+  const results = pack.flatMap((_, i) => (gradedAt[i] ? [gradedAt[i]] : []))
+
+  const goTo = useCallback(
+    (to: number) => {
+      setDirection(to > index ? 1 : -1)
+      setIndex(to)
+      setFlipped(false)
+      setError(null)
+    },
+    [index],
+  )
 
   // swiping up without grading skips the card: no progress change
   const next = useCallback(() => {
@@ -33,11 +58,13 @@ export function StudySession({ pack, label, onDone, onQuit }: Props) {
       onDone(results)
       return
     }
-    setIndex((i) => i + 1)
-    setFlipped(false)
-    setGraded(null)
-    setError(null)
-  }, [index, pack.length, results, saving, onDone])
+    goTo(index + 1)
+  }, [index, pack.length, results, saving, onDone, goTo])
+
+  const previous = useCallback(() => {
+    if (saving || index === 0) return
+    goTo(index - 1)
+  }, [index, saving, goTo])
 
   const grade = useCallback(
     async (gotIt: boolean) => {
@@ -47,15 +74,14 @@ export function StudySession({ pack, label, onDone, onQuit }: Props) {
       try {
         const result = await recordAnswer(item.card, gotIt)
         vibrate(gotIt ? 15 : [10, 30, 10])
-        setGraded(result)
-        setResults((r) => [...r, result])
+        setGradedAt((g) => ({ ...g, [index]: result }))
       } catch {
         setError('Could not save that answer. Check your connection and try again.')
       } finally {
         setSaving(false)
       }
     },
-    [flipped, graded, saving, item],
+    [flipped, graded, saving, item, index],
   )
 
   useEffect(() => {
@@ -66,15 +92,16 @@ export function StudySession({ pack, label, onDone, onQuit }: Props) {
       } else if (e.key === 'ArrowLeft' || e.key === '1') grade(false)
       else if (e.key === 'ArrowRight' || e.key === '2') grade(true)
       else if (e.key === 'ArrowUp') next()
+      else if (e.key === 'ArrowDown') previous()
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [grade, next])
+  }, [grade, next, previous])
 
   if (!item) return null
 
   // the card keeps the foil it was pulled with; promotions are revealed on the summary
-  const foil = foilForBox(item.box)
+  const foil = item.special ? 4 : foilForBox(item.box)
 
   return (
     <div className="flex min-h-dvh flex-col items-center px-4 safe-top safe-bottom">
@@ -93,7 +120,7 @@ export function StudySession({ pack, label, onDone, onQuit }: Props) {
               <span
                 key={p.card.id}
                 className={`h-1.5 flex-1 rounded-full transition-colors ${
-                  i < index || (i === index && graded) ? 'bg-white' : i === index ? 'bg-white/50' : 'bg-white/15'
+                  i === index ? 'bg-white/60 ring-1 ring-white' : gradedAt[i] ? 'bg-white' : 'bg-white/15'
                 }`}
               />
             ))}
@@ -105,18 +132,21 @@ export function StudySession({ pack, label, onDone, onQuit }: Props) {
       </header>
 
       <div className="relative flex flex-1 items-center justify-center py-4">
-        <AnimatePresence mode="popLayout">
+        <AnimatePresence mode="popLayout" custom={direction}>
           <motion.div
             key={index}
+            custom={direction}
             drag="y"
             dragConstraints={{ top: 0, bottom: 0 }}
-            dragElastic={{ top: 0.8, bottom: 0.1 }}
+            dragElastic={{ top: 0.8, bottom: index > 0 ? 0.8 : 0.1 }}
             onDragEnd={(_, info) => {
               if (info.offset.y < -SWIPE_DISTANCE || info.velocity.y < -SWIPE_VELOCITY) next()
+              else if (info.offset.y > SWIPE_DISTANCE || info.velocity.y > SWIPE_VELOCITY) previous()
             }}
-            initial={{ y: 140, opacity: 0, scale: 0.9 }}
-            animate={{ y: 0, opacity: 1, scale: 1 }}
-            exit={{ y: -720, opacity: 0, rotate: -6, transition: { duration: 0.35 } }}
+            variants={SLIDE}
+            initial="enter"
+            animate="center"
+            exit="exit"
             transition={{ type: 'spring', stiffness: 160, damping: 20 }}
             className="relative"
           >
@@ -124,7 +154,8 @@ export function StudySession({ pack, label, onDone, onQuit }: Props) {
             <TcgCard
               card={item.card}
               foil={foil}
-              reverse={item.slot === 'review'}
+              mono={item.special?.color}
+              reverse={item.slot === 'review' && !item.special}
               flipped={flipped}
               onFlip={() => setFlipped((f) => !f)}
             />
@@ -187,7 +218,7 @@ export function StudySession({ pack, label, onDone, onQuit }: Props) {
             </motion.p>
             <button onClick={next} className="flex items-center gap-2 text-sm text-white/60 hover:text-white">
               <ArrowUpIcon className="h-4 w-4 animate-bounce" />
-              Swipe up for the next card
+              Swipe up for the next card{index > 0 && ', down to go back'}
             </button>
           </>
         )}
@@ -202,6 +233,17 @@ const SLOT_TAGS: Partial<Record<PulledCard['slot'], { text: string; className: s
 }
 
 function SlotTag({ pulled }: { pulled: PulledCard }) {
+  if (pulled.special) {
+    const color = SPECIAL_COLORS[pulled.special.color]
+    return (
+      <span
+        className="absolute -top-7 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white"
+        style={{ background: color.hex, boxShadow: `0 0 14px ${color.hex}` }}
+      >
+        {color.name} Special Art
+      </span>
+    )
+  }
   const tag = SLOT_TAGS[pulled.slot]
   if (!tag) return null
   return (

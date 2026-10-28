@@ -1,17 +1,19 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { CloseIcon, FlameIcon } from '../components/Icons'
+import { Scaled } from '../components/Scaled'
 import { TcgCard } from '../components/TcgCard'
 import { getHome } from '../lib/api'
-import { RARITY_META } from '../lib/meta'
-import { FOIL_NAMES, foilForBox, type AnswerResult, type Card, type HomeStats } from '../types'
+import { RARITY_META, SPECIAL_COLORS } from '../lib/meta'
+import { FOIL_NAMES, foilForBox, type AnswerResult, type Card, type HomeStats, type PulledCard } from '../types'
 
 interface Props {
   results: AnswerResult[]
+  specials: PulledCard[]
   onHome: () => void
 }
 
-export function SummaryScreen({ results, onHome }: Props) {
+export function SummaryScreen({ results, specials, onHome }: Props) {
   const [stats, setStats] = useState<HomeStats | null>(null)
   const [reading, setReading] = useState<Card | null>(null)
 
@@ -54,6 +56,25 @@ export function SummaryScreen({ results, onHome }: Props) {
             <p className="text-sm text-white/60">Today's pack counts. Come back tomorrow to keep it going.</p>
           </div>
         </motion.div>
+      )}
+
+      {specials.length > 0 && (
+        <section className="flex flex-col items-center gap-3">
+          <h2 className="font-display text-2xl font-bold italic">Special pull!</h2>
+          <div className="flex flex-wrap justify-center gap-4">
+            {specials.map(({ card, special }) => (
+              <div key={card.id} className="flex flex-col items-center gap-1.5">
+                <Scaled scale={0.55}>
+                  <TcgCard card={card} foil={4} mono={special!.color} still />
+                </Scaled>
+                <p className="text-xs font-semibold" style={{ color: SPECIAL_COLORS[special!.color].hex }}>
+                  {SPECIAL_COLORS[special!.color].name} {special!.kind === 'ex-fa' ? 'EX-FA' : 'FA'} · added to your
+                  binder
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
       )}
 
       {promotions.length > 0 && (

@@ -46,16 +46,32 @@ export interface Card {
   ex?: { points: string[]; answer?: string }
   // on an EX card: the title of the card it follows up
   exOf?: string
+  // a page that explains the concept in full (skill sets only)
+  learn?: string
 }
 
 // Which pack slot a card filled. Review slots hold cards you have seen before, shown as reverse holo.
 export type SlotKind = 'common' | 'uncommon' | 'review' | 'hit' | 'ex'
+
+// Special Art: an extremely rare single-color pull, either a card in Full Art or an EX in Full Art
+export type SpecialColor = 'red' | 'gold' | 'black' | 'white' | 'silver' | 'blue' | 'green' | 'purple' | 'rose'
+
+export interface Special {
+  kind: 'fa' | 'ex-fa'
+  color: SpecialColor
+}
 
 // A card as it came out of a pack: box is null when you have never seen it
 export interface PulledCard {
   card: Card
   box: number | null
   slot: SlotKind
+  special?: Special
+}
+
+export interface SpecialPull extends Special {
+  card: Card
+  pulledAt: string
 }
 
 export interface AnswerResult {

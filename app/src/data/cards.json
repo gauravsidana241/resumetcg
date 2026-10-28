@@ -1086,7 +1086,8 @@
           "any spreads: once in, it leaks into everything it touches"
         ],
         "answer": "function len(x: unknown) {\n  if (typeof x === 'string') {\n    return x.length  // ok: narrowed\n  }\n  return 0\n}"
-      }
+      },
+      "learn": "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html"
     },
     {
       "id": "fe-ts-narrowing",
@@ -1111,7 +1112,8 @@
           "assertNever also throws at runtime for safety"
         ],
         "answer": "function assertNever(x: never): never {\n  throw new Error(`Unhandled: ${x}`)\n}\n// default: return assertNever(shape)"
-      }
+      },
+      "learn": "https://www.typescriptlang.org/docs/handbook/2/narrowing.html#discriminated-unions"
     },
     {
       "id": "fe-closures",
@@ -1136,7 +1138,8 @@
           "Common in setInterval and event listeners set up once in useEffect",
           "Fix: functional updates (setX(x => x + 1)), correct deps, or a ref"
         ]
-      }
+      },
+      "learn": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Closures"
     },
     {
       "id": "fe-promises",
@@ -1161,7 +1164,8 @@
           "Batching with Promise.all on chunks works, but waits for the slowest in each chunk"
         ],
         "answer": "async function pool(items, n, fn) {\n  const queue = [...items]\n  const worker = async () => {\n    while (queue.length) {\n      await fn(queue.shift())\n    }\n  }\n  await Promise.all(\n    Array.from({ length: n }, worker),\n  )\n}"
-      }
+      },
+      "learn": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise#promise_concurrency"
     },
     {
       "id": "js-array-methods",
@@ -1185,7 +1189,8 @@
           "Use Object.groupBy, a Map, or a for...of loop instead",
           "Readability beats cleverness in code reviews"
         ]
-      }
+      },
+      "learn": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce"
     },
     {
       "id": "js-equality",
@@ -1209,7 +1214,8 @@
           "Otherwise the same as ===",
           "React uses Object.is to decide if state changed"
         ]
-      }
+      },
+      "learn": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Equality_comparisons_and_sameness"
     },
     {
       "id": "js-var-let-const",
@@ -1233,7 +1239,8 @@
           "let creates a fresh binding per iteration, so each callback keeps its own i"
         ],
         "answer": "for (var i = 0; i < 3; i++) {\n  setTimeout(() => log(i))\n}\n// 3, 3, 3  (with let: 0, 1, 2)"
-      }
+      },
+      "learn": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let"
     },
     {
       "id": "js-ts-utility",
@@ -1257,7 +1264,8 @@
           "-? removes it again, which is how Required works"
         ],
         "answer": "type MyPartial<T> = {\n  [K in keyof T]?: T[K]\n}"
-      }
+      },
+      "learn": "https://www.typescriptlang.org/docs/handbook/utility-types.html"
     },
     {
       "id": "js-this",
@@ -1280,7 +1288,8 @@
           "bind(thisArg): returns a new function with this fixed for later"
         ],
         "answer": "const hi = user.hi.bind(user)\nhi()  // 'G'"
-      }
+      },
+      "learn": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/this"
     },
     {
       "id": "js-async-errors",
@@ -1304,7 +1313,8 @@
           "Treat it as a bug to fix, not something to swallow",
           "Restart the process (PM2, Kubernetes) rather than limping on"
         ]
-      }
+      },
+      "learn": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function"
     },
     {
       "id": "js-ts-generics",
@@ -1328,7 +1338,8 @@
           "In a conditional type, T extends X ? A : B is a type-level if",
           "Same keyword, two jobs: constrain or test"
         ]
-      }
+      },
+      "learn": "https://www.typescriptlang.org/docs/handbook/2/generics.html"
     },
     {
       "id": "js-ts-as-const",
@@ -1352,7 +1363,8 @@
           "They do not work with type-stripping tools (erasableSyntaxOnly)",
           "An as const object plus a union type does the same job"
         ]
-      }
+      },
+      "learn": "https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-4.html#const-assertions"
     },
     {
       "id": "js-ts-conditional",
@@ -1374,7 +1386,8 @@
           "ElementOf<string[] | number> gives string | number",
           "Wrap both sides in brackets, [T] extends [X], to stop it"
         ]
-      }
+      },
+      "learn": "https://www.typescriptlang.org/docs/handbook/2/conditional-types.html"
     },
     {
       "id": "fe-rerenders",
@@ -1399,7 +1412,8 @@
           "React then reuses the wrong component, so state and inputs end up on the wrong row",
           "Use a stable id from the data; an index is fine only for static lists"
         ]
-      }
+      },
+      "learn": "https://react.dev/learn/render-and-commit"
     },
     {
       "id": "fe-useeffect",
@@ -1424,7 +1438,8 @@
           "Production runs it once",
           "If running twice breaks something, the effect is missing a cleanup"
         ]
-      }
+      },
+      "learn": "https://react.dev/reference/react/useEffect"
     },
     {
       "id": "fe-rendering-modes",
@@ -1449,7 +1464,8 @@
           "Until it finishes, the page is visible but not interactive",
           "If server and client render differently, React warns of a hydration mismatch"
         ]
-      }
+      },
+      "learn": "https://developer.mozilla.org/en-US/docs/Glossary/SSR"
     },
     {
       "id": "fe-redux",
@@ -1474,7 +1490,8 @@
           "No side effects (API calls, randomness) inside reducers",
           "Redux Toolkit uses Immer so you can write mutating code safely"
         ]
-      }
+      },
+      "learn": "https://redux.js.org/tutorials/essentials/part-1-overview-concepts"
     },
     {
       "id": "fe-vue-react",
@@ -1499,7 +1516,8 @@
           "Writing to it notifies only the components that read it",
           "So Vue updates precisely, with no manual memoization"
         ]
-      }
+      },
+      "learn": "https://vuejs.org/guide/extras/reactivity-in-depth.html"
     },
     {
       "id": "fe-tailwind",
@@ -1524,7 +1542,8 @@
           "@apply in CSS for small shared patterns, sparingly",
           "Design tokens in the Tailwind theme keep values consistent"
         ]
-      }
+      },
+      "learn": "https://tailwindcss.com/docs/styling-with-utility-classes"
     },
     {
       "id": "js-usestate",
@@ -1548,7 +1567,8 @@
           "Several updates in one event are batched into one render",
           "Use the updater form, or compute the new value in a variable first"
         ]
-      }
+      },
+      "learn": "https://react.dev/reference/react/useState"
     },
     {
       "id": "js-useref",
@@ -1571,7 +1591,8 @@
           "If not (timer ids, latest values for callbacks), a ref",
           "Never read refs during render for display: they do not trigger updates"
         ]
-      }
+      },
+      "learn": "https://react.dev/reference/react/useRef"
     },
     {
       "id": "js-usememo-usecallback",
@@ -1595,7 +1616,8 @@
           "Unstable dependencies (new objects each render) defeat it entirely",
           "Measure with the Profiler before memoizing; React Compiler can do it for you"
         ]
-      }
+      },
+      "learn": "https://react.dev/reference/react/useCallback"
     },
     {
       "id": "js-usecontext",
@@ -1618,7 +1640,8 @@
           "Memoize the value, and split big contexts into smaller ones",
           "For frequently changing shared state, use a store with selectors"
         ]
-      }
+      },
+      "learn": "https://react.dev/reference/react/useContext"
     },
     {
       "id": "js-usereducer",
@@ -1640,7 +1663,8 @@
           "Reducers are easy to unit-test because they are pure",
           "dispatch is stable, so passing it down never re-renders children"
         ]
-      }
+      },
+      "learn": "https://react.dev/reference/react/useReducer"
     },
     {
       "id": "js-custom-hooks",
@@ -1663,7 +1687,8 @@
           "React matches hook state by call order on every render",
           "A conditional hook shifts that order and mixes up state"
         ]
-      }
+      },
+      "learn": "https://react.dev/learn/reusing-logic-with-custom-hooks"
     },
     {
       "id": "js-server-components",
@@ -1687,7 +1712,8 @@
           "Its output is sent as a serialized tree, not live code",
           "Move the interactive part into a client component"
         ]
-      }
+      },
+      "learn": "https://react.dev/reference/rsc/server-components"
     },
     {
       "id": "js-list-perf",
@@ -1712,7 +1738,8 @@
           "On scroll, it computes which rows are visible and swaps them in",
           "Variable row heights need measuring, which makes it harder"
         ]
-      }
+      },
+      "learn": "https://tanstack.com/virtual/latest/docs/introduction"
     },
     {
       "id": "js-fetch-race",
@@ -1738,7 +1765,8 @@
           "Ignore AbortError in the catch"
         ],
         "answer": "useEffect(() => {\n  const ctrl = new AbortController()\n  fetch(url, { signal: ctrl.signal })\n    .then((r) => r.json())\n    .then(setResults)\n    .catch(() => {})\n  return () => ctrl.abort()\n}, [url])"
-      }
+      },
+      "learn": "https://react.dev/learn/synchronizing-with-effects#fetching-data"
     },
     {
       "id": "js-autocomplete",
@@ -1763,7 +1791,8 @@
           "Debounce suits search input",
           "Throttle suits scroll and resize handlers"
         ]
-      }
+      },
+      "learn": "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/combobox_role"
     },
     {
       "id": "js-hydration",
@@ -1787,7 +1816,8 @@
           "Used to link labels and inputs, and ARIA attributes",
           "Not for list keys"
         ]
-      }
+      },
+      "learn": "https://react.dev/reference/react-dom/client/hydrateRoot"
     },
     {
       "id": "be-event-loop",
@@ -1813,7 +1843,8 @@
           "Inside an I/O callback, setImmediate always runs before setTimeout(0)"
         ],
         "answer": "setTimeout(() => log('timeout'))\nsetImmediate(() => log('immediate'))\nPromise.resolve().then(() => log('then'))\nprocess.nextTick(() => log('tick'))\n// tick, then, timeout/immediate"
-      }
+      },
+      "learn": "https://nodejs.org/learn/asynchronous-work/event-loop-timers-and-nexttick"
     },
     {
       "id": "be-blocking",
@@ -1838,7 +1869,8 @@
           "Worker threads: threads inside one process, for CPU-heavy tasks",
           "Workers can share memory (SharedArrayBuffer) and pass messages"
         ]
-      }
+      },
+      "learn": "https://nodejs.org/learn/asynchronous-work/dont-block-the-event-loop"
     },
     {
       "id": "be-express",
@@ -1863,7 +1895,8 @@
           "The error handler must be last, or errors skip it",
           "A catch-all 404 placed early swallows every later route"
         ]
-      }
+      },
+      "learn": "https://expressjs.com/en/guide/using-middleware/"
     },
     {
       "id": "js-express-req",
@@ -1887,7 +1920,8 @@
           "It must be registered before the routes that need it",
           "Set a size limit to avoid huge payloads"
         ]
-      }
+      },
+      "learn": "https://expressjs.com/en/api/request/"
     },
     {
       "id": "js-node-streams",
@@ -1911,7 +1945,8 @@
           "The producer should pause until the 'drain' event",
           "pipeline and pipe handle this for you"
         ]
-      }
+      },
+      "learn": "https://nodejs.org/api/stream.html"
     },
     {
       "id": "js-cors",
@@ -1935,7 +1970,8 @@
           "The server must answer with the allowed methods and headers",
           "Access-Control-Max-Age caches the answer to save round trips"
         ]
-      }
+      },
+      "learn": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS"
     },
     {
       "id": "js-memory-leak",
@@ -1960,7 +1996,8 @@
           "Good for attaching data to objects you do not own, without leaking",
           "Not iterable and has no size, because entries can vanish"
         ]
-      }
+      },
+      "learn": "https://nodejs.org/learn/diagnostics/memory"
     },
     {
       "id": "js-node-cpu",
@@ -1984,7 +2021,8 @@
           "APM tools sample continuously with low overhead",
           "Profile under realistic load, not on an idle box"
         ]
-      }
+      },
+      "learn": "https://nodejs.org/learn/getting-started/profiling"
     },
     {
       "id": "fe-vite-webpack",
@@ -2009,7 +2047,8 @@
           "Chunks can be cached with content hashes",
           "Vite uses Rollup (now Rolldown) for production builds"
         ]
-      }
+      },
+      "learn": "https://vite.dev/guide/why"
     },
     {
       "id": "test-jest-mocha",
@@ -2034,7 +2073,8 @@
           "Test errors too: timeouts, 429s, bad payloads"
         ],
         "answer": "jest.mock('./amazonClient')\namazonClient.getOrders\n  .mockResolvedValue([{ id: '1' }])"
-      }
+      },
+      "learn": "https://jestjs.io/docs/mock-functions"
     },
     {
       "id": "msc-bias-variance",
@@ -2059,7 +2099,8 @@
           "Early stopping halts at the best validation score",
           "A big gap in final train vs validation accuracy says the same"
         ]
-      }
+      },
+      "learn": "https://d2l.ai/chapter_linear-regression/generalization.html"
     },
     {
       "id": "msc-splits",
@@ -2084,7 +2125,8 @@
           "Random splits on time series: the model sees the future",
           "The same customer in both train and test sets"
         ]
-      }
+      },
+      "learn": "https://scikit-learn.org/stable/common_pitfalls.html#data-leakage"
     },
     {
       "id": "msc-metrics",
@@ -2109,7 +2151,8 @@
           "Fraud or cancer screening flip it: missing a case is worse, so recall",
           "Tune the threshold to the cost of each kind of mistake"
         ]
-      }
+      },
+      "learn": "https://scikit-learn.org/stable/modules/model_evaluation.html#precision-recall-and-f-measures"
     },
     {
       "id": "msc-big-o",
@@ -2133,7 +2176,8 @@
           "Lookups then walk a long chain: O(n)",
           "Randomized hashing and resizing keep it O(1) on average"
         ]
-      }
+      },
+      "learn": "https://wiki.python.org/moin/TimeComplexity"
     },
     {
       "id": "sk-pipeline",
@@ -2156,7 +2200,8 @@
           "One object to save and deploy, with the exact same transforms",
           "Hyperparameter search can tune preprocessing too"
         ]
-      }
+      },
+      "learn": "https://scikit-learn.org/stable/modules/compose.html#pipeline"
     },
     {
       "id": "ml-cross-validation",
@@ -2180,7 +2225,8 @@
           "Scores are then more stable and honest",
           "For time series, use time-based splits instead"
         ]
-      }
+      },
+      "learn": "https://scikit-learn.org/stable/modules/cross_validation.html"
     },
     {
       "id": "ml-regularization",
@@ -2204,7 +2250,8 @@
           "L2's push fades as the weight shrinks, so weights rarely hit zero",
           "That makes L1 a form of feature selection"
         ]
-      }
+      },
+      "learn": "https://scikit-learn.org/stable/modules/linear_model.html#lasso"
     },
     {
       "id": "ml-imbalance",
@@ -2228,7 +2275,8 @@
           "Precision-recall AUC exposes them",
           "Report PR AUC for rare-event problems"
         ]
-      }
+      },
+      "learn": "https://imbalanced-learn.org/stable/user_guide.html"
     },
     {
       "id": "ml-scaling",
@@ -2252,7 +2300,8 @@
           "Fit on train, then transform validation and test with it",
           "A Pipeline does this automatically"
         ]
-      }
+      },
+      "learn": "https://scikit-learn.org/stable/modules/preprocessing.html#standardization-or-mean-removal-and-variance-scaling"
     },
     {
       "id": "ml-ab-test",
@@ -2277,7 +2326,8 @@
           "It does not mean the effect is large or important",
           "Do not peek and stop early: it inflates false positives"
         ]
-      }
+      },
+      "learn": "https://en.wikipedia.org/wiki/A/B_testing"
     },
     {
       "id": "msc-backprop",
@@ -2302,7 +2352,8 @@
           "Use a learning-rate finder, warmup, and a schedule that decays it",
           "Adam is more forgiving than plain SGD, but still sensitive"
         ]
-      }
+      },
+      "learn": "https://d2l.ai/chapter_multilayer-perceptrons/backprop.html"
     },
     {
       "id": "msc-attention",
@@ -2327,7 +2378,8 @@
           "Dividing by sqrt(d) keeps scores at a stable scale",
           "So training stays stable whatever the model width"
         ]
-      }
+      },
+      "learn": "https://d2l.ai/chapter_attention-mechanisms-and-transformers/attention-scoring-functions.html"
     },
     {
       "id": "msc-frameworks",
@@ -2352,7 +2404,8 @@
           "Forgetting it gives noisy, worse predictions"
         ],
         "answer": "model.eval()\nwith torch.no_grad():\n    preds = model(x)"
-      }
+      },
+      "learn": "https://docs.pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module.eval"
     },
     {
       "id": "torch-train-loop",
@@ -2375,7 +2428,8 @@
           "Training then behaves wrongly",
           "Skipping it on purpose is how gradient accumulation works"
         ]
-      }
+      },
+      "learn": "https://docs.pytorch.org/tutorials/beginner/basics/optimization_tutorial.html"
     },
     {
       "id": "ml-tokenization",
@@ -2399,7 +2453,8 @@
           "It has to have learned each token's letters indirectly",
           "Splitting the word into characters first helps"
         ]
-      }
+      },
+      "learn": "https://huggingface.co/learn/llm-course/chapter6/5"
     },
     {
       "id": "ml-dropout",
@@ -2423,7 +2478,8 @@
           "Acts like averaging many smaller networks",
           "Turned off at inference, with outputs scaled to match"
         ]
-      }
+      },
+      "learn": "https://d2l.ai/chapter_multilayer-perceptrons/dropout.html"
     },
     {
       "id": "ml-vanishing",
@@ -2447,7 +2503,8 @@
           "So signals survive through very deep networks",
           "Why ResNets and Transformers can stack so many layers"
         ]
-      }
+      },
+      "learn": "https://d2l.ai/chapter_multilayer-perceptrons/numerical-stability-and-init.html"
     },
     {
       "id": "msc-retrieval",
@@ -2472,7 +2529,8 @@
           "When users expect literal matches",
           "Hybrid search combines both and usually wins"
         ]
-      }
+      },
+      "learn": "https://en.wikipedia.org/wiki/Okapi_BM25"
     },
     {
       "id": "msc-serving",
@@ -2497,7 +2555,8 @@
           "Costs some accuracy, usually small",
           "Calibrate on real data and measure accuracy before shipping"
         ]
-      }
+      },
+      "learn": "https://onnxruntime.ai/docs/"
     },
     {
       "id": "ml-embeddings",
@@ -2521,7 +2580,8 @@
           "For normalized vectors they give the same ranking",
           "Use whatever the embedding model was trained with"
         ]
-      }
+      },
+      "learn": "https://developers.google.com/machine-learning/crash-course/embeddings"
     },
     {
       "id": "ml-recsys",
@@ -2546,7 +2606,8 @@
           "Use content features (category, price, text) and popularity",
           "Ask new users for preferences; explore new items deliberately"
         ]
-      }
+      },
+      "learn": "https://developers.google.com/machine-learning/recommendation"
     },
     {
       "id": "ml-drift",
@@ -2571,7 +2632,8 @@
           "Example: the same behavior that meant fraud last year no longer does",
           "Data drift is visible without labels; concept drift needs fresh labels"
         ]
-      }
+      },
+      "learn": "https://en.wikipedia.org/wiki/Concept_drift"
     },
     {
       "id": "ml-rag",
@@ -2596,7 +2658,8 @@
           "Answer: is it correct and grounded in the retrieved text?",
           "Use LLM-as-judge with spot checks by humans; track it over time"
         ]
-      }
+      },
+      "learn": "https://en.wikipedia.org/wiki/Retrieval-augmented_generation"
     },
     {
       "id": "ml-serve-fast",
@@ -2621,7 +2684,8 @@
           "Each request may wait a few milliseconds longer",
           "Tune the maximum wait time against your latency target"
         ]
-      }
+      },
+      "learn": "https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/user_guide/batcher.html"
     },
     {
       "id": "py-comprehension",
@@ -2645,7 +2709,8 @@
           "Use a generator for big data or when you only iterate once",
           "Written with parentheses: sum(n * n for n in nums)"
         ]
-      }
+      },
+      "learn": "https://docs.python.org/3/tutorial/datastructures.html#list-comprehensions"
     },
     {
       "id": "py-args-kwargs",
@@ -2669,7 +2734,8 @@
           "Use None and create the list inside"
         ],
         "answer": "def add(item, items=None):\n    if items is None:\n        items = []\n    items.append(item)\n    return items"
-      }
+      },
+      "learn": "https://docs.python.org/3/tutorial/controlflow.html#arbitrary-argument-lists"
     },
     {
       "id": "py-with",
@@ -2693,7 +2759,8 @@
           "Put cleanup in finally so it runs on errors"
         ],
         "answer": "from contextlib import contextmanager\n\n@contextmanager\ndef timer(name):\n    start = time.perf_counter()\n    try:\n        yield\n    finally:\n        took = time.perf_counter() - start\n        print(name, took)"
-      }
+      },
+      "learn": "https://docs.python.org/3/reference/compound_stmts.html#the-with-statement"
     },
     {
       "id": "py-dict-tools",
@@ -2717,7 +2784,8 @@
           "So keys must be immutable: str, int, tuple of immutables",
           "Lists and dicts cannot be keys"
         ]
-      }
+      },
+      "learn": "https://docs.python.org/3/library/collections.html#collections.Counter"
     },
     {
       "id": "py-is-eq",
@@ -2741,7 +2809,8 @@
           "Outside that range, equal ints can be different objects",
           "An implementation detail: never rely on it"
         ]
-      }
+      },
+      "learn": "https://docs.python.org/3/reference/expressions.html#is-not"
     },
     {
       "id": "py-decorators",
@@ -2763,7 +2832,8 @@
           "wraps copies __name__, __doc__ and other metadata",
           "It also sets __wrapped__ so tools can find the original"
         ]
-      }
+      },
+      "learn": "https://docs.python.org/3/glossary.html#term-decorator"
     },
     {
       "id": "py-generators",
@@ -2786,7 +2856,8 @@
           "Also passes through send() and the sub-generator's return value",
           "Handy for recursive generators like walking a tree"
         ]
-      }
+      },
+      "learn": "https://docs.python.org/3/howto/functional.html#generators"
     },
     {
       "id": "py-gil",
@@ -2810,7 +2881,8 @@
           "asyncio: one thread, thousands of concurrent I/O tasks, needs async libraries",
           "CPU-bound: processes. Lots of I/O: asyncio. Some I/O: threads"
         ]
-      }
+      },
+      "learn": "https://docs.python.org/3/glossary.html#term-global-interpreter-lock"
     },
     {
       "id": "py-asyncio",
@@ -2832,7 +2904,8 @@
           "Use async libraries (asyncio.sleep, httpx)",
           "Or offload it: await asyncio.to_thread(fn)"
         ]
-      }
+      },
+      "learn": "https://docs.python.org/3/library/asyncio-task.html"
     },
     {
       "id": "py-typing",
@@ -2855,7 +2928,8 @@
           "Use Pydantic at boundaries: API input, config, JSON",
           "Dataclasses inside your code, where data is already trusted"
         ]
-      }
+      },
+      "learn": "https://docs.python.org/3/library/dataclasses.html"
     },
     {
       "id": "np-broadcasting",
@@ -2879,7 +2953,8 @@
           "Add an axis to fix it: means[:, None] or reshape(-1, 1)"
         ],
         "answer": "row_means = X.mean(axis=1)    # (100,)\nX - row_means[:, None]        # (100, 1)"
-      }
+      },
+      "learn": "https://numpy.org/doc/stable/user/basics.broadcasting.html"
     },
     {
       "id": "np-reshape-axis",
@@ -2902,7 +2977,8 @@
           "axis=1 runs across the columns: one result per row",
           "Same rule in pandas: df.mean(axis=0) gives column means"
         ]
-      }
+      },
+      "learn": "https://numpy.org/doc/stable/reference/generated/numpy.reshape.html"
     },
     {
       "id": "pd-loc-iloc",
@@ -2926,7 +3002,8 @@
           "Use one .loc call: df.loc[mask, 'col'] = 0",
           "Or call .copy() if you want a separate frame"
         ]
-      }
+      },
+      "learn": "https://pandas.pydata.org/docs/user_guide/indexing.html"
     },
     {
       "id": "pd-groupby",
@@ -2949,7 +3026,8 @@
           "Use transform to add group statistics as a column"
         ],
         "answer": "df['seller_avg'] = (\n    df.groupby('seller')['total']\n      .transform('mean'))"
-      }
+      },
+      "learn": "https://pandas.pydata.org/docs/user_guide/groupby.html"
     },
     {
       "id": "pd-merge",
@@ -2973,7 +3051,8 @@
           "concat: stack frames on top of each other or side by side",
           "Joining finds matching rows; concat just glues"
         ]
-      }
+      },
+      "learn": "https://pandas.pydata.org/docs/user_guide/merging.html"
     },
     {
       "id": "py-pandas-memory",
@@ -2997,7 +3076,8 @@
           "A status column with millions of rows shrinks hugely",
           "Group-bys on it get faster too"
         ]
-      }
+      },
+      "learn": "https://pandas.pydata.org/docs/user_guide/scale.html"
     },
     {
       "id": "data-indexes",
@@ -3023,7 +3103,8 @@
           "Fix: add an index on (b), or reorder to (b, a) if that matches your queries"
         ],
         "answer": "-- index on (a, b)\nWHERE a = 1            -- uses it\nWHERE a = 1 AND b = 2  -- uses it\nWHERE b = 2            -- usually not"
-      }
+      },
+      "learn": "https://use-the-index-luke.com/sql/anatomy"
     },
     {
       "id": "data-acid",
@@ -3048,7 +3129,8 @@
           "Prevented by serializable isolation (and by repeatable read in Postgres)",
           "Different from a non-repeatable read, where an existing row changed"
         ]
-      }
+      },
+      "learn": "https://www.postgresql.org/docs/current/transaction-iso.html"
     },
     {
       "id": "data-oversell",
@@ -3074,7 +3156,8 @@
           "Pessimistic avoids retry storms when conflicts are common, but holds locks"
         ],
         "answer": "UPDATE stock\nSET qty = qty - 1, version = version + 1\nWHERE sku = $1 AND version = $2;\n-- 0 rows: someone else won, retry"
-      }
+      },
+      "learn": "https://www.postgresql.org/docs/current/explicit-locking.html#LOCKING-ROWS"
     },
     {
       "id": "data-bulk-upsert",
@@ -3099,7 +3182,8 @@
           "Huge WAL and memory use, and long replication lag",
           "Chunks of a few thousand give progress, retries and room for other work"
         ]
-      }
+      },
+      "learn": "https://www.postgresql.org/docs/current/sql-insert.html#SQL-ON-CONFLICT"
     },
     {
       "id": "data-pagination",
@@ -3124,7 +3208,8 @@
           "Index (created_at, id) so it stays fast"
         ],
         "answer": "SELECT * FROM orders\nWHERE (created_at, id) < ($1, $2)\nORDER BY created_at DESC, id DESC\nLIMIT 20;"
-      }
+      },
+      "learn": "https://use-the-index-luke.com/no-offset"
     },
     {
       "id": "data-coalesce",
@@ -3148,7 +3233,8 @@
           "Classic combo: avoid dividing by zero"
         ],
         "answer": "SELECT total / NULLIF(items, 0)\nFROM orders;  -- NULL instead of error"
-      }
+      },
+      "learn": "https://www.postgresql.org/docs/current/functions-conditional.html"
     },
     {
       "id": "data-join-types",
@@ -3172,7 +3258,8 @@
           "Useful to generate combinations: every product with every size",
           "Also to fill gaps, e.g. a calendar of days crossed with stores"
         ]
-      }
+      },
+      "learn": "https://www.postgresql.org/docs/current/queries-table-expressions.html#QUERIES-JOIN"
     },
     {
       "id": "data-select-star",
@@ -3197,7 +3284,8 @@
           "SELECT * usually defeats it, because no index has every column"
         ],
         "answer": "CREATE INDEX ON orders (customer_id)\n  INCLUDE (total, status);"
-      }
+      },
+      "learn": "https://www.postgresql.org/docs/current/indexes-index-only-scans.html"
     },
     {
       "id": "data-postgres-mvcc",
@@ -3221,7 +3309,8 @@
           "Worst case: transaction ID wraparound, where Postgres stops accepting writes to protect data",
           "Fix: tune autovacuum, kill idle-in-transaction sessions, watch dead tuples"
         ]
-      }
+      },
+      "learn": "https://www.postgresql.org/docs/current/mvcc-intro.html"
     },
     {
       "id": "data-slow-query",
@@ -3247,7 +3336,8 @@
           "APM traces show which endpoints trigger them"
         ],
         "answer": "SELECT query, calls, total_exec_time\nFROM pg_stat_statements\nORDER BY total_exec_time DESC\nLIMIT 10;"
-      }
+      },
+      "learn": "https://www.postgresql.org/docs/current/pgstatstatements.html"
     },
     {
       "id": "data-read-scaling",
@@ -3272,7 +3362,8 @@
           "Fix: read your own writes from the primary for a short window",
           "Or route by session, and monitor lag so stale replicas are taken out"
         ]
-      }
+      },
+      "learn": "https://www.postgresql.org/docs/current/high-availability.html"
     },
     {
       "id": "data-group-having",
@@ -3297,7 +3388,8 @@
           "ORDER BY, then LIMIT / OFFSET",
           "That is why a SELECT alias works in ORDER BY but not in WHERE"
         ]
-      }
+      },
+      "learn": "https://www.postgresql.org/docs/current/queries-table-expressions.html#QUERIES-GROUP"
     },
     {
       "id": "data-count-variants",
@@ -3321,7 +3413,8 @@
           "For a rough number, read reltuples from pg_class",
           "Or keep a counter table, or count a filtered, indexed subset"
         ]
-      }
+      },
+      "learn": "https://www.postgresql.org/docs/current/functions-aggregate.html"
     },
     {
       "id": "data-null-equals",
@@ -3345,7 +3438,8 @@
           "The query quietly returns no rows",
           "Use NOT EXISTS instead, which handles NULLs correctly"
         ]
-      }
+      },
+      "learn": "https://www.postgresql.org/docs/current/functions-comparison.html"
     },
     {
       "id": "data-like",
@@ -3369,7 +3463,8 @@
           "For real search, use full-text search (tsvector) instead"
         ],
         "answer": "CREATE EXTENSION pg_trgm;\nCREATE INDEX ON customers\n  USING gin (name gin_trgm_ops);"
-      }
+      },
+      "learn": "https://www.postgresql.org/docs/current/functions-matching.html#FUNCTIONS-LIKE"
     },
     {
       "id": "data-keys",
@@ -3393,7 +3488,8 @@
           "Dangerous when chains are long: one delete can wipe far more than expected",
           "Alternatives: RESTRICT (block the delete) or soft deletes"
         ]
-      }
+      },
+      "learn": "https://www.postgresql.org/docs/current/ddl-constraints.html"
     },
     {
       "id": "data-window-functions",
@@ -3416,7 +3512,8 @@
           "DENSE_RANK: ties share a number, no gaps (1, 1, 2)",
           "Pick based on whether ties should both count"
         ]
-      }
+      },
+      "learn": "https://www.postgresql.org/docs/current/tutorial-window.html"
     },
     {
       "id": "data-cte",
@@ -3439,7 +3536,8 @@
           "Stops when the recursive part returns no rows",
           "Guard against cycles with a depth limit"
         ]
-      }
+      },
+      "learn": "https://www.postgresql.org/docs/current/queries-with.html"
     },
     {
       "id": "data-explain",
@@ -3463,7 +3561,8 @@
           "A type mismatch or implicit cast in the comparison",
           "Stale statistics make the planner misjudge; run ANALYZE"
         ]
-      }
+      },
+      "learn": "https://www.postgresql.org/docs/current/using-explain.html"
     },
     {
       "id": "data-deadlock",
@@ -3488,7 +3587,8 @@
           "Retry on a deadlock error as a safety net"
         ],
         "answer": "SELECT * FROM accounts\nWHERE id IN ($1, $2)\nORDER BY id\nFOR UPDATE;"
-      }
+      },
+      "learn": "https://www.postgresql.org/docs/current/explicit-locking.html#LOCKING-DEADLOCKS"
     },
     {
       "id": "data-vacuum",
@@ -3512,7 +3612,8 @@
           "On a big table that can mean a long outage",
           "Use pg_repack, or fix autovacuum so bloat does not build up"
         ]
-      }
+      },
+      "learn": "https://www.postgresql.org/docs/current/routine-vacuuming.html"
     },
     {
       "id": "data-jsonb",
@@ -3536,7 +3637,8 @@
           "For one hot key, an expression index on that key is better"
         ],
         "answer": "CREATE INDEX ON products\n  USING gin (attrs jsonb_path_ops);\n\nSELECT * FROM products\nWHERE attrs @> '{\"color\": \"red\"}';"
-      }
+      },
+      "learn": "https://www.postgresql.org/docs/current/datatype-json.html"
     },
     {
       "id": "data-connection-pool",
@@ -3560,7 +3662,8 @@
           "Older setups also broke named prepared statements",
           "Use session mode, or keep that work in single transactions"
         ]
-      }
+      },
+      "learn": "https://www.pgbouncer.org/features.html"
     },
     {
       "id": "data-zero-downtime",
@@ -3585,7 +3688,8 @@
           "Adding a foreign key or check validates every row; add it NOT VALID, validate later",
           "Any DDL waits behind long queries and blocks everyone queued after it: set lock_timeout"
         ]
-      }
+      },
+      "learn": "https://www.postgresql.org/docs/current/sql-altertable.html"
     },
     {
       "id": "data-partitioning",
@@ -3609,7 +3713,8 @@
           "Partitioning helps maintenance and pruning; sharding scales writes and storage",
           "Sharding adds cross-shard queries and transactions: much more complexity"
         ]
-      }
+      },
+      "learn": "https://www.postgresql.org/docs/current/ddl-partitioning.html"
     },
     {
       "id": "data-stale-read",
@@ -3633,7 +3738,8 @@
           "Race: a slow reader can refill the cache with old data after the delete",
           "TTLs cap how long stale data can live"
         ]
-      }
+      },
+      "learn": "https://www.postgresql.org/docs/current/hot-standby.html"
     },
     {
       "id": "data-hot-row",
@@ -3657,7 +3763,8 @@
           "Reads sum the slots, which is cheap for a handful of rows"
         ],
         "answer": "UPDATE counters\nSET n = n + 1\nWHERE page = $1\n  AND slot = floor(random() * 16);"
-      }
+      },
+      "learn": "https://www.postgresql.org/docs/current/explicit-locking.html#LOCKING-ROWS"
     },
     {
       "id": "data-sql-nosql",
@@ -3682,7 +3789,8 @@
           "Write-heavy workloads that need horizontal sharding built in",
           "Few joins: what you read together is stored together"
         ]
-      }
+      },
+      "learn": "https://www.mongodb.com/docs/manual/data-modeling/"
     },
     {
       "id": "data-n-plus-one",
@@ -3707,7 +3815,8 @@
           "pg_stat_statements: a tiny query with a huge call count",
           "Fail tests that exceed a query budget per endpoint"
         ]
-      }
+      },
+      "learn": "https://sequelize.org/docs/v6/advanced-association-concepts/eager-loading/"
     },
     {
       "id": "data-orm",
@@ -3732,7 +3841,8 @@
           "Applied in order and recorded in a migrations table",
           "Makes schema changes reviewable and repeatable, instead of hand-edited"
         ]
-      }
+      },
+      "learn": "https://sequelize.org/docs/v6/other-topics/migrations/"
     },
     {
       "id": "data-mongo-lookup",
@@ -3755,7 +3865,8 @@
           "Joins across shards are expensive and limited",
           "Fix: embed or duplicate the fields you need, or reconsider the database"
         ]
-      }
+      },
+      "learn": "https://www.mongodb.com/docs/manual/reference/operator/aggregation/lookup/"
     },
     {
       "id": "data-mongo-when-not",
@@ -3779,7 +3890,8 @@
           "They need a session, are slower, and have time limits",
           "Good schema design makes most writes single-document"
         ]
-      }
+      },
+      "learn": "https://www.mongodb.com/docs/manual/core/transactions/"
     },
     {
       "id": "data-sequelize-include",
@@ -3803,7 +3915,8 @@
           "hasMany: the other model holds the key, many rows",
           "belongsToMany: many-to-many through a join table"
         ]
-      }
+      },
+      "learn": "https://sequelize.org/docs/v6/core-concepts/assocs/"
     },
     {
       "id": "data-mysql-postgres",
@@ -3827,7 +3940,8 @@
           "Postgres stores rows in a heap; every index points to a row location",
           "Postgres updates write new row versions; InnoDB updates in place with undo logs"
         ]
-      }
+      },
+      "learn": "https://dev.mysql.com/doc/refman/8.4/en/innodb-index-types.html"
     },
     {
       "id": "data-sequelize-transaction",
@@ -3850,7 +3964,8 @@
           "It can also wait on locks the transaction holds: a self-deadlock",
           "Fix: CLS (continuation-local storage) passes it automatically"
         ]
-      }
+      },
+      "learn": "https://sequelize.org/docs/v6/other-topics/transactions/"
     },
     {
       "id": "data-mongo-find",
@@ -3874,7 +3989,8 @@
           "Check it with explain('executionStats')"
         ],
         "answer": "db.orders.createIndex(\n  { status: 1, createdAt: -1, total: 1 },\n)"
-      }
+      },
+      "learn": "https://www.mongodb.com/docs/manual/reference/method/db.collection.find/"
     },
     {
       "id": "data-mongoose-populate",
@@ -3898,7 +4014,8 @@
           "Select only the fields you need, and paginate",
           "Or embed the data you always read together"
         ]
-      }
+      },
+      "learn": "https://mongoosejs.com/docs/populate.html"
     },
     {
       "id": "data-mongo-esr",
@@ -3922,7 +4039,8 @@
           "Exclude _id in the projection unless it is in the index",
           "explain() shows totalDocsExamined: 0"
         ]
-      }
+      },
+      "learn": "https://www.mongodb.com/docs/manual/tutorial/equality-sort-range-guideline/"
     },
     {
       "id": "data-mongo-embed",
@@ -3946,7 +4064,8 @@
           "Normal reads stay fast; only outliers pay extra",
           "Alternative: the bucket pattern, grouping items into fixed-size documents"
         ]
-      }
+      },
+      "learn": "https://www.mongodb.com/docs/manual/data-modeling/embedding/"
     },
     {
       "id": "data-shard-key",
@@ -3970,7 +4089,8 @@
           "That shard becomes a hotspot while the others sit idle",
           "Hash it, or put a high-cardinality field in front of it"
         ]
-      }
+      },
+      "learn": "https://www.mongodb.com/docs/manual/core/sharding-choose-a-shard-key/"
     },
     {
       "id": "data-mongo-aggregate",
@@ -3993,7 +4113,8 @@
           "Stages have a memory limit; big sorts need allowDiskUse",
           "The optimizer reorders some stages, but do not rely on it"
         ]
-      }
+      },
+      "learn": "https://www.mongodb.com/docs/manual/core/aggregation-pipeline/"
     },
     {
       "id": "be-rest",
@@ -4018,7 +4139,8 @@
           "PUT is idempotent; PATCH can be, but is not guaranteed",
           "A PUT with missing fields wipes them"
         ]
-      }
+      },
+      "learn": "https://developer.mozilla.org/en-US/docs/Glossary/REST"
     },
     {
       "id": "be-idempotency",
@@ -4043,7 +4165,8 @@
           "Keep them at least as long as clients may retry: often 24 hours",
           "Record 'in progress' first so two concurrent duplicates cannot both run"
         ]
-      }
+      },
+      "learn": "https://developer.mozilla.org/en-US/docs/Glossary/Idempotent"
     },
     {
       "id": "be-oauth",
@@ -4068,7 +4191,8 @@
           "A stolen authorization code is useless without the secret",
           "Required for apps that cannot keep a client secret: mobile apps and SPAs"
         ]
-      }
+      },
+      "learn": "https://oauth.net/2/grant-types/authorization-code/"
     },
     {
       "id": "be-authn-authz",
@@ -4093,7 +4217,8 @@
           "The server still decides what those claims allow",
           "OIDC ID tokens are for identity; OAuth access tokens are for API access"
         ]
-      }
+      },
+      "learn": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Authentication"
     },
     {
       "id": "be-websockets",
@@ -4118,7 +4243,8 @@
           "The load balancer must support long-lived connections and upgrades",
           "Plan for reconnects: clients resume and refetch what they missed"
         ]
-      }
+      },
+      "learn": "https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API"
     },
     {
       "id": "be-openapi",
@@ -4142,7 +4268,8 @@
           "Code-first: faster for one team; the spec can drift less if generated",
           "For integrations with other teams, design-first usually wins"
         ]
-      }
+      },
+      "learn": "https://learn.openapis.org/"
     },
     {
       "id": "be-rate-limiting",
@@ -4168,7 +4295,8 @@
           "Or rate limit at the gateway in front of all 5 servers"
         ],
         "answer": "const key = `rl:${userId}:${minute}`\nconst n = await redis.incr(key)\nif (n === 1) await redis.expire(key, 60)\nif (n > 100) return res.status(429)"
-      }
+      },
+      "learn": "https://redis.io/glossary/rate-limiting/"
     },
     {
       "id": "api-http-methods",
@@ -4192,7 +4320,8 @@
           "Put parameters in the query string instead",
           "For big search queries, use POST /search"
         ]
-      }
+      },
+      "learn": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods"
     },
     {
       "id": "api-status-codes",
@@ -4216,7 +4345,8 @@
           "Many APIs return 404 to hide existence",
           "Pick one rule and apply it consistently"
         ]
-      }
+      },
+      "learn": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status"
     },
     {
       "id": "api-headers",
@@ -4240,7 +4370,8 @@
           "If nothing changed, the server replies 304 Not Modified with no body",
           "If-Match on writes prevents overwriting someone else's change"
         ]
-      }
+      },
+      "learn": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/ETag"
     },
     {
       "id": "api-jwt",
@@ -4264,7 +4395,8 @@
           "A denylist of token ids checked on each request",
           "Or a per-user token version that bumps on logout or password change"
         ]
-      }
+      },
+      "learn": "https://www.jwt.io/introduction"
     },
     {
       "id": "api-http-versions",
@@ -4288,7 +4420,8 @@
           "HTTP/2 fixes it at the HTTP level, but one lost TCP packet still stalls all streams",
           "HTTP/3 over QUIC fixes it at the transport level too"
         ]
-      }
+      },
+      "learn": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Evolution_of_HTTP"
     },
     {
       "id": "api-pagination-design",
@@ -4312,7 +4445,8 @@
           "Sign or validate it so clients cannot craft arbitrary queries",
           "Changing the sort means changing what the cursor holds"
         ]
-      }
+      },
+      "learn": "https://use-the-index-luke.com/no-offset"
     },
     {
       "id": "api-versioning",
@@ -4336,7 +4470,8 @@
           "Changing error codes or default behavior",
           "Adding optional fields or new endpoints is safe"
         ]
-      }
+      },
+      "learn": "https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design#implement-versioning"
     },
     {
       "id": "api-grpc-rest",
@@ -4360,7 +4495,8 @@
           "Connect protocol works in browsers too",
           "Or put a REST gateway in front"
         ]
-      }
+      },
+      "learn": "https://grpc.io/docs/what-is-grpc/introduction/"
     },
     {
       "id": "api-http-caching",
@@ -4384,7 +4520,8 @@
           "Purge the CDN by key or tag when data changes",
           "ETags for cheap revalidation"
         ]
-      }
+      },
+      "learn": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Caching"
     },
     {
       "id": "api-webhooks-polling",
@@ -4408,7 +4545,8 @@
           "Store events and process them in order per resource",
           "Make the handler idempotent"
         ]
-      }
+      },
+      "learn": "https://docs.github.com/en/webhooks/using-webhooks/best-practices-for-using-webhooks"
     },
     {
       "id": "api-charge-once",
@@ -4433,7 +4571,8 @@
           "Or query the payment status before trying again",
           "Show the user 'checking payment', not 'failed'"
         ]
-      }
+      },
+      "learn": "https://docs.stripe.com/api/idempotent_requests"
     },
     {
       "id": "msg-redis",
@@ -4457,7 +4596,8 @@
           "I/O multiplexing (epoll) serves thousands of clients from that thread",
           "Recent versions add I/O threads for networking; commands stay single-threaded"
         ]
-      }
+      },
+      "learn": "https://redis.io/docs/latest/develop/get-started/"
     },
     {
       "id": "msg-redis-restart",
@@ -4482,7 +4622,8 @@
           "Jobs would then vanish silently, or queues break",
           "noeviction makes writes fail instead, which you can see and alert on"
         ]
-      }
+      },
+      "learn": "https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/"
     },
     {
       "id": "msg-kafka-basics",
@@ -4507,7 +4648,8 @@
           "So the partition count caps a group's parallelism",
           "Plan partitions for your peak consumer count"
         ]
-      }
+      },
+      "learn": "https://docs.confluent.io/kafka/introduction.html"
     },
     {
       "id": "msg-kafka-delivery",
@@ -4532,7 +4674,8 @@
           "Make processing idempotent: upsert by order id, or keep a processed-ids table",
           "Be ready to give the real answer for your Fynd pipeline"
         ]
-      }
+      },
+      "learn": "https://docs.confluent.io/kafka/design/delivery-semantics.html"
     },
     {
       "id": "msg-bullmq",
@@ -4557,7 +4700,8 @@
           "Causes: a crashed worker, or CPU-heavy code blocking the event loop",
           "Blocking code can make two workers process the same job"
         ]
-      }
+      },
+      "learn": "https://docs.bullmq.io/guide/workers"
     },
     {
       "id": "msg-event-driven",
@@ -4582,7 +4726,8 @@
           "Log the same correlation id everywhere so logs can be joined",
           "Look at the trace in Jaeger, Tempo or your APM tool"
         ]
-      }
+      },
+      "learn": "https://microservices.io/patterns/data/event-driven-architecture.html"
     },
     {
       "id": "msg-outbox",
@@ -4607,7 +4752,8 @@
           "The database is the source of truth, so it must commit first",
           "The outbox makes the event part of that same commit"
         ]
-      }
+      },
+      "learn": "https://microservices.io/patterns/data/transactional-outbox.html"
     },
     {
       "id": "api-redis-commands",
@@ -4631,7 +4777,8 @@
           "If work outlasts the TTL, two clients can hold it",
           "For correctness-critical locks, add fencing tokens or use the database"
         ]
-      }
+      },
+      "learn": "https://redis.io/docs/latest/commands/set/"
     },
     {
       "id": "api-kafka-acks",
@@ -4655,7 +4802,8 @@
           "Below the minimum, producers get errors instead of silent risk",
           "It trades availability for durability"
         ]
-      }
+      },
+      "learn": "https://docs.confluent.io/platform/current/installation/configuration/producer-configs.html#acks"
     },
     {
       "id": "api-bullmq-add",
@@ -4679,7 +4827,8 @@
           "Give it a stable id so restarts do not add duplicates"
         ],
         "answer": "await queue.upsertJobScheduler(\n  'hourly-sync',\n  { pattern: '0 * * * *' },\n)"
-      }
+      },
+      "learn": "https://docs.bullmq.io/guide/retrying-failing-jobs"
     },
     {
       "id": "api-kafka-rebalance",
@@ -4703,7 +4852,8 @@
           "Still make processing idempotent: some duplicates are unavoidable",
           "Keep each poll batch quick so you do not time out"
         ]
-      }
+      },
+      "learn": "https://docs.confluent.io/platform/current/clients/consumer.html"
     },
     {
       "id": "api-retry-topics",
@@ -4727,7 +4877,8 @@
           "Consumers must be idempotent, since some may have half-succeeded",
           "Keep the original key and headers so ordering and tracing survive"
         ]
-      }
+      },
+      "learn": "https://www.confluent.io/blog/error-handling-patterns-in-kafka/"
     },
     {
       "id": "api-kafka-ordering",
@@ -4751,7 +4902,8 @@
           "Old and new events for that key can be read out of order",
           "Plan partition counts up front, or migrate to a new topic"
         ]
-      }
+      },
+      "learn": "https://docs.confluent.io/kafka/introduction.html"
     },
     {
       "id": "msg-temporal",
@@ -4776,7 +4928,8 @@
           "Signals are recorded in history; queries are not",
           "Updates combine both: change state and return a result"
         ]
-      }
+      },
+      "learn": "https://docs.temporal.io/workflows"
     },
     {
       "id": "be-microservices",
@@ -4801,7 +4954,8 @@
           "Accept eventual consistency between services",
           "Shared databases couple services and defeat independent deploys"
         ]
-      }
+      },
+      "learn": "https://microservices.io/patterns/microservices.html"
     },
     {
       "id": "api-temporal-retry",
@@ -4825,7 +4979,8 @@
           "Retrying a permanent error just wastes time and quota"
         ],
         "answer": "throw ApplicationFailure.nonRetryable(\n  'Invalid SKU',\n)"
-      }
+      },
+      "learn": "https://docs.temporal.io/encyclopedia/retry-policies"
     },
     {
       "id": "api-saga",
@@ -4849,7 +5004,8 @@
           "Orchestration: one coordinator tells each service what to do",
           "Easier to see, test and change; Temporal is an orchestrator"
         ]
-      }
+      },
+      "learn": "https://microservices.io/patterns/data/saga.html"
     },
     {
       "id": "api-circuit-breaker",
@@ -4873,7 +5029,8 @@
           "Half-open: a few test calls are let through",
           "Success closes it again; failure reopens it"
         ]
-      }
+      },
+      "learn": "https://microservices.io/patterns/reliability/circuit-breaker.html"
     },
     {
       "id": "api-cap",
@@ -4897,7 +5054,8 @@
           "Even without failures, stronger consistency costs latency",
           "Example: synchronous replication is consistent but slower"
         ]
-      }
+      },
+      "learn": "https://en.wikipedia.org/wiki/CAP_theorem"
     },
     {
       "id": "api-notifications",
@@ -4922,7 +5080,8 @@
           "Pass the id as an idempotency key to providers that support it",
           "Exactly-once is not guaranteed; aim for at-least-once plus dedupe"
         ]
-      }
+      },
+      "learn": "https://microservices.io/patterns/communication-style/messaging.html"
     },
     {
       "id": "api-cache-stampede",
@@ -4947,7 +5106,8 @@
           "Many CDNs and proxies do this for you"
         ],
         "answer": "const inflight = new Map()\nfunction load(key) {\n  if (!inflight.has(key)) {\n    const p = fetchFromDb(key)\n      .finally(() => inflight.delete(key))\n    inflight.set(key, p)\n  }\n  return inflight.get(key)\n}"
-      }
+      },
+      "learn": "https://en.wikipedia.org/wiki/Cache_stampede"
     },
     {
       "id": "api-cascading-failure",
@@ -4972,7 +5132,8 @@
           "A hung dependency exhausts only its own pool",
           "Everything else keeps working"
         ]
-      }
+      },
+      "learn": "https://sre.google/sre-book/addressing-cascading-failures/"
     },
     {
       "id": "cloud-docker",
@@ -4998,7 +5159,8 @@
           "Builds go from minutes to seconds"
         ],
         "answer": "COPY package*.json ./\nRUN npm ci\nCOPY . .\nRUN npm run build"
-      }
+      },
+      "learn": "https://docs.docker.com/build/cache/"
     },
     {
       "id": "cloud-k8s",
@@ -5023,7 +5185,8 @@
           "Startup probe: gives slow starters time before liveness kicks in",
           "Never make liveness depend on the database, or a DB blip restarts everything"
         ]
-      }
+      },
+      "learn": "https://kubernetes.io/docs/concepts/workloads/pods/"
     },
     {
       "id": "cloud-helm",
@@ -5047,7 +5210,8 @@
           "Or encrypt them in the repo (SOPS, Sealed Secrets)",
           "Inject at deploy time from the CI system's secret variables"
         ]
-      }
+      },
+      "learn": "https://helm.sh/docs/intro/using_helm/"
     },
     {
       "id": "cloud-dockerfile",
@@ -5071,7 +5235,8 @@
           "docker run arguments replace CMD, not ENTRYPOINT",
           "Use the exec (JSON array) form so signals reach your process"
         ]
-      }
+      },
+      "learn": "https://docs.docker.com/reference/dockerfile/"
     },
     {
       "id": "cloud-docker-volumes",
@@ -5095,7 +5260,8 @@
           "Bind mounts map a host folder instead: handy for local dev",
           "In Kubernetes the same idea is a PersistentVolume"
         ]
-      }
+      },
+      "learn": "https://docs.docker.com/engine/storage/volumes/"
     },
     {
       "id": "cloud-kubectl",
@@ -5119,7 +5285,8 @@
           "apply tracks what you set, so later changes merge cleanly",
           "Use apply (or Helm) in pipelines"
         ]
-      }
+      },
+      "learn": "https://kubernetes.io/docs/reference/kubectl/quick-reference/"
     },
     {
       "id": "cloud-k8s-resources",
@@ -5143,7 +5310,8 @@
           "Going over a CPU limit only throttles; it does not kill",
           "Watch for it in kubectl describe pod and your alerts"
         ]
-      }
+      },
+      "learn": "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"
     },
     {
       "id": "cloud-multistage",
@@ -5165,7 +5333,8 @@
           "A .dockerignore so node_modules and .git stay out",
           "Run as a non-root user, and scan images in CI"
         ]
-      }
+      },
+      "learn": "https://docs.docker.com/build/building/multi-stage/"
     },
     {
       "id": "cloud-k8s-services",
@@ -5189,7 +5358,8 @@
           "kube-proxy routes the Service IP to those pods",
           "A typo in labels means a Service with zero endpoints"
         ]
-      }
+      },
+      "learn": "https://kubernetes.io/docs/concepts/services-networking/service/"
     },
     {
       "id": "cloud-rolling-update",
@@ -5213,7 +5383,8 @@
           "Canary: send a small slice of traffic to the new version first",
           "Watch metrics, then widen; catches problems with fewer users affected"
         ]
-      }
+      },
+      "learn": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment"
     },
     {
       "id": "cloud-k8s-secrets",
@@ -5237,7 +5408,8 @@
           "Enable encryption at rest for etcd",
           "Better: sync from an external secret manager"
         ]
-      }
+      },
+      "learn": "https://kubernetes.io/docs/concepts/configuration/secret/"
     },
     {
       "id": "cloud-hpa",
@@ -5261,7 +5433,8 @@
           "Scale on queue depth or job age instead",
           "KEDA scales Kubernetes workloads on queue metrics"
         ]
-      }
+      },
+      "learn": "https://kubernetes.io/docs/concepts/workloads/autoscaling/horizontal-pod-autoscale/"
     },
     {
       "id": "cloud-container-network",
@@ -5285,7 +5458,8 @@
           "One command to start or stop the whole stack",
           "depends_on and healthchecks to order startup"
         ]
-      }
+      },
+      "learn": "https://docs.docker.com/compose/how-tos/networking/"
     },
     {
       "id": "cloud-crashloop",
@@ -5310,7 +5484,8 @@
           "They run in order; if one fails, the pod restarts it",
           "Keeps setup tools out of the main image"
         ]
-      }
+      },
+      "learn": "https://kubernetes.io/docs/tasks/debug/debug-application/debug-pods/"
     },
     {
       "id": "cloud-graceful-deploy",
@@ -5336,7 +5511,8 @@
           "Then exit; Kubernetes sends SIGKILL after the grace period"
         ],
         "answer": "process.on('SIGTERM', () => {\n  server.close(async () => {\n    await db.end()\n    process.exit(0)\n  })\n})"
-      }
+      },
+      "learn": "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination"
     },
     {
       "id": "cloud-image-security",
@@ -5361,7 +5537,8 @@
           "Blocks writing to system paths and binding low ports",
           "Set USER in the Dockerfile and runAsNonRoot in Kubernetes"
         ]
-      }
+      },
+      "learn": "https://kubernetes.io/docs/concepts/security/pod-security-standards/"
     },
     {
       "id": "cloud-k8s-dns",
@@ -5386,7 +5563,8 @@
           "The name resolves to the Service's stable virtual IP",
           "Headless Services resolve to the individual pod IPs instead"
         ]
-      }
+      },
+      "learn": "https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/"
     },
     {
       "id": "cloud-terraform",
@@ -5411,7 +5589,8 @@
           "Remote backends lock the state during a run (S3 lock file, DynamoDB, GCS)",
           "Run applies from CI so only one pipeline touches an environment"
         ]
-      }
+      },
+      "learn": "https://developer.hashicorp.com/terraform/language/state"
     },
     {
       "id": "cloud-ci",
@@ -5436,7 +5615,8 @@
           "Deployment needs strong tests, monitoring and fast rollback",
           "Most teams start with delivery"
         ]
-      }
+      },
+      "learn": "https://docs.gitlab.com/ci/"
     },
     {
       "id": "cloud-aws",
@@ -5461,7 +5641,8 @@
           "Credentials rotate on their own; nothing is stored on disk",
           "Use IMDSv2 to protect metadata from SSRF attacks"
         ]
-      }
+      },
+      "learn": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html"
     },
     {
       "id": "cloud-scaling",
@@ -5486,7 +5667,8 @@
           "Read replicas help reads only, and add lag",
           "Sharding helps writes but makes queries and transactions much harder"
         ]
-      }
+      },
+      "learn": "https://docs.aws.amazon.com/wellarchitected/latest/performance-efficiency-pillar/welcome.html"
     },
     {
       "id": "cloud-terraform-cli",
@@ -5510,7 +5692,8 @@
           "You still write the matching configuration",
           "Newer versions support import blocks, reviewed in plan"
         ]
-      }
+      },
+      "learn": "https://developer.hashicorp.com/terraform/cli/commands"
     },
     {
       "id": "cloud-config",
@@ -5534,7 +5717,8 @@
           "Injected at runtime, rotated without redeploying code",
           "Not in images, repos, or logs"
         ]
-      }
+      },
+      "learn": "https://12factor.net/config"
     },
     {
       "id": "cloud-s3-presigned",
@@ -5558,7 +5742,8 @@
           "Less bandwidth through your own servers",
           "Your API only signs, which is cheap"
         ]
-      }
+      },
+      "learn": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html"
     },
     {
       "id": "cloud-iam",
@@ -5582,7 +5767,8 @@
           "The permissions policy says what the role can do",
           "Both must allow it, or assuming the role fails"
         ]
-      }
+      },
+      "learn": "https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html"
     },
     {
       "id": "cloud-gcp",
@@ -5606,7 +5792,8 @@
           "Start on Cloud Run; move to GKE when you need its control",
           "Cost: Cloud Run per request; GKE per node"
         ]
-      }
+      },
+      "learn": "https://docs.cloud.google.com/docs/get-started/aws-azure-gcp-service-comparison"
     },
     {
       "id": "cloud-terraform-envs",
@@ -5630,7 +5817,8 @@
           "Separate folders: explicit, can differ, separate access per environment",
           "Most teams use folders (or Terragrunt) for real environments"
         ]
-      }
+      },
+      "learn": "https://developer.hashicorp.com/terraform/language/modules"
     },
     {
       "id": "cloud-drift",
@@ -5654,7 +5842,8 @@
           "Keep a break-glass role for emergencies, with alerts and audit logs",
           "Detect drift on a schedule and alert"
         ]
-      }
+      },
+      "learn": "https://developer.hashicorp.com/terraform/tutorials/state/resource-drift"
     },
     {
       "id": "cloud-ci-yaml",
@@ -5676,7 +5865,8 @@
           "Only run what changed (path rules, affected tests)",
           "Fail fast: lint and unit tests before slow integration tests"
         ]
-      }
+      },
+      "learn": "https://docs.gitlab.com/ci/yaml/"
     },
     {
       "id": "cloud-load-balancers",
@@ -5700,7 +5890,8 @@
           "They break even load balancing and lose sessions when a server dies",
           "Better: stateless servers with sessions in Redis or tokens"
         ]
-      }
+      },
+      "learn": "https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/how-elastic-load-balancing-works.html"
     },
     {
       "id": "cloud-url-journey",
@@ -5724,7 +5915,8 @@
           "After that, traffic is encrypted and tamper-proof",
           "TLS 1.3 does it in one round trip"
         ]
-      }
+      },
+      "learn": "https://developer.mozilla.org/en-US/docs/Web/Performance/Guides/How_browsers_work"
     },
     {
       "id": "cloud-serverless",
@@ -5748,7 +5940,8 @@
           "Keep the package small and do less work at startup",
           "Keep a minimum number of warm instances (provisioned concurrency, min instances)"
         ]
-      }
+      },
+      "learn": "https://docs.cloud.google.com/run/docs/overview/what-is-cloud-run"
     },
     {
       "id": "cloud-pipeline-design",
@@ -5773,7 +5966,8 @@
           "Roll out to a percentage of users, or turn off instantly without a deploy",
           "Clean up old flags, or they become debt"
         ]
-      }
+      },
+      "learn": "https://martinfowler.com/bliki/DeploymentPipeline.html"
     },
     {
       "id": "cloud-cost",
@@ -5798,7 +5992,8 @@
           "Mix with on-demand nodes so a reclaim does not take everything down",
           "Not for databases or single critical instances"
         ]
-      }
+      },
+      "learn": "https://docs.aws.amazon.com/wellarchitected/latest/cost-optimization-pillar/welcome.html"
     },
     {
       "id": "cloud-disaster-recovery",
@@ -5823,7 +6018,8 @@
           "RPO drives backup and replication frequency",
           "RTO drives standby setup; smaller numbers cost more"
         ]
-      }
+      },
+      "learn": "https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-options-in-the-cloud.html"
     },
     {
       "id": "cloud-git-rebase",
@@ -5847,7 +6043,8 @@
           "They get duplicate commits and painful conflicts",
           "Rebase your own local work; merge shared branches"
         ]
-      }
+      },
+      "learn": "https://git-scm.com/book/en/v2/Git-Branching-Rebasing"
     },
     {
       "id": "cloud-git-undo",
@@ -5871,7 +6068,8 @@
           "Reset is fine for local, unpushed commits",
           "Lost something? git reflog can usually recover it"
         ]
-      }
+      },
+      "learn": "https://git-scm.com/book/en/v2/Git-Basics-Undoing-Things"
     },
     {
       "id": "cloud-bash-pipes",
@@ -5895,7 +6093,8 @@
           "-o pipefail: a pipeline fails if any part fails, not just the last",
           "Together they stop scripts silently carrying on after errors"
         ]
-      }
+      },
+      "learn": "https://www.gnu.org/software/bash/manual/bash.html#Pipelines"
     },
     {
       "id": "cloud-git-bisect",
@@ -5918,7 +6117,8 @@
           "Creates a new commit with a different hash",
           "Overuse makes histories hard to follow; prefer merging when you can"
         ]
-      }
+      },
+      "learn": "https://git-scm.com/docs/git-bisect"
     },
     {
       "id": "cloud-bash-loop",
@@ -5942,7 +6142,8 @@
           "Default to double-quoting every variable"
         ],
         "answer": "name='G S'\necho '$name'   # $name\necho \"$name\"   # G S"
-      }
+      },
+      "learn": "https://www.gnu.org/software/bash/manual/bash.html#Quoting"
     },
     {
       "id": "test-contract",
@@ -5967,7 +6168,8 @@
           "You still need a few end-to-end checks against the real system",
           "Review contract changes like code"
         ]
-      }
+      },
+      "learn": "https://martinfowler.com/bliki/ContractTest.html"
     },
     {
       "id": "test-pyramid",
@@ -5992,7 +6194,8 @@
           "Over-mocking tests the wiring, not the behavior",
           "Back mocks with contract tests or a few real integration tests"
         ]
-      }
+      },
+      "learn": "https://martinfowler.com/articles/practical-test-pyramid.html"
     },
     {
       "id": "test-coverage",
@@ -6017,7 +6220,8 @@
           "If tests still pass, that mutant survived: your tests missed it",
           "Measures test quality, not just lines run (Stryker for JavaScript)"
         ]
-      }
+      },
+      "learn": "https://martinfowler.com/bliki/TestCoverage.html"
     },
     {
       "id": "q-jest-basics",
@@ -6041,7 +6245,8 @@
           "Two different objects with the same fields: toEqual passes, toBe fails",
           "toStrictEqual also checks undefined properties and classes"
         ]
-      }
+      },
+      "learn": "https://jestjs.io/docs/using-matchers"
     },
     {
       "id": "q-jest-fn",
@@ -6065,7 +6270,8 @@
           "A spy still calls the real method unless you mock its implementation",
           "Restore spies after each test (mockRestore or restoreMocks)"
         ]
-      }
+      },
+      "learn": "https://jestjs.io/docs/mock-functions"
     },
     {
       "id": "q-jest-hooks",
@@ -6089,7 +6295,8 @@
           "Running in parallel or alone gives different results",
           "Reset state in beforeEach so every test starts clean"
         ]
-      }
+      },
+      "learn": "https://jestjs.io/docs/setup-teardown"
     },
     {
       "id": "q-async-tests",
@@ -6112,7 +6319,8 @@
           "Errors may surface later, in another test, confusingly",
           "Lint for floating promises; expect.assertions(n) catches it"
         ]
-      }
+      },
+      "learn": "https://jestjs.io/docs/asynchronous"
     },
     {
       "id": "q-mocha-chai",
@@ -6134,7 +6342,8 @@
           "Jest bundles runner, assertions, mocks and coverage together",
           "Mocha is more flexible; Jest is quicker to set up"
         ]
-      }
+      },
+      "learn": "https://mochajs.org/"
     },
     {
       "id": "q-test-doubles",
@@ -6158,7 +6367,8 @@
           "Stubs test state; mocks test behavior",
           "Over-using mocks ties tests to implementation details"
         ]
-      }
+      },
+      "learn": "https://martinfowler.com/articles/mocksArentStubs.html"
     },
     {
       "id": "q-test-types",
@@ -6182,7 +6392,8 @@
           "Real network calls, clocks, time zones and randomness",
           "Fix the cause; retries just hide it"
         ]
-      }
+      },
+      "learn": "https://martinfowler.com/bliki/IntegrationTest.html"
     },
     {
       "id": "q-snapshots",
@@ -6206,7 +6417,8 @@
           "When they change on every unrelated edit",
           "Keep them small, or assert on specific behavior instead"
         ]
-      }
+      },
+      "learn": "https://jestjs.io/docs/snapshot-testing"
     },
     {
       "id": "q-tdd",
@@ -6230,7 +6442,8 @@
           "Refactor: clean up code and tests while everything stays green",
           "Small steps, repeated"
         ]
-      }
+      },
+      "learn": "https://martinfowler.com/bliki/TestDrivenDevelopment.html"
     },
     {
       "id": "q-supertest",
@@ -6253,7 +6466,8 @@
           "Or a fresh container per suite (Testcontainers)",
           "Seed only what each test needs"
         ]
-      }
+      },
+      "learn": "https://github.com/forwardemail/supertest"
     },
     {
       "id": "q-msw",
@@ -6277,7 +6491,8 @@
           "Error responses and delays are easy to simulate",
           "Tests describe the API, not your implementation"
         ]
-      }
+      },
+      "learn": "https://mswjs.io/docs/"
     },
     {
       "id": "q-specmatic-stub",
@@ -6301,7 +6516,8 @@
           "The provider knows which changes would break someone",
           "Pact is the best-known tool for this style"
         ]
-      }
+      },
+      "learn": "https://docs.specmatic.io/"
     },
     {
       "id": "q-coverage-gate",
@@ -6325,7 +6541,8 @@
           "Start with the riskiest, most-changed modules",
           "Gate on diff coverage so the total climbs steadily"
         ]
-      }
+      },
+      "learn": "https://jestjs.io/docs/configuration#coveragethreshold-object"
     },
     {
       "id": "q-e2e",
@@ -6349,7 +6566,8 @@
           "Isolated test data per run",
           "Mock third parties you do not control"
         ]
-      }
+      },
+      "learn": "https://playwright.dev/docs/best-practices"
     },
     {
       "id": "q-flaky-ci",
@@ -6374,7 +6592,8 @@
           "Keep tracking its pass rate",
           "Delete or fix it; quarantine is not a graveyard"
         ]
-      }
+      },
+      "learn": "https://martinfowler.com/articles/nonDeterminism.html"
     },
     {
       "id": "q-integration-strategy",
@@ -6399,7 +6618,8 @@
           "Retry only around the sandbox, and alert on sustained failure",
           "Treat sandbox results as a signal, not a gate"
         ]
-      }
+      },
+      "learn": "https://martinfowler.com/articles/microservice-testing/"
     },
     {
       "id": "q-temporal-testing",
@@ -6423,7 +6643,8 @@
           "That catches non-deterministic changes before they break running workflows",
           "Run it in CI with histories exported from production"
         ]
-      }
+      },
+      "learn": "https://docs.temporal.io/develop/typescript/best-practices/testing-suite"
     },
     {
       "id": "test-otel",
@@ -6448,7 +6669,8 @@
           "Instrumentation libraries for Kafka do this automatically",
           "Batches may use span links to connect to many parent traces"
         ]
-      }
+      },
+      "learn": "https://opentelemetry.io/docs/concepts/context-propagation/"
     },
     {
       "id": "test-alerting",
@@ -6473,7 +6695,8 @@
           "It links to a runbook and a dashboard",
           "If the response is always 'ignore it', delete the alert"
         ]
-      }
+      },
+      "learn": "https://sre.google/sre-book/monitoring-distributed-systems/"
     },
     {
       "id": "q-structured-logs",
@@ -6497,7 +6720,8 @@
           "Easy to aggregate, count and graph",
           "Add trace ids so logs link to traces"
         ]
-      }
+      },
+      "learn": "https://opentelemetry.io/docs/concepts/signals/logs/"
     },
     {
       "id": "q-metric-types",
@@ -6521,7 +6745,8 @@
           "A few very slow requests can hide behind a fine average",
           "SLOs are usually written on percentiles"
         ]
-      }
+      },
+      "learn": "https://prometheus.io/docs/concepts/metric_types/"
     },
     {
       "id": "q-red-use",
@@ -6545,7 +6770,8 @@
           "Connection pool wait time, queue depth and age",
           "Saturation rises before latency and errors do, so it is an early warning"
         ]
-      }
+      },
+      "learn": "https://www.brendangregg.com/usemethod.html"
     },
     {
       "id": "q-otel-span",
@@ -6568,7 +6794,8 @@
           "Events: timestamped moments inside a span (retry, cache miss)",
           "recordException adds an error event with the stack trace"
         ]
-      }
+      },
+      "learn": "https://opentelemetry.io/docs/languages/js/instrumentation/"
     },
     {
       "id": "q-promql-rate",
@@ -6592,7 +6819,8 @@
           "rate() also handles counter resets when a process restarts",
           "Graph raw counters and you get ever-rising lines"
         ]
-      }
+      },
+      "learn": "https://prometheus.io/docs/prometheus/latest/querying/functions/#rate"
     },
     {
       "id": "q-sampling",
@@ -6616,7 +6844,8 @@
           "Rare but important operations (payments, refunds)",
           "A small random sample of normal traffic, as a baseline"
         ]
-      }
+      },
+      "learn": "https://opentelemetry.io/docs/concepts/sampling/"
     },
     {
       "id": "q-trace-context",
@@ -6640,7 +6869,8 @@
           "It travels in headers, so keep it small",
           "Never put secrets or personal data in it"
         ]
-      }
+      },
+      "learn": "https://www.w3.org/TR/trace-context/"
     },
     {
       "id": "q-correlate",
@@ -6664,7 +6894,8 @@
           "Redact in the logger (pino redact paths) as a safety net",
           "Treat logs as sensitive: access control and retention limits"
         ]
-      }
+      },
+      "learn": "https://grafana.com/docs/grafana/latest/fundamentals/exemplars/"
     },
     {
       "id": "q-dashboard",
@@ -6688,7 +6919,8 @@
           "Millions of series blow up memory and cost in Prometheus",
           "Put ids in logs and traces, not metric labels"
         ]
-      }
+      },
+      "learn": "https://grafana.com/docs/grafana/latest/visualizations/dashboards/build-dashboards/best-practices/"
     },
     {
       "id": "q-instrument-service",
@@ -6713,7 +6945,8 @@
           "Traces for anything spanning several services",
           "With OpenTelemetry auto-instrumentation, traces are nearly free to add"
         ]
-      }
+      },
+      "learn": "https://opentelemetry.io/docs/concepts/instrumentation/"
     },
     {
       "id": "q-sli-slo",
@@ -6737,7 +6970,8 @@
           "Budget left: ship faster and take risks",
           "Budget spent: slow down and fix reliability first"
         ]
-      }
+      },
+      "learn": "https://sre.google/sre-book/service-level-objectives/"
     },
     {
       "id": "q-alert-fatigue",
@@ -6761,7 +6995,8 @@
           "Example: error budget burning fast pages; disk 70% full is a ticket",
           "If a page can wait until morning, it should not be a page"
         ]
-      }
+      },
+      "learn": "https://sre.google/workbook/alerting-on-slos/"
     },
     {
       "id": "q-load-testing",
@@ -6785,7 +7020,8 @@
           "Averages hide queueing and GC pauses",
           "Users remember the slow requests"
         ]
-      }
+      },
+      "learn": "https://grafana.com/docs/k6/latest/testing-guides/test-types/"
     },
     {
       "id": "q-runbooks",
@@ -6809,7 +7045,8 @@
           "Safe first steps that stop the bleeding",
           "Updated after every incident that used it"
         ]
-      }
+      },
+      "learn": "https://sre.google/workbook/on-call/"
     },
     {
       "id": "q-incident",
@@ -6834,7 +7071,8 @@
           "Keeps the timeline and makes the call on risky actions",
           "Decides when the incident is resolved"
         ]
-      }
+      },
+      "learn": "https://sre.google/sre-book/managing-incidents/"
     },
     {
       "id": "q-slo-design",
@@ -6859,7 +7097,8 @@
           "The policy is agreed in advance with product, not decided mid-crisis",
           "If it keeps running out, the SLO or the system needs to change"
         ]
-      }
+      },
+      "learn": "https://sre.google/workbook/implementing-slos/"
     },
     {
       "id": "q-tail-latency",
@@ -6884,7 +7123,8 @@
           "So each service's tail becomes the user's typical experience",
           "Fixes: hedged requests, timeouts, fewer fan-out calls"
         ]
-      }
+      },
+      "learn": "https://research.google/pubs/the-tail-at-scale/"
     },
     {
       "id": "q-chaos",
@@ -6909,7 +7149,8 @@
           "Automatic abort if key metrics cross a threshold",
           "Run when the team is around, never on peak days"
         ]
-      }
+      },
+      "learn": "https://principlesofchaos.org/"
     }
   ]
 }

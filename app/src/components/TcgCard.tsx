@@ -5,7 +5,7 @@ import { CodeBlock } from './CodeBlock'
 import { getColorLogo, isDarkLogo } from '../lib/colorLogos'
 import { brandColor, getIcon } from '../lib/icons'
 import { EX_COLOR, RARITY_META, TYPE_META } from '../lib/meta'
-import { FOIL_NAMES, type Card, type CardType, type Foil } from '../types'
+import { FOIL_NAMES, type Card, type CardType, type Foil, type SpecialColor } from '../types'
 
 const MAX_TILT = 14
 const DOUBLE_TAP_MS = 300
@@ -22,9 +22,11 @@ interface Props {
   still?: boolean
   // review slot: a shine on everything except the art, like a reverse holo
   reverse?: boolean
+  // Special Art: the whole card in one color, like gold and red etched cards
+  mono?: SpecialColor
 }
 
-export function TcgCard({ card, foil, flipped: flippedProp, onFlip, still = false, reverse = false }: Props) {
+export function TcgCard({ card, foil, flipped: flippedProp, onFlip, still = false, reverse = false, mono }: Props) {
   const [flippedState, setFlippedState] = useState(false)
   const flipped = flippedProp ?? flippedState
   const sceneRef = useRef<HTMLDivElement>(null)
@@ -80,8 +82,10 @@ export function TcgCard({ card, foil, flipped: flippedProp, onFlip, still = fals
       className="tcg-scene"
       data-rarity={card.rarity}
       data-foil={foil}
+      data-mono={mono}
       style={
-        { '--type': accent, ...(still && { '--card-w': `${CARD_WIDTH}px` }) } as CSSProperties
+        // a mono card takes its whole palette from CSS, so it does not set --type
+        { ...(!mono && { '--type': accent }), ...(still && { '--card-w': `${CARD_WIDTH}px` }) } as CSSProperties
       }
       {...handlers}
     >
@@ -113,7 +117,7 @@ export function TcgCard({ card, foil, flipped: flippedProp, onFlip, still = fals
               </header>
 
               <div className={card.code ? 'art art-compact' : 'art'}>
-                <CardArt card={card} color={fullArt || isEx} />
+                <CardArt card={card} color={fullArt || isEx || !!mono} />
                 {(card.rarity === 'ultra' || isEx) && <Sparkles />}
                 <div className="holo-art" />
               </div>
@@ -181,7 +185,7 @@ export function TcgCard({ card, foil, flipped: flippedProp, onFlip, still = fals
                 </div>
               )}
 
-              <CardFooter card={card} foil={foil} />
+              <CardFooter card={card} foil={foil} link={!still} />
             </div>
             <div className="sheen" />
             <div className="holo-full" />
@@ -232,7 +236,7 @@ function CardArt({ card, color }: { card: Card; color: boolean }) {
   }
 
   return (
-    <div className={`flex items-center gap-5 ${icons.length > 1 ? 'art-multi' : ''}`}>
+    <div className={`art-logos flex items-center gap-5 ${icons.length > 1 ? 'art-multi' : ''}`}>
       {icons.map(({ slug, icon, logo }) => {
         const width = icons.length > 1 ? 52 : 92
         if (logo && (color || !icon)) {
@@ -279,16 +283,62 @@ const TYPE_ART: Record<CardType, string> = {
   syntax: 'M8 6 2 12l6 6M16 6l6 6-6 6M14 4l-4 16',
 }
 
-function CardFooter({ card, foil }: { card: Card; foil: Foil }) {
+function CardFooter({ card, foil, link = false }: { card: Card; foil: Foil; link?: boolean }) {
   const rarity = RARITY_META[card.rarity]
   return (
-    <footer className="flex items-center justify-between text-[10px] text-white/55 font-medium">
+    <footer className="flex items-center justify-between gap-2 text-[10px] text-white/55 font-medium">
       <span>{FOIL_NAMES[foil]}</span>
+      {link && card.learn && <LearnLink url={card.learn} />}
       <span className="flex items-center gap-1.5">
         <span className="rarity-symbol">{rarity.symbol}</span>
         {card.number}
       </span>
     </footer>
+  )
+}
+
+const SITE_NAMES: Record<string, string> = {
+  'developer.mozilla.org': 'MDN',
+  'react.dev': 'React docs',
+  'www.typescriptlang.org': 'TS Handbook',
+  'nodejs.org': 'Node.js docs',
+  'docs.python.org': 'Python docs',
+  'd2l.ai': 'Dive into DL',
+  'scikit-learn.org': 'scikit-learn',
+  'www.postgresql.org': 'PostgreSQL docs',
+  'use-the-index-luke.com': 'Use The Index, Luke',
+  'www.mongodb.com': 'MongoDB docs',
+  'microservices.io': 'microservices.io',
+  'docs.confluent.io': 'Confluent',
+  'kubernetes.io': 'Kubernetes docs',
+  'docs.docker.com': 'Docker docs',
+  'developer.hashicorp.com': 'Terraform docs',
+  'git-scm.com': 'Pro Git',
+  'sre.google': 'Google SRE',
+  'martinfowler.com': 'Martin Fowler',
+  'opentelemetry.io': 'OpenTelemetry',
+  'jestjs.io': 'Jest docs',
+  'en.wikipedia.org': 'Wikipedia',
+}
+
+function siteName(url: string): string {
+  const host = new URL(url).hostname
+  return SITE_NAMES[host] ?? host.replace(/^(www|docs)\./, '')
+}
+
+// Opens a page explaining the concept in full. Stops the tap from counting toward a double-tap flip.
+function LearnLink({ url }: { url: string }) {
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      onPointerUp={(e) => e.stopPropagation()}
+      onClick={(e) => e.stopPropagation()}
+      className="learn-link"
+    >
+      Learn more ↗ <span className="text-white/50">{siteName(url)}</span>
+    </a>
   )
 }
 

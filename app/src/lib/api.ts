@@ -1,5 +1,15 @@
 import { getCard } from '../data/catalog'
-import type { AnswerResult, Card, CardProgress, HomeStats, PulledCard, SlotKind } from '../types'
+import type {
+  AnswerResult,
+  Card,
+  CardProgress,
+  HomeStats,
+  PulledCard,
+  SlotKind,
+  Special,
+  SpecialColor,
+  SpecialPull,
+} from '../types'
 import { supabase } from './supabase'
 
 const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -13,9 +23,17 @@ export async function openPacks(count: number, setId: string): Promise<PulledCar
     const card = getCard(row.card_key)
     // the database may know a card the app bundle no longer ships
     if (!card) continue
-    ;(packs[row.pack_no - 1] ??= []).push({ card, box: row.card_box, slot: row.slot_kind as SlotKind })
+    ;(packs[row.pack_no - 1] ??= []).push({
+      card,
+      box: row.card_box,
+      slot: row.slot_kind as SlotKind,
+      special: row.special_kind
+        ? { kind: row.special_kind as Special['kind'], color: row.special_color as SpecialColor }
+        : undefined,
+    })
   }
-  return packs.filter(Boolean)
+  // a Special Art is always revealed last
+  return packs.filter(Boolean).map((pack) => [...pack.filter((p) => !p.special), ...pack.filter((p) => p.special)])
 }
 
 export async function recordAnswer(card: Card, gotIt: boolean): Promise<AnswerResult> {
@@ -42,4 +60,17 @@ export async function getProgress(): Promise<Map<string, CardProgress>> {
   const { data, error } = await supabase.from('progress').select('card_id, box, due_at')
   if (error) throw error
   return new Map(data.map((row) => [row.card_id, { box: row.box, due_at: row.due_at }]))
+}
+
+export async function getSpecialPulls(): Promise<SpecialPull[]> {
+  const { data, error } = await supabase
+    .from('special_pulls')
+    .select('card_id, kind, color, pulled_at')
+    .order('pulled_at', { ascending: false })
+  if (error) throw error
+  return data.flatMap((row) => {
+    const card = getCard(row.card_id)
+    if (!card) return []
+    return [{ card, kind: row.kind as Special['kind'], color: row.color as SpecialColor, pulledAt: row.pulled_at }]
+  })
 }

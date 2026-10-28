@@ -16,7 +16,7 @@ import type { AnswerResult, CardSet, PulledCard } from './types'
 type Screen =
   | { name: 'home' | 'binder' }
   | { name: 'packs'; set: CardSet; packs: PulledCard[][] }
-  | { name: 'summary'; results: AnswerResult[] }
+  | { name: 'summary'; results: AnswerResult[]; specials: PulledCard[] }
 
 // shared so React StrictMode's double effect does not create two anonymous users
 let anonymousSignIn: Promise<string | null> | null = null
@@ -63,11 +63,19 @@ export default function App() {
         <PackRun
           set={screen.set}
           packs={screen.packs}
-          onFinish={(results) => setScreen({ name: 'summary', results })}
+          onFinish={(results) =>
+            setScreen({ name: 'summary', results, specials: screen.packs.flat().filter((p) => p.special) })
+          }
         />
       )
     case 'summary':
-      return <SummaryScreen results={screen.results} onHome={() => setScreen({ name: 'home' })} />
+      return (
+        <SummaryScreen
+          results={screen.results}
+          specials={screen.specials}
+          onHome={() => setScreen({ name: 'home' })}
+        />
+      )
     default:
       return (
         <>

@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react'
 import { TcgCard } from '../components/TcgCard'
 import { exVersion, getCard } from '../data/catalog'
-import type { Card, Foil } from '../types'
+import { SPECIAL_COLORS } from '../lib/meta'
+import type { Card, Foil, SpecialColor } from '../types'
 
 const SAMPLE_IDS = [
   'data-coalesce',
@@ -13,6 +14,9 @@ const SAMPLE_IDS = [
   'data-slow-query',
   'data-read-scaling',
 ]
+
+const SPECIAL_IDS = ['data-indexes', 'msg-redis', 'cloud-docker', 'fe-rerenders', 'msg-kafka-basics']
+const COLORS = Object.keys(SPECIAL_COLORS) as SpecialColor[]
 
 const COLOR_IDS = [
   'msg-redis',
@@ -36,6 +40,31 @@ export function DesignPreview() {
         <h1 className="font-display text-3xl font-bold">Design preview</h1>
         <p className="text-sm text-white/60">Front and back side by side. Nothing here is live yet.</p>
       </header>
+
+      {(['ex-fa', 'fa'] as const).map((kind) => (
+        <Section
+          key={kind}
+          title={kind === 'ex-fa' ? 'Special Art: EX-FA' : 'Special Art: FA'}
+          note={
+            kind === 'ex-fa'
+              ? 'EX in the Full Art layout, in every color. 1 in 150 packs.'
+              : 'A card in Full Art, in every color. 1 in 40 packs.'
+          }
+        >
+          {COLORS.map((color, i) => {
+            const base = getCard(SPECIAL_IDS[i % SPECIAL_IDS.length])!
+            const card = kind === 'ex-fa' ? exVersion(base)! : base
+            return (
+              <div key={color} className="flex flex-col gap-2" data-card={`${card.id}-${color}`}>
+                <p className="text-xs font-semibold uppercase tracking-widest text-white/50">
+                  {SPECIAL_COLORS[color].name}
+                </p>
+                <TcgCard card={card} foil={4} mono={color} still />
+              </div>
+            )
+          })}
+        </Section>
+      ))}
 
       <Section title="EX card" note="The base card on the left, its EX version on the right. The EX asks the base card's Weakness.">
         <Pair card={base} label="Base card" />
