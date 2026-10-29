@@ -70,8 +70,20 @@ body {
     0 0 0 1px rgb(255 255 255 / 0.06);
 }
 
+/* explicit rotations so every browser knows which way each face points */
+.face.front {
+  transform: rotateY(0deg);
+}
+
 .face.back {
   transform: rotateY(180deg);
+}
+
+/* parts lifted with z-index (Special Art text over the art) get their own layer, and some browsers
+   then show that layer through the other face; hiding each part's back stops the bleed */
+.face * {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .panel {
