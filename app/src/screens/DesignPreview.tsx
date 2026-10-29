@@ -15,6 +15,8 @@ const SAMPLE_IDS = [
   'data-read-scaling',
 ]
 
+const TYPE_IDS = ['fe-ts-basics', 'js-array-methods', 'data-oversell', 'data-sql-nosql', 'data-select-star', 'beh-conflict']
+
 const SPECIAL_IDS = ['data-indexes', 'msg-redis', 'cloud-docker', 'fe-rerenders', 'msg-kafka-basics']
 const COLORS = Object.keys(SPECIAL_COLORS) as SpecialColor[]
 
@@ -40,6 +42,68 @@ export function DesignPreview() {
         <h1 className="font-display text-3xl font-bold">Design preview</h1>
         <p className="text-sm text-white/60">Front and back side by side. Nothing here is live yet.</p>
       </header>
+
+      <Section
+        title="Card layout"
+        note="Silver type pill reaching into the border, an XP corner, a silver info plate under the logo, the extra section, and a silver-framed weakness on the back."
+      >
+        {TYPE_IDS.slice(0, 4).map((id) => (
+          <div key={id} className="flex gap-4" data-card={`${id}-silver`}>
+            <TcgCard card={getCard(id)!} foil={0} still />
+            <TcgCard card={getCard(id)!} foil={0} flipped still learnLink />
+          </div>
+        ))}
+      </Section>
+
+      <Section
+        title="Special Art layout"
+        note="Pill and weakness take the silver shapes and shading in the card's own color. EX-FA puts the ex rule where the stat strip goes."
+      >
+        {(
+          [
+            ['data-indexes', 'red', true],
+            ['msg-redis', 'gold', true],
+            ['cloud-docker', 'black', false],
+            ['fe-rerenders', 'white', false],
+          ] as const
+        ).map(([id, color, ex]) => {
+          const card = ex ? exVersion(getCard(id)!)! : getCard(id)!
+          return (
+            <div key={id} className="flex gap-4" data-card={`${card.id}-sa-silver`}>
+              <TcgCard card={card} foil={4} mono={color} still />
+              <TcgCard card={card} foil={4} mono={color} flipped still learnLink />
+            </div>
+          )
+        })}
+      </Section>
+
+      <Section title="Every foil" note="Plain, Silver, Gold, Holo and Full Art, then an EX.">
+        {([0, 1, 2, 3, 4] as const).map((foil) => (
+          <div key={foil} data-card={`foil-${foil}`}>
+            <TcgCard card={getCard('data-postgres-mvcc')!} foil={foil} still />
+          </div>
+        ))}
+        <div data-card="foil-ex">
+          <TcgCard card={ex} foil={2} still />
+        </div>
+      </Section>
+
+      <Section
+        title="Card types as energy types"
+        note="Concept = Psychic, Syntax = Lightning, Boss = Dragon, Trade-off = Metal, Trap = Darkness, Story = Fighting."
+      >
+        {TYPE_IDS.map((id) => (
+          <Pair key={id} card={getCard(id)!} />
+        ))}
+      </Section>
+
+      <Section title="Energy symbols on Special Art" note="The same six types on single-color cards.">
+        {TYPE_IDS.map((id, i) => (
+          <div key={id} data-card={`${id}-sa`}>
+            <TcgCard card={getCard(id)!} foil={4} mono={COLORS[i]} still />
+          </div>
+        ))}
+      </Section>
 
       {(['ex-fa', 'fa'] as const).map((kind) => (
         <Section

@@ -184,3 +184,9 @@ app/
 - **Answer modes.** Type or speak an answer and get AI feedback, plus a timed Mock Interview mode with no flipping.
 - **Offline play.** Cache packs and sync answers when you are back online.
 - **Card art.** Memes and custom art in the art box, not only logos.
+
+## Credits
+
+- Card type symbols are from [pokemon-type-svg-icons](https://github.com/duiker101/pokemon-type-svg-icons) by duiker101, based on [this Pokédex design](https://dribbble.com/shots/4862612-Pokedex-iOS-app).
+- Technology logos come from [Simple Icons](https://simpleicons.org) and [Devicon](https://devicon.dev). Logos are trademarks of their owners.
+

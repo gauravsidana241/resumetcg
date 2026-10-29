@@ -1,12 +1,14 @@
 import type { CardType, Rarity, SpecialColor } from '../types'
 
-export const TYPE_META: Record<CardType, { label: string; color: string; glyph: string }> = {
-  concept: { label: 'Concept', color: '#3b82f6', glyph: 'C' },
-  story: { label: 'Story', color: '#f59e0b', glyph: 'S' },
-  tradeoff: { label: 'Trade-off', color: '#a855f7', glyph: 'T' },
-  trap: { label: 'Trap', color: '#ef4444', glyph: '!' },
-  boss: { label: 'Boss', color: '#e11d48', glyph: 'B' },
-  syntax: { label: 'Syntax', color: '#14b8a6', glyph: '{' },
+// Each card type maps to a TCG energy type, which sets its color and symbol (see TypeSymbol).
+// ink is the symbol color on the energy ball: dark on the light yellow and silver, white elsewhere.
+export const TYPE_META: Record<CardType, { label: string; energy: string; color: string; ink: string }> = {
+  concept: { label: 'Concept', energy: 'Psychic', color: '#a855f7', ink: '#ffffff' },
+  syntax: { label: 'Syntax', energy: 'Lightning', color: '#facc15', ink: '#3b2a03' },
+  boss: { label: 'Boss', energy: 'Dragon', color: '#b7791f', ink: '#ffffff' },
+  tradeoff: { label: 'Trade-off', energy: 'Metal', color: '#94a3b8', ink: '#1e293b' },
+  trap: { label: 'Trap', energy: 'Darkness', color: '#2f8f8a', ink: '#ffffff' },
+  story: { label: 'Story', energy: 'Fighting', color: '#c2691e', ink: '#ffffff' },
 }
 
 export const EX_COLOR = '#f97316'

@@ -2,6 +2,7 @@ import { useRef, useState, type CSSProperties, type PointerEvent } from 'react'
 import { motion, useSpring } from 'motion/react'
 import { stackName } from '../data/catalog'
 import { CodeBlock } from './CodeBlock'
+import { TypeSymbol } from './TypeSymbol'
 import { getColorLogo, isDarkLogo } from '../lib/colorLogos'
 import { brandColor, getIcon } from '../lib/icons'
 import { EX_COLOR, RARITY_META, TYPE_META } from '../lib/meta'
@@ -24,9 +25,20 @@ interface Props {
   reverse?: boolean
   // Special Art: the whole card in one color, like gold and red etched cards
   mono?: SpecialColor
+  // show the Learn more link even on a still (fixed-size) card, for the preview
+  learnLink?: boolean
 }
 
-export function TcgCard({ card, foil, flipped: flippedProp, onFlip, still = false, reverse = false, mono }: Props) {
+export function TcgCard({
+  card,
+  foil,
+  flipped: flippedProp,
+  onFlip,
+  still = false,
+  reverse = false,
+  mono,
+  learnLink,
+}: Props) {
   const [flippedState, setFlippedState] = useState(false)
   const flipped = flippedProp ?? flippedState
   const sceneRef = useRef<HTMLDivElement>(null)
@@ -83,6 +95,7 @@ export function TcgCard({ card, foil, flipped: flippedProp, onFlip, still = fals
       data-rarity={card.rarity}
       data-foil={foil}
       data-mono={mono}
+      data-silver
       style={
         // a mono card takes its whole palette from CSS, so it does not set --type
         { ...(!mono && { '--type': accent }), ...(still && { '--card-w': `${CARD_WIDTH}px` }) } as CSSProperties
@@ -102,18 +115,14 @@ export function TcgCard({ card, foil, flipped: flippedProp, onFlip, still = fals
               {reverse && !fullArt && <div className="reverse-holo" />}
               <header className="flex items-center gap-2">
                 <span className="type-pill">{type.label}</span>
-                <h2
-                  className={`font-display font-bold leading-tight tracking-tight line-clamp-2 flex-1 ${
-                    card.title.length > 14 ? 'text-[14px]' : 'text-lg'
-                  }`}
-                >
+                <h2 className="card-title font-display font-bold tracking-tight line-clamp-2 flex-1">
                   {card.title}
                   {isEx && <span className="ex-badge">ex</span>}
                 </h2>
                 <span className="font-display text-xs font-semibold text-white/70">
                   XP <span className="text-base text-white">{rarity.xp}</span>
                 </span>
-                <span className="orb">{type.glyph}</span>
+                <Orb type={card.type} />
               </header>
 
               <div className={card.code ? 'art art-compact' : 'art'}>
@@ -130,7 +139,7 @@ export function TcgCard({ card, foil, flipped: flippedProp, onFlip, still = fals
 
               <div className={`attack flex-col ${fullArt ? '' : 'flex-1'}`}>
                 <div className="flex gap-2">
-                  <span className="orb orb-sm mt-0.5">{type.glyph}</span>
+                  <Orb type={card.type} size="orb-sm mt-0.5" />
                   {/* code, or a long question next to the ex rule, needs the smaller size to fit */}
                   <p
                     className={`font-medium leading-snug ${
@@ -143,7 +152,13 @@ export function TcgCard({ card, foil, flipped: flippedProp, onFlip, still = fals
                 {card.code && <CodeBlock code={card.code} />}
               </div>
 
-              {isEx && <ExRule of={card.exOf} />}
+              {isEx ? (
+                <div className="stat-bar stat-bar-rule">
+                  <ExRule of={card.exOf} />
+                </div>
+              ) : (
+                <StatBar card={card} />
+              )}
 
               <CardFooter card={card} foil={foil} />
             </div>
@@ -157,10 +172,10 @@ export function TcgCard({ card, foil, flipped: flippedProp, onFlip, still = fals
             <div className="panel">
               <header className="flex items-center gap-2">
                 <span className="type-pill">Answer</span>
-                <h2 className="font-display text-base font-bold leading-tight truncate flex-1">
+                <h2 className="card-title font-display font-bold tracking-tight line-clamp-2 flex-1">
                   {card.title}
                 </h2>
-                <span className="orb">{type.glyph}</span>
+                <Orb type={card.type} />
               </header>
 
               {card.answer && <CodeBlock code={card.answer} />}
@@ -168,7 +183,7 @@ export function TcgCard({ card, foil, flipped: flippedProp, onFlip, still = fals
               <ul className="flex flex-col gap-2 flex-1 overflow-hidden">
                 {card.points.map((point) => (
                   <li key={point} className="flex gap-2 text-[12.5px] leading-snug text-white/90">
-                    <span className="orb orb-xs mt-[3px]">{type.glyph}</span>
+                    <Orb type={card.type} size="orb-xs mt-[3px]" />
                     <span>{point}</span>
                   </li>
                 ))}
@@ -185,7 +200,7 @@ export function TcgCard({ card, foil, flipped: flippedProp, onFlip, still = fals
                 </div>
               )}
 
-              <CardFooter card={card} foil={foil} link={!still} />
+              <CardFooter card={card} foil={foil} link={learnLink ?? !still} />
             </div>
             <div className="sheen" />
             <div className="holo-full" />
@@ -218,21 +233,7 @@ function CardArt({ card, color }: { card: Card; color: boolean }) {
   })
 
   if (icons.length === 0) {
-    return (
-      <svg
-        viewBox="0 0 24 24"
-        className="art-icon"
-        style={{ width: 84 }}
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={1.6}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden
-      >
-        <path d={TYPE_ART[card.type]} />
-      </svg>
-    )
+    return <TypeSymbol type={card.type} className="art-icon" />
   }
 
   return (
@@ -272,15 +273,37 @@ function CardArt({ card, color }: { card: Card; color: boolean }) {
   )
 }
 
-// stroke glyphs for cards that have no technology logo
-const TYPE_ART: Record<CardType, string> = {
-  concept:
-    'M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.3h6c0-1 .4-1.8 1-2.3A7 7 0 0 0 12 2z',
-  story: 'M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2zM22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z',
-  tradeoff: 'M12 3v18M7 21h10M4 7h16M7 7l-3 7a3 3 0 0 0 6 0zM17 7l-3 7a3 3 0 0 0 6 0z',
-  trap: 'M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01',
-  boss: 'M2 20h20M3 7l5 5 4-7 4 7 5-5-2 11H5z',
-  syntax: 'M8 6 2 12l6 6M16 6l6 6-6 6M14 4l-4 16',
+// the energy ball: the type's symbol on a ball of its color
+function Orb({ type, size = '' }: { type: CardType; size?: string }) {
+  return (
+    <span className={`orb ${size}`} style={{ color: TYPE_META[type].ink }}>
+      <TypeSymbol type={type} className="orb-symbol" />
+    </span>
+  )
+}
+
+// EXPLORATION: the printed-card stat strip, with the question's follow-ups and its difficulty
+const DIFFICULTY: Record<Card['rarity'], number> = { common: 1, rare: 2, ultra: 3, ex: 3 }
+
+function StatBar({ card }: { card: Card }) {
+  const followUps = card.weakness ? 1 : 0
+  const level = DIFFICULTY[card.rarity]
+  return (
+    <div className="stat-bar">
+      <span>
+        Follow-ups <b>×{followUps}</b>
+      </span>
+      <span className="stat-slash" aria-hidden />
+      <span className="flex items-center gap-1.5">
+        Difficulty
+        <span className="flex gap-0.5">
+          {[1, 2, 3].map((n) => (
+            <i key={n} className={n <= level ? 'pip pip-on' : 'pip'} />
+          ))}
+        </span>
+      </span>
+    </div>
+  )
 }
 
 function CardFooter({ card, foil, link = false }: { card: Card; foil: Foil; link?: boolean }) {
