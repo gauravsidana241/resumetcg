@@ -23,17 +23,17 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-@property --angle {
-  syntax: "<angle>";
-  initial-value: 0deg;
-  inherits: false;
-}
-
 /* ---------- Card structure ---------- */
 
 .tcg-scene {
   --mx: 50%;
   --my: 50%;
+  /* card text is in Cabin, a humanist sans in the Gill Sans family of printed cards; titles and XP
+     use its condensed cut. Scoped to the card, so the rest of the app keeps its fonts. */
+  --font-display:
+    "Cabin Condensed", "Cabin", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Cabin", ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-sans);
   perspective: 1100px;
   touch-action: manipulation;
   user-select: none;
@@ -125,27 +125,15 @@ body {
     0 0 28px -4px color-mix(in oklab, var(--type) 70%, transparent);
 }
 
-[data-rarity="ultra"] .face {
-  background: conic-gradient(
-    from var(--angle),
-    #f43f5e,
-    #f59e0b,
-    #fde047,
-    #22d3ee,
-    #a855f7,
-    #f43f5e
-  );
-  animation: frame-spin 5s linear infinite;
-  box-shadow:
-    0 24px 50px -18px rgb(0 0 0 / 0.85),
-    0 0 36px -2px rgb(244 63 94 / 0.55),
-    0 0 70px -10px rgb(168 85 247 / 0.5);
+/* Rare: a black border with a faint sheen */
+[data-rarity="ultra"] {
+  --frame: linear-gradient(145deg, #2a2b31, #08080a 35%, #1c1d22 65%, #050506);
 }
 
-@keyframes frame-spin {
-  to {
-    --angle: 360deg;
-  }
+[data-rarity="ultra"] .face {
+  box-shadow:
+    0 24px 50px -18px rgb(0 0 0 / 0.85),
+    0 0 0 1px rgb(255 255 255 / 0.08);
 }
 
 /* ---------- Card parts ---------- */
@@ -250,9 +238,7 @@ body {
   display: flex;
   gap: 8px;
   padding: 10px;
-  border-radius: 8px;
-  background: rgb(255 255 255 / 0.04);
-  border-top: 1px solid rgb(255 255 255 / 0.1);
+  /* the question sits straight on the card on every layout: no box behind it */
 }
 
 .code-block {
@@ -442,7 +428,6 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  [data-rarity="ultra"] .face,
   .sparkle {
     animation: none;
   }
@@ -773,13 +758,6 @@ body {
 .full-art .set-strip {
   color: rgb(255 255 255 / 0.75);
   text-shadow: 0 1px 4px black;
-}
-
-.full-art .attack {
-  background: rgb(5 6 10 / 0.72);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  border: 1px solid rgb(255 255 255 / 0.12);
 }
 
 .full-art footer {
@@ -1494,22 +1472,65 @@ body {
   );
 }
 
-/* stat strip: thin silver lines above and below, follow-ups on the left, difficulty on the right */
+/* ---------- stat strip and ex rule box: SVG plates (see Plate.tsx) ---------- */
+
+/* each plate has a rim in the card's border color (--rim-1 to --rim-4, top to bottom) and a lighter
+   fill (--plate). Silver borders, and the rainbow border, get the type pill's silver rim. */
+[data-rarity] {
+  --rim-1: #ffffff;
+  --rim-2: #eef0f3;
+  --rim-3: #8a919c;
+  --rim-4: #a3aab4;
+  --plate: #e6e9ee;
+}
+
+/* Rare: silver rims around black insides */
+[data-rarity="ultra"]:not([data-mono]) {
+  --plate: #0c0d10;
+}
+
+/* type-colored borders (Uncommon), and Full Art's brand-tinted border, get a rim in that color */
+[data-rarity="rare"],
+[data-foil="4"]:not([data-rarity="ultra"]) {
+  --rim-1: color-mix(in oklab, var(--type) 25%, white);
+  --rim-2: color-mix(in oklab, var(--type) 55%, white);
+  --rim-3: var(--type);
+  --rim-4: color-mix(in oklab, var(--type) 75%, black);
+  --plate: color-mix(in oklab, var(--type) 22%, white);
+}
+
+/* Special Art: the rim and fill in the card's own color */
+[data-rarity][data-mono] {
+  --rim-1: var(--mono-hi);
+  --rim-2: color-mix(in oklab, var(--mono-hi) 55%, var(--mono-bg));
+  --rim-3: color-mix(in oklab, var(--mono-bg) 80%, black);
+  --rim-4: var(--mono-bg);
+  --plate: color-mix(in oklab, var(--mono-bg) 55%, var(--mono-hi));
+}
+
+.plate {
+  position: relative;
+  z-index: 0;
+}
+
+.plate-svg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: visible;
+  /* shadow to the bottom and right, like the type pill */
+  filter: drop-shadow(1.5px 2px 1px rgb(0 0 0 / 0.45));
+}
+
+/* two plates side by side: Follow-ups on the left, Difficulty on the right */
 .stat-bar {
   position: relative;
   flex: none;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 4px 4px;
+  gap: 2px;
   font-size: 10.5px;
   font-weight: 600;
   color: #1b1d24;
-  /* top and bottom lines each carry the full gradient, so the bottom one doesn't fade out */
-  background:
-    var(--silver-line) top / 100% 2px no-repeat,
-    var(--silver-line) bottom / 100% 2px no-repeat;
-  padding-block: 6px;
 }
 
 .stat-bar b {
@@ -1518,18 +1539,91 @@ body {
   font-size: 13px;
 }
 
-/* the swoosh in the middle of the strip */
-.stat-slash {
-  width: 22px;
-  height: 14px;
-  background: var(--silver);
-  clip-path: shape(
-    from 100% 0,
-    curve to 0 100% with 40% 20% / 60% 80%,
-    line to 30% 100%,
-    curve to 100% 0 with 70% 60% / 60% 0%,
-    close
-  );
+.stat-seg {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  height: 22px;
+  padding: 0 17px 0 16px;
+}
+
+/* EX: the card number stacked on the left, the ex rule box on the right */
+.ex-bottom {
+  position: relative;
+  flex: none;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.ex-meta {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-bottom: 1px;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.ex-box {
+  flex: 1;
+  /* no top padding, so the label sits in the top-left corner */
+  padding: 0 22px 8px 23px;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 16px;
+}
+
+/* the rule text wraps around the label: its first line sits beside it, the rest below */
+.ex-box-text {
+  padding-top: 5px;
+}
+
+.panel .ex-box,
+.panel .ex-box b {
+  color: #1b1d24 !important;
+}
+
+.ex-box b {
+  font-weight: 700;
+}
+
+/* the label's text, over the tab the box draws in its rim; the text wraps around it */
+.ex-box-label {
+  float: left;
+  width: 88px;
+  height: 16px;
+  margin: 0 6px 0 -23px;
+  padding-left: 25px;
+  font-family: "Barlow Condensed", ui-sans-serif, system-ui, sans-serif;
+  font-style: italic;
+  font-weight: 800;
+  font-size: 12.5px;
+  letter-spacing: 0.03em;
+  line-height: 16px;
+  -webkit-text-stroke: 0.4px rgb(255 255 255 / 0.9);
+  paint-order: stroke fill;
+  text-shadow:
+    0 1px 0 rgb(255 255 255 / 0.85),
+    0 -0.5px 0 rgb(255 255 255 / 0.6);
+}
+
+.panel .ex-box-label {
+  color: var(--silver-ink) !important;
+}
+
+/* Special Art: plate text in the card's ink, and its own-color label */
+[data-mono] .panel .ex-box,
+[data-mono] .panel .ex-box b {
+  color: var(--mono-ink) !important;
+}
+
+[data-mono] .ex-box-label {
+  -webkit-text-stroke: 0;
+  text-shadow: 0 1px 0 rgb(0 0 0 / 0.25) !important;
 }
 
 .pip {
@@ -1570,8 +1664,8 @@ body {
   mask-composite: add;
 }
 
-/* XP like printed HP: a small label and a big number */
-[data-silver]:not([data-mono]) .panel > header > span.font-display {
+/* XP like printed HP: a small label and a big number, on every card including Special Art */
+[data-silver] .panel > header > span.font-display {
   display: flex;
   align-items: baseline;
   gap: 2px;
@@ -1579,21 +1673,10 @@ body {
   font-weight: 700;
 }
 
-[data-silver]:not([data-mono]) .panel > header > span.font-display > span {
+[data-silver] .panel > header > span.font-display > span {
   font-size: 24px;
   font-weight: 700;
   line-height: 1;
-}
-
-/* the ex rule sitting in the stat strip's place */
-.stat-bar-rule {
-  justify-content: flex-start;
-}
-
-.stat-bar-rule .ex-rule {
-  padding: 0;
-  background: none;
-  border: none;
 }
 
 /* the Learn more pill in silver */
@@ -1697,12 +1780,47 @@ body {
   border: none !important;
 }
 
-/* Full Art (not Special Art): the art fills the card, so text stays light and the question keeps its dark glass */
-[data-silver]:not([data-mono]) .full-art .attack {
-  background: rgb(5 6 10 / 0.72) !important;
-  border: 1px solid rgb(255 255 255 / 0.12) !important;
+/* ---------- Full Art (not Special Art): one rounded art panel, black text with a white edge ---------- */
+
+/* the art is the whole panel: no silver frame inside the card border, and rounded on every corner */
+[data-silver]:not([data-mono]) .full-art .art {
+  border: none;
+  border-radius: 11px;
+  background:
+    radial-gradient(
+      circle at 50% 40%,
+      color-mix(in oklab, var(--type) 75%, transparent),
+      transparent 70%
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgb(255 255 255 / 0.05) 0 1px,
+      transparent 1px 16px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgb(255 255 255 / 0.05) 0 1px,
+      transparent 1px 16px
+    ),
+    linear-gradient(
+      165deg,
+      color-mix(in oklab, var(--type) 45%, #05060a),
+      color-mix(in oklab, var(--type) 15%, #05060a) 55%,
+      color-mix(in oklab, var(--type) 35%, #05060a)
+    );
 }
 
+/* the light body behind the art never shows, so drop it */
+[data-silver]:not([data-mono]) .face.front.full-art .panel::before {
+  content: none;
+}
+
+/* no dark band behind the title */
+[data-silver]:not([data-mono]) .full-art header {
+  background: none;
+}
+
+/* black text with a white edge wherever text sits on the art (the silver pieces and the light plates keep their own) */
 [data-silver]:not([data-mono])
   .full-art
   :is(
@@ -1710,24 +1828,35 @@ body {
     header > span,
     header > span > span,
     .attack p,
-    .stat-bar,
-    .stat-bar span,
+    .ex-meta span,
     footer,
     footer span
-  ) {
-  color: white !important;
-  text-shadow: 0 1px 4px black;
+  ):not(.type-pill):not(.orb):not(.orb *) {
+  color: #0b0c10 !important;
+  text-shadow:
+    1px 0 0 white,
+    -1px 0 0 white,
+    0 1px 0 white,
+    0 -1px 0 white,
+    0.7px 0.7px 0 white,
+    -0.7px 0.7px 0 white,
+    0.7px -0.7px 0 white,
+    -0.7px -0.7px 0 white !important;
 }
 
-/* the ex rule in the extra section reads dark on the bright body (light on Full Art) */
-[data-silver]:not([data-mono]) .stat-bar-rule .ex-rule,
-[data-silver]:not([data-mono]) .stat-bar-rule .ex-rule span {
-  color: #1b1d24 !important;
+/* icons: the energy orbs keep their color, with a white ring like the text edge */
+[data-silver]:not([data-mono]) .full-art .orb {
+  box-shadow: 0 0 0 1.5px white;
 }
 
-[data-silver]:not([data-mono]) .full-art .stat-bar-rule .ex-rule,
-[data-silver]:not([data-mono]) .full-art .stat-bar-rule .ex-rule span {
-  color: white !important;
+/* the rarity mark is tiny, so a thinner white edge keeps it reading as solid black */
+[data-silver]:not([data-mono]) .full-art :is(footer, .ex-meta) .rarity-symbol {
+  font-size: 12px;
+  text-shadow:
+    0.6px 0 0 white,
+    -0.6px 0 0 white,
+    0 0.6px 0 white,
+    0 -0.6px 0 white !important;
 }
 
 /* ---------- title row: one pill size, one title size, the same on every card ---------- */
@@ -1765,7 +1894,123 @@ body {
   line-height: 1;
 }
 
+/* one title size on every card; titles are written short enough to fit on one line */
 .card-title {
-  font-size: 15px;
+  font-size: 18px;
   line-height: 1.05;
+}
+
+/* ---------- Rare: black border, silver pieces, black tile insides ---------- */
+
+/* black text with a white edge on the black tile insides */
+[data-rarity="ultra"]:not([data-mono])
+  :is(.stat-seg, .stat-seg span, .stat-seg b) {
+  color: #0b0c10 !important;
+  text-shadow:
+    1px 0 0 white,
+    -1px 0 0 white,
+    0 1px 0 white,
+    0 -1px 0 white,
+    0.7px 0.7px 0 white,
+    -0.7px 0.7px 0 white,
+    0.7px -0.7px 0 white,
+    -0.7px -0.7px 0 white !important;
+}
+
+/* difficulty pips: black inside with a white border when filled, a faint border when empty */
+[data-rarity="ultra"]:not([data-mono]) .stat-seg .pip {
+  border-color: rgb(255 255 255 / 0.4);
+}
+
+[data-rarity="ultra"]:not([data-mono]) .stat-seg .pip-on {
+  background: #0b0c10;
+  border-color: white;
+}
+
+/* ---------- Weakness box: one metal body (frame and title bar) around a recessed inside ---------- */
+
+/* the inside: a lighter shade of the card's color (Special Art: its own lighter shade; Rare: black) */
+[data-rarity] {
+  --inner: color-mix(in oklab, var(--type) 22%, white);
+}
+
+[data-rarity][data-mono] {
+  --inner: var(--plate);
+}
+
+[data-rarity="ultra"]:not([data-mono]) {
+  --inner: #0c0d10;
+}
+
+/* frame and title bar are one piece in the tiles' rim gradient, so the color runs on unbroken */
+[data-silver] .panel .weakness {
+  padding: 0 4px 4px !important;
+  border: none !important;
+  border-radius: 8px;
+  overflow: hidden;
+  background: linear-gradient(
+    180deg,
+    var(--rim-1),
+    var(--rim-2) 38%,
+    var(--rim-3) 52%,
+    var(--rim-4)
+  ) !important;
+  filter: drop-shadow(1.5px 2px 1px rgb(0 0 0 / 0.45));
+}
+
+[data-silver] .panel .weakness > p:first-child {
+  padding: 3px 5px;
+  background: none;
+}
+
+/* recessed: the frame casts a shadow in from the top left */
+[data-silver] .panel .weakness > p:last-child {
+  padding: 6px 8px 7px;
+  border-radius: 5px;
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--rim-1) 30%, var(--inner)),
+    color-mix(in oklab, var(--rim-2) 30%, var(--inner)) 38%,
+    color-mix(in oklab, var(--rim-3) 30%, var(--inner)) 52%,
+    color-mix(in oklab, var(--rim-4) 30%, var(--inner))
+  );
+  box-shadow:
+    inset 1.5px 2px 3px rgb(0 0 0 / 0.45),
+    inset -0.5px -0.5px 0 rgb(255 255 255 / 0.25);
+}
+
+/* Rare: black text with a white edge on the black inside */
+[data-rarity="ultra"]:not([data-mono]) .panel .weakness > p:last-child {
+  color: #0b0c10 !important;
+  text-shadow:
+    1px 0 0 white,
+    -1px 0 0 white,
+    0 1px 0 white,
+    0 -1px 0 white,
+    0.7px 0.7px 0 white,
+    -0.7px 0.7px 0 white,
+    0.7px -0.7px 0 white,
+    -0.7px -0.7px 0 white !important;
+}
+
+/* ---------- Set plate under the logo: the ex rule box's shape (see Plate.tsx) ---------- */
+
+/* the SVG draws the shape, so drop the older silver plate's own background, clip and outline */
+[data-silver] .set-strip.set-plate {
+  /* thin, and wide enough that each end's curve starts a few pixels past the logo frame's edge
+     (the left end leans right, so it reaches out further) */
+  margin: -10px -11px 0 -12px;
+  padding: 1px 18px 2px;
+  line-height: 1.6;
+  border-radius: 0;
+  text-align: center;
+  background: none;
+  border: none;
+  box-shadow: none;
+  clip-path: none;
+  filter: none;
+}
+
+[data-silver] .set-strip.set-plate::before {
+  content: none;
 }

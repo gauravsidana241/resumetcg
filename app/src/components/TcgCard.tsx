@@ -2,6 +2,7 @@ import { useRef, useState, type CSSProperties, type PointerEvent } from "react";
 import { motion, useSpring } from "motion/react";
 import { stackName } from "../data/catalog";
 import { CodeBlock } from "./CodeBlock";
+import { Plate } from "./Plate";
 import { TypeSymbol } from "./TypeSymbol";
 import { getColorLogo, isDarkLogo } from "../lib/colorLogos";
 import { brandColor, getIcon } from "../lib/icons";
@@ -146,11 +147,14 @@ export function TcgCard({
                 <div className="holo-art" />
               </div>
 
-              {fullArt && <div className="flex-1" />}
-
-              <p className="set-strip">
-                {stackName(card.stack)} · {rarity.label}
-              </p>
+              {/* Full Art and Special Art let the art run uninterrupted, so they skip the set plate */}
+              {fullArt ? (
+                <div className="flex-1" />
+              ) : (
+                <Plate bow={6} rim={6} rightEnd="mirror" inset className="set-strip set-plate">
+                  {stackName(card.stack)} · {rarity.label}
+                </Plate>
+              )}
 
               <div className={`attack flex-col ${fullArt ? "" : "flex-1"}`}>
                 <div className="flex gap-2">
@@ -169,15 +173,23 @@ export function TcgCard({
                 {card.code && <CodeBlock code={card.code} />}
               </div>
 
+              <StatBar card={card} />
+
+              {/* EX: the card number moves left to make room for the ex rule box */}
               {isEx ? (
-                <div className="stat-bar stat-bar-rule">
-                  <ExRule of={card.exOf} />
+                <div className="ex-bottom">
+                  <div className="ex-meta">
+                    <span>{FOIL_NAMES[foil]}</span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="rarity-symbol">{rarity.symbol}</span>
+                      {card.number}
+                    </span>
+                  </div>
+                  <ExRuleBox of={card.exOf} />
                 </div>
               ) : (
-                <StatBar card={card} />
+                <CardFooter card={card} foil={foil} />
               )}
-
-              <CardFooter card={card} foil={foil} />
             </div>
             <div className="sheen" />
             <div className="holo-full" />
@@ -229,6 +241,18 @@ export function TcgCard({
         </motion.div>
       </motion.div>
     </div>
+  );
+}
+
+// the front's ex rule: a box with a silver label, like the rule box on a printed card
+function ExRuleBox({ of }: { of?: string }) {
+  return (
+    <Plate bow={8} rim={7} rightEnd="mirror" label={{ w: 74, h: 16 }} className="ex-box">
+      <span className="ex-box-label">ex rule</span>
+      <p className="ex-box-text">
+        The follow-up an interviewer asks after <b>{of}</b>.
+      </p>
+    </Plate>
   );
 }
 
@@ -326,18 +350,17 @@ function StatBar({ card }: { card: Card }) {
   const level = DIFFICULTY[card.rarity];
   return (
     <div className="stat-bar">
-      <span>
+      <Plate className="stat-seg">
         Follow-ups <b>×{followUps}</b>
-      </span>
-      <span className="stat-slash" aria-hidden />
-      <span className="flex items-center gap-1.5">
+      </Plate>
+      <Plate className="stat-seg">
         Difficulty
         <span className="flex gap-0.5">
           {[1, 2, 3].map((n) => (
             <i key={n} className={n <= level ? "pip pip-on" : "pip"} />
           ))}
         </span>
-      </span>
+      </Plate>
     </div>
   );
 }

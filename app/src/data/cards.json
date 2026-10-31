@@ -42,7 +42,7 @@
       "stack": "fynd",
       "type": "tradeoff",
       "rarity": "rare",
-      "title": "Temporal vs Queues",
+      "title": "Why Temporal",
       "icons": ["temporal"],
       "question": "Why move 9 integrations onto a workflow engine like Temporal instead of chaining jobs on a queue?",
       "points": [
@@ -67,7 +67,7 @@
       "stack": "fynd",
       "type": "story",
       "rarity": "ultra",
-      "title": "The Temporal Migration",
+      "title": "The Migration",
       "icons": ["temporal"],
       "question": "Tell me about leading Fynd's first Temporal rollout: 9 integrations and about 80 workflow stages in 9 to 12 months.",
       "points": [
@@ -118,7 +118,7 @@
       "stack": "fynd",
       "type": "concept",
       "rarity": "common",
-      "title": "Workflows & Activities",
+      "title": "Activities",
       "icons": ["temporal"],
       "question": "In Temporal, what is the difference between a workflow and an activity?",
       "points": [
@@ -143,7 +143,7 @@
       "stack": "fynd",
       "type": "tradeoff",
       "rarity": "rare",
-      "title": "Per-Seller Rate Limits",
+      "title": "Rate Limits",
       "icons": ["shopify"],
       "question": "How do you respect Amazon, Flipkart and Shopify rate limits while syncing catalogues of up to 300,000 SKUs?",
       "points": [
@@ -169,7 +169,7 @@
       "stack": "fynd",
       "type": "trap",
       "rarity": "rare",
-      "title": "Silent Schema Change",
+      "title": "Schema Drift",
       "icons": [],
       "question": "A marketplace quietly changes its API response format. How do you find out before your sellers do?",
       "points": [
@@ -194,7 +194,7 @@
       "stack": "fynd",
       "type": "boss",
       "rarity": "ultra",
-      "title": "Multi-Market Sync",
+      "title": "Market Sync",
       "icons": ["postgres", "node", "shopify"],
       "question": "Design inventory and order sync for a seller with 300,000 SKUs across Amazon, Flipkart and Shopify.",
       "points": [
@@ -219,7 +219,7 @@
       "stack": "fynd",
       "type": "story",
       "rarity": "rare",
-      "title": "Amazon VDF in 3 Months",
+      "title": "Amazon VDF",
       "icons": [],
       "question": "You delivered the company's first Amazon VDF integration in 3 months. Walk me through it.",
       "points": [
@@ -244,7 +244,7 @@
       "stack": "fynd",
       "type": "boss",
       "rarity": "ultra",
-      "title": "70k Orders a Day",
+      "title": "70k Orders",
       "icons": ["kafka", "redis"],
       "question": "Explain your BullMQ and Kafka pipeline: 70,000+ orders and feed updates a day within Amazon's feed limits, without delaying new orders.",
       "points": [
@@ -269,7 +269,7 @@
       "stack": "fynd",
       "type": "tradeoff",
       "rarity": "rare",
-      "title": "Kafka vs BullMQ",
+      "title": "Kafka/BullMQ",
       "icons": ["kafka", "redis"],
       "question": "Kafka and BullMQ both move messages. What is each one good at?",
       "points": [
@@ -294,7 +294,7 @@
       "stack": "fynd",
       "type": "story",
       "rarity": "rare",
-      "title": "0% to 70% Coverage",
+      "title": "70% Coverage",
       "icons": ["jest"],
       "question": "You introduced the team's first automated tests for 9 integrations that had 0% coverage. How?",
       "points": [
@@ -319,7 +319,7 @@
       "stack": "fynd",
       "type": "story",
       "rarity": "rare",
-      "title": "SSO & Seller Auth",
+      "title": "Seller SSO",
       "icons": ["google"],
       "question": "You set up Google SSO and per-seller IAM authentication for Amazon's APIs across 100+ sellers. Explain both.",
       "points": [
@@ -344,7 +344,7 @@
       "stack": "fynd",
       "type": "story",
       "rarity": "rare",
-      "title": "On-Call Incident",
+      "title": "On-Call",
       "icons": [],
       "question": "Tell me about a production incident you handled on-call.",
       "points": [
@@ -369,7 +369,7 @@
       "stack": "fynd",
       "type": "concept",
       "rarity": "common",
-      "title": "Root Cause Analysis",
+      "title": "Root Cause",
       "icons": [],
       "question": "What goes into a good root cause analysis (postmortem)?",
       "points": [
@@ -394,7 +394,7 @@
       "stack": "fynd",
       "type": "story",
       "rarity": "rare",
-      "title": "No-Code Builder",
+      "title": "Flow Builder",
       "icons": ["react", "typescript"],
       "question": "You built a no-code workflow builder used daily by 5+ product managers. Tell me about it.",
       "points": [
@@ -419,7 +419,7 @@
       "stack": "wap",
       "type": "story",
       "rarity": "rare",
-      "title": "Workflow Platform",
+      "title": "The Platform",
       "icons": ["react", "temporal"],
       "question": "Walk me through your Workflow Automation Platform.",
       "points": [
@@ -444,7 +444,7 @@
       "stack": "wap",
       "type": "boss",
       "rarity": "ultra",
-      "title": "Running the Graph",
+      "title": "Graph Runs",
       "icons": ["temporal", "typescript"],
       "question": "How do you safely execute a user-drawn graph with conditions and loops?",
       "points": [
@@ -520,7 +520,7 @@
       "stack": "wap",
       "type": "concept",
       "rarity": "common",
-      "title": "Four Node Types",
+      "title": "Node Types",
       "icons": [],
       "question": "Why triggers, conditions, loops and actions? Why those four?",
       "points": [
@@ -545,7 +545,7 @@
       "stack": "formhook",
       "type": "boss",
       "rarity": "ultra",
-      "title": "Zero Lost Events",
+      "title": "Zero Loss",
       "icons": ["redis", "node", "terraform"],
       "question": "Walk me through how FormHook makes sure no webhook event is lost when an endpoint fails.",
       "points": [
@@ -570,7 +570,7 @@
       "stack": "formhook",
       "type": "trap",
       "rarity": "rare",
-      "title": "Duplicate Delivery",
+      "title": "Duplicates",
       "icons": [],
       "question": "The endpoint received your webhook but timed out before replying, so you retry. How do you stop it being processed twice?",
       "points": [
@@ -595,7 +595,7 @@
       "stack": "formhook",
       "type": "concept",
       "rarity": "common",
-      "title": "Exponential Backoff",
+      "title": "Backoff",
       "icons": [],
       "question": "Why use exponential backoff instead of retrying straight away?",
       "points": [
@@ -620,7 +620,7 @@
       "stack": "formhook",
       "type": "concept",
       "rarity": "common",
-      "title": "Dead-Letter Queue",
+      "title": "Dead Letters",
       "icons": [],
       "question": "What is a dead-letter queue, and why have one?",
       "points": [
@@ -645,7 +645,7 @@
       "stack": "formhook",
       "type": "tradeoff",
       "rarity": "rare",
-      "title": "Failure Simulation",
+      "title": "Failure Sim",
       "icons": [],
       "question": "Why build a failure-simulation mode into FormHook itself?",
       "points": [
@@ -670,7 +670,7 @@
       "stack": "formhook",
       "type": "concept",
       "rarity": "rare",
-      "title": "Signed Webhooks",
+      "title": "Signatures",
       "icons": [],
       "question": "How does a webhook receiver know a request really came from you?",
       "points": [
@@ -721,7 +721,7 @@
       "stack": "built",
       "type": "concept",
       "rarity": "rare",
-      "title": "Row Level Security",
+      "title": "RLS",
       "icons": ["supabase", "postgres"],
       "question": "What is Row Level Security in Postgres, and how does Supabase use it?",
       "points": [
@@ -746,7 +746,7 @@
       "stack": "built",
       "type": "tradeoff",
       "rarity": "rare",
-      "title": "Supabase vs Firebase",
+      "title": "Why Supabase",
       "icons": ["supabase"],
       "question": "Why did you build this app on Supabase instead of Firebase?",
       "points": [
@@ -771,7 +771,7 @@
       "stack": "built",
       "type": "boss",
       "rarity": "ultra",
-      "title": "The Streak Query",
+      "title": "Streak Query",
       "icons": ["postgres"],
       "question": "Write the SQL that computes a daily streak from a table of pack openings.",
       "points": [
@@ -797,7 +797,7 @@
       "stack": "built",
       "type": "trap",
       "rarity": "rare",
-      "title": "Definer vs Invoker",
+      "title": "Invoker Mode",
       "icons": ["postgres"],
       "question": "SECURITY DEFINER vs SECURITY INVOKER functions in Postgres?",
       "points": [
@@ -871,7 +871,7 @@
       "stack": "built",
       "type": "tradeoff",
       "rarity": "rare",
-      "title": "The Pack Builder",
+      "title": "Pack Builder",
       "icons": ["postgres"],
       "question": "How does the pack builder pick cards, and why do hard cards show up more?",
       "points": [
@@ -896,7 +896,7 @@
       "stack": "behavioral",
       "type": "story",
       "rarity": "common",
-      "title": "Tell Me About You",
+      "title": "About You",
       "icons": [],
       "question": "Tell me about yourself.",
       "points": [
@@ -971,7 +971,7 @@
       "stack": "behavioral",
       "type": "story",
       "rarity": "common",
-      "title": "A Tight Deadline",
+      "title": "The Deadline",
       "icons": [],
       "question": "Tell me about delivering something under a tight deadline.",
       "points": [
@@ -995,7 +995,7 @@
       "stack": "behavioral",
       "type": "story",
       "rarity": "common",
-      "title": "Taking Initiative",
+      "title": "Initiative",
       "icons": [],
       "question": "Tell me about a time you pushed for something nobody asked you to do.",
       "points": [
@@ -1146,7 +1146,7 @@
       "stack": "js-lang",
       "type": "concept",
       "rarity": "rare",
-      "title": "Promise Combinators",
+      "title": "Promise APIs",
       "icons": ["javascript"],
       "question": "Promise.all vs allSettled vs race vs any?",
       "points": [
@@ -1172,7 +1172,7 @@
       "stack": "js-lang",
       "type": "syntax",
       "rarity": "common",
-      "title": "map, filter, reduce",
+      "title": "map/filter",
       "icons": ["javascript"],
       "question": "Total of paid orders, using filter and reduce.",
       "answer": "const total = orders\n  .filter((o) => o.status === 'paid')\n  .reduce((sum, o) => sum + o.total, 0)",
@@ -1446,7 +1446,7 @@
       "stack": "js-frontend",
       "type": "tradeoff",
       "rarity": "rare",
-      "title": "CSR, SSR, SSG, ISR",
+      "title": "Render Modes",
       "icons": ["nextjs"],
       "question": "In Next.js, what are CSR, SSR, SSG and ISR, and when do you use each?",
       "points": [
@@ -1472,7 +1472,7 @@
       "stack": "js-frontend",
       "type": "tradeoff",
       "rarity": "common",
-      "title": "Do I Need Redux?",
+      "title": "Need Redux?",
       "icons": ["redux"],
       "question": "When do you need Redux instead of React state or context?",
       "points": [
@@ -1599,7 +1599,7 @@
       "stack": "js-frontend",
       "type": "syntax",
       "rarity": "rare",
-      "title": "useMemo & useCallback",
+      "title": "Memo Hooks",
       "icons": ["react"],
       "question": "useMemo vs useCallback: what does each keep between renders?",
       "answer": "const sorted = useMemo(\n  () => sortRows(rows), [rows],\n)\nconst onSave = useCallback(\n  () => save(id), [id],\n)",
@@ -1695,7 +1695,7 @@
       "stack": "js-frontend",
       "type": "concept",
       "rarity": "rare",
-      "title": "Server Components",
+      "title": "RSC",
       "icons": ["nextjs", "react"],
       "question": "Server components vs client components in the Next.js App Router?",
       "points": [
@@ -1746,7 +1746,7 @@
       "stack": "js-frontend",
       "type": "boss",
       "rarity": "ultra",
-      "title": "Out-of-Order Results",
+      "title": "Fetch Races",
       "icons": ["react"],
       "question": "A search box shows results for an older query after you type quickly. Why, and how do you fix it?",
       "points": [
@@ -1773,7 +1773,7 @@
       "stack": "js-frontend",
       "type": "boss",
       "rarity": "ultra",
-      "title": "Build Autocomplete",
+      "title": "Autocomplete",
       "icons": ["react", "typescript"],
       "question": "Design a search autocomplete component. What do you need to get right?",
       "points": [
@@ -1799,7 +1799,7 @@
       "stack": "js-frontend",
       "type": "trap",
       "rarity": "ultra",
-      "title": "Hydration Mismatch",
+      "title": "Hydration",
       "icons": ["nextjs"],
       "question": "Next.js warns: 'Text content does not match server-rendered HTML'. What causes it, and how do you fix it?",
       "points": [
@@ -1851,7 +1851,7 @@
       "stack": "js-node",
       "type": "trap",
       "rarity": "common",
-      "title": "One Slow Request",
+      "title": "Slow Request",
       "icons": ["node"],
       "question": "One CPU-heavy request makes your whole Node API slow. Why, and how do you fix it?",
       "points": [
@@ -1877,7 +1877,7 @@
       "stack": "js-node",
       "type": "concept",
       "rarity": "common",
-      "title": "Express Middleware",
+      "title": "Middleware",
       "icons": ["express"],
       "question": "How does Express middleware work?",
       "points": [
@@ -1903,7 +1903,7 @@
       "stack": "js-node",
       "type": "syntax",
       "rarity": "common",
-      "title": "params, query, body",
+      "title": "Request Data",
       "icons": ["express"],
       "question": "In Express, where do req.params, req.query and req.body come from?",
       "answer": "// PUT /orders/42?notify=true\napp.put('/orders/:id', (req, res) => {\n  req.params.id    // '42'\n  req.query.notify // 'true'\n  req.body         // parsed JSON\n})",
@@ -2029,7 +2029,7 @@
       "stack": "js-tooling",
       "type": "tradeoff",
       "rarity": "common",
-      "title": "Vite vs Webpack",
+      "title": "Vite/Webpack",
       "icons": ["vite", "webpack"],
       "question": "Why is Vite so much faster than Webpack in development?",
       "points": [
@@ -2081,7 +2081,7 @@
       "stack": "ml-fundamentals",
       "type": "concept",
       "rarity": "rare",
-      "title": "Bias vs Variance",
+      "title": "Bias/Variance",
       "icons": ["scikitlearn"],
       "question": "Explain bias vs variance, and overfitting.",
       "points": [
@@ -2133,7 +2133,7 @@
       "stack": "ml-fundamentals",
       "type": "concept",
       "rarity": "common",
-      "title": "Precision & Recall",
+      "title": "Precision",
       "icons": [],
       "question": "Precision, recall and F1: when does accuracy lie?",
       "points": [
@@ -2208,7 +2208,7 @@
       "stack": "ml-fundamentals",
       "type": "concept",
       "rarity": "rare",
-      "title": "Cross-Validation",
+      "title": "K-Fold CV",
       "icons": ["scikitlearn"],
       "question": "How does k-fold cross-validation work, and why use it?",
       "points": [
@@ -2258,7 +2258,7 @@
       "stack": "ml-fundamentals",
       "type": "concept",
       "rarity": "rare",
-      "title": "Imbalanced Data",
+      "title": "Imbalance",
       "icons": ["scikitlearn"],
       "question": "Only 1% of transactions are fraud. How do you train a useful model?",
       "points": [
@@ -2461,7 +2461,7 @@
       "stack": "ml-deep",
       "type": "concept",
       "rarity": "rare",
-      "title": "Dropout & BatchNorm",
+      "title": "Dropout & BN",
       "icons": ["pytorch"],
       "question": "What do dropout and batch normalization do?",
       "points": [
@@ -2486,7 +2486,7 @@
       "stack": "ml-deep",
       "type": "concept",
       "rarity": "ultra",
-      "title": "Vanishing Gradients",
+      "title": "Gradients",
       "icons": ["pytorch"],
       "question": "What are vanishing and exploding gradients, and how do you fix them?",
       "points": [
@@ -2511,7 +2511,7 @@
       "stack": "ml-serving",
       "type": "tradeoff",
       "rarity": "rare",
-      "title": "Keyword vs Dense",
+      "title": "Retrieval",
       "icons": [],
       "question": "Information retrieval: BM25 keyword search vs dense embeddings?",
       "points": [
@@ -2614,7 +2614,7 @@
       "stack": "ml-serving",
       "type": "boss",
       "rarity": "ultra",
-      "title": "The Model Got Worse",
+      "title": "Model Drift",
       "icons": ["python", "grafana"],
       "question": "A model was accurate at launch, but three months later its predictions are noticeably worse. What do you do?",
       "points": [
@@ -2717,7 +2717,7 @@
       "stack": "ml-python",
       "type": "syntax",
       "rarity": "common",
-      "title": "*args, **kwargs",
+      "title": "**kwargs",
       "icons": ["python"],
       "question": "What do *args and **kwargs do?",
       "answer": "def log(msg, *args, **kwargs):\n    print(msg, args, kwargs)\n\nlog('hi', 1, 2, level='info')\n# hi (1, 2) {'level': 'info'}",
@@ -3370,7 +3370,7 @@
       "stack": "data-sql",
       "type": "syntax",
       "rarity": "common",
-      "title": "GROUP BY & HAVING",
+      "title": "HAVING",
       "icons": ["postgres"],
       "question": "List customers with more than 5 orders, with their order count.",
       "answer": "SELECT customer_id, COUNT(*) AS n\nFROM orders\nGROUP BY customer_id\nHAVING COUNT(*) > 5;",
@@ -3471,7 +3471,7 @@
       "stack": "data-sql",
       "type": "concept",
       "rarity": "common",
-      "title": "Keys & Constraints",
+      "title": "Constraints",
       "icons": ["postgres"],
       "question": "Primary key vs foreign key vs unique constraint?",
       "points": [
@@ -3496,7 +3496,7 @@
       "stack": "data-sql",
       "type": "syntax",
       "rarity": "rare",
-      "title": "Latest per Group",
+      "title": "Latest Row",
       "icons": ["postgres"],
       "question": "Get each customer's most recent order using a window function.",
       "answer": "SELECT * FROM (\n  SELECT o.*, ROW_NUMBER() OVER (\n    PARTITION BY customer_id\n    ORDER BY created_at DESC\n  ) AS rn\n  FROM orders o\n) t\nWHERE rn = 1;",
@@ -3544,7 +3544,7 @@
       "stack": "data-sql",
       "type": "concept",
       "rarity": "rare",
-      "title": "Reading EXPLAIN",
+      "title": "EXPLAIN",
       "icons": ["postgres"],
       "question": "You run EXPLAIN ANALYZE. What do you look for?",
       "points": [
@@ -3645,7 +3645,7 @@
       "stack": "data-sql",
       "type": "concept",
       "rarity": "rare",
-      "title": "Connection Pools",
+      "title": "Pooling",
       "icons": ["postgres", "node"],
       "question": "Why do you need a connection pool for Postgres?",
       "points": [
@@ -3670,7 +3670,7 @@
       "stack": "data-sql",
       "type": "boss",
       "rarity": "ultra",
-      "title": "Zero-Downtime Rename",
+      "title": "Safe Rename",
       "icons": ["postgres"],
       "question": "Rename a column on a busy production table without downtime.",
       "points": [
@@ -3721,7 +3721,7 @@
       "stack": "data-sql",
       "type": "boss",
       "rarity": "ultra",
-      "title": "The Vanishing Edit",
+      "title": "Lost Edit",
       "icons": ["postgres"],
       "question": "A user updates their profile, refreshes, and sees the old data. Then it fixes itself. What is happening?",
       "points": [
@@ -3771,7 +3771,7 @@
       "stack": "data-modelling",
       "type": "tradeoff",
       "rarity": "rare",
-      "title": "Postgres vs MongoDB",
+      "title": "SQL or NoSQL",
       "icons": ["postgres", "mongodb"],
       "question": "Postgres vs MongoDB: how do you choose?",
       "points": [
@@ -3823,7 +3823,7 @@
       "stack": "data-modelling",
       "type": "tradeoff",
       "rarity": "common",
-      "title": "ORM vs Raw SQL",
+      "title": "ORM or SQL",
       "icons": ["sequelize"],
       "question": "ORM (Sequelize, Mongoose) vs raw SQL?",
       "points": [
@@ -3873,7 +3873,7 @@
       "stack": "data-mongo",
       "type": "tradeoff",
       "rarity": "rare",
-      "title": "When Not Mongo",
+      "title": "Not Mongo",
       "icons": ["mongodb"],
       "question": "When is MongoDB the wrong choice?",
       "points": [
@@ -3923,7 +3923,7 @@
       "stack": "data-modelling",
       "type": "tradeoff",
       "rarity": "rare",
-      "title": "MySQL vs Postgres",
+      "title": "MySQL or PG",
       "icons": ["mysql", "postgres"],
       "question": "MySQL vs PostgreSQL: how would you choose?",
       "points": [
@@ -3948,7 +3948,7 @@
       "stack": "data-modelling",
       "type": "syntax",
       "rarity": "rare",
-      "title": "ORM Transactions",
+      "title": "Transactions",
       "icons": ["sequelize"],
       "question": "Create an order and its items in one Sequelize transaction.",
       "answer": "await sequelize.transaction(async (t) => {\n  const order = await Order.create(\n    data, { transaction: t },\n  )\n  await Item.bulkCreate(\n    items(order.id), { transaction: t },\n  )\n})",
@@ -4022,7 +4022,7 @@
       "stack": "data-mongo",
       "type": "concept",
       "rarity": "rare",
-      "title": "Compound Indexes",
+      "title": "ESR Rule",
       "icons": ["mongodb"],
       "question": "How do you order fields in a MongoDB compound index?",
       "points": [
@@ -4047,7 +4047,7 @@
       "stack": "data-mongo",
       "type": "tradeoff",
       "rarity": "rare",
-      "title": "Embed or Reference",
+      "title": "Embed or Ref",
       "icons": ["mongodb"],
       "question": "MongoDB: when do you embed a sub-document, and when do you reference it?",
       "points": [
@@ -4072,7 +4072,7 @@
       "stack": "data-mongo",
       "type": "boss",
       "rarity": "ultra",
-      "title": "Pick a Shard Key",
+      "title": "Shard Keys",
       "icons": ["mongodb"],
       "question": "You must shard the orders collection. How do you choose the shard key?",
       "points": [
@@ -4097,7 +4097,7 @@
       "stack": "data-mongo",
       "type": "syntax",
       "rarity": "rare",
-      "title": "Aggregation Pipeline",
+      "title": "Aggregation",
       "icons": ["mongodb"],
       "question": "Total revenue per seller for paid orders, highest first, in MongoDB.",
       "answer": "db.orders.aggregate([\n  { $match: { status: 'paid' } },\n  { $group: {\n    _id: '$sellerId',\n    revenue: { $sum: '$total' },\n  } },\n  { $sort: { revenue: -1 } },\n])",
@@ -4225,7 +4225,7 @@
       "stack": "api-web",
       "type": "tradeoff",
       "rarity": "rare",
-      "title": "Real-Time Options",
+      "title": "Real-Time",
       "icons": ["socketio"],
       "question": "WebSockets vs polling vs Server-Sent Events: when do you use each?",
       "points": [
@@ -4428,7 +4428,7 @@
       "stack": "api-web",
       "type": "tradeoff",
       "rarity": "rare",
-      "title": "Paginating an API",
+      "title": "API Paging",
       "icons": ["openapi"],
       "question": "Offset or cursor pagination for a public API?",
       "points": [
@@ -4528,7 +4528,7 @@
       "stack": "api-web",
       "type": "tradeoff",
       "rarity": "rare",
-      "title": "Webhooks vs Polling",
+      "title": "Push or Poll",
       "icons": ["openapi"],
       "question": "Integrating with a marketplace: should you receive webhooks or poll their API?",
       "points": [
@@ -4553,7 +4553,7 @@
       "stack": "api-web",
       "type": "boss",
       "rarity": "ultra",
-      "title": "Charge Exactly Once",
+      "title": "Charge Once",
       "icons": ["openapi"],
       "question": "The checkout charges a card. How do you make sure retries never charge twice?",
       "points": [
@@ -4656,7 +4656,7 @@
       "stack": "api-messaging",
       "type": "trap",
       "rarity": "ultra",
-      "title": "Delivery Guarantees",
+      "title": "Guarantees",
       "icons": ["kafka"],
       "question": "At-most-once, at-least-once, exactly-once: how does each happen in Kafka?",
       "points": [
@@ -4760,7 +4760,7 @@
       "stack": "api-messaging",
       "type": "syntax",
       "rarity": "common",
-      "title": "Redis Commands",
+      "title": "Redis Ops",
       "icons": ["redis"],
       "question": "What do SET with EX and NX, INCR and EXPIRE do?",
       "answer": "SET session:42 data EX 3600\nSET lock:job7 me NX EX 30\nINCR views:page1\nEXPIRE views:page1 86400",
@@ -4936,7 +4936,7 @@
       "stack": "api-architecture",
       "type": "tradeoff",
       "rarity": "ultra",
-      "title": "Monolith or Micro?",
+      "title": "Monolith?",
       "icons": ["docker", "kubernetes"],
       "question": "When would you NOT use microservices?",
       "points": [
@@ -4962,7 +4962,7 @@
       "stack": "api-architecture",
       "type": "syntax",
       "rarity": "common",
-      "title": "Activity Options",
+      "title": "Retry Policy",
       "icons": ["temporal", "typescript"],
       "question": "Configure a Temporal activity with a timeout and a retry policy.",
       "answer": "const { syncOrders } = proxyActivities({\n  startToCloseTimeout: '1 minute',\n  retry: {\n    initialInterval: '1s',\n    backoffCoefficient: 2,\n    maximumAttempts: 5,\n  },\n})",
@@ -5062,7 +5062,7 @@
       "stack": "api-architecture",
       "type": "boss",
       "rarity": "ultra",
-      "title": "Notification Service",
+      "title": "Notifications",
       "icons": ["kafka", "redis"],
       "question": "Design a service that sends email, SMS and push notifications for a whole platform.",
       "points": [
@@ -5088,7 +5088,7 @@
       "stack": "api-architecture",
       "type": "boss",
       "rarity": "ultra",
-      "title": "Cache Stampede",
+      "title": "Stampede",
       "icons": ["redis", "postgres"],
       "question": "A popular cache key expires and thousands of requests hit the database at once. How do you prevent it?",
       "points": [
@@ -5114,7 +5114,7 @@
       "stack": "api-architecture",
       "type": "boss",
       "rarity": "ultra",
-      "title": "Cascading Failure",
+      "title": "Cascades",
       "icons": ["kubernetes", "node"],
       "question": "One slow downstream service ends up taking your whole platform down. How do you stop that happening?",
       "points": [
@@ -5218,7 +5218,7 @@
       "stack": "cloud-containers",
       "type": "syntax",
       "rarity": "common",
-      "title": "Dockerfile Basics",
+      "title": "Dockerfile",
       "icons": ["docker"],
       "question": "Write a basic Dockerfile for a Node app.",
       "answer": "FROM node:22-slim\nWORKDIR /app\nCOPY package*.json ./\nRUN npm ci --omit=dev\nCOPY . .\nEXPOSE 3000\nCMD [\"node\", \"server.js\"]",
@@ -5293,7 +5293,7 @@
       "stack": "cloud-containers",
       "type": "concept",
       "rarity": "common",
-      "title": "Requests & Limits",
+      "title": "Pod Limits",
       "icons": ["kubernetes"],
       "question": "What are resource requests and limits in Kubernetes?",
       "answer": "resources:\n  requests: { cpu: 250m, memory: 256Mi }\n  limits:   { memory: 512Mi }",
@@ -5318,7 +5318,7 @@
       "stack": "cloud-containers",
       "type": "syntax",
       "rarity": "rare",
-      "title": "Multi-Stage Builds",
+      "title": "Multi-Stage",
       "icons": ["docker"],
       "question": "Write a multi-stage Dockerfile that builds a TypeScript app but ships only the output.",
       "answer": "FROM node:22 AS build\nWORKDIR /app\nCOPY package*.json ./\nRUN npm ci\nCOPY . .\nRUN npm run build\n\nFROM node:22-slim\nWORKDIR /app\nCOPY --from=build /app/dist ./dist\nCOPY package*.json ./\nRUN npm ci --omit=dev\nCMD [\"node\", \"dist/server.js\"]",
@@ -5391,7 +5391,7 @@
       "stack": "cloud-containers",
       "type": "concept",
       "rarity": "rare",
-      "title": "ConfigMaps & Secrets",
+      "title": "K8s Secrets",
       "icons": ["kubernetes"],
       "question": "ConfigMaps vs Secrets in Kubernetes, and how pods use them?",
       "points": [
@@ -5441,7 +5441,7 @@
       "stack": "cloud-containers",
       "type": "trap",
       "rarity": "rare",
-      "title": "localhost in Docker",
+      "title": "localhost?",
       "icons": ["docker"],
       "question": "Your app in a container can't reach Postgres at localhost:5432, but it works outside Docker. Why?",
       "points": [
@@ -5492,7 +5492,7 @@
       "stack": "cloud-containers",
       "type": "boss",
       "rarity": "ultra",
-      "title": "No Dropped Requests",
+      "title": "Zero Drops",
       "icons": ["kubernetes", "node"],
       "question": "Every deploy causes a burst of 502 errors. How do you get truly zero-downtime deploys?",
       "points": [
@@ -5519,7 +5519,7 @@
       "stack": "cloud-containers",
       "type": "boss",
       "rarity": "ultra",
-      "title": "Harden the Container",
+      "title": "Hardening",
       "icons": ["docker", "kubernetes"],
       "question": "How would you harden your containers and cluster for production?",
       "points": [
@@ -5545,7 +5545,7 @@
       "stack": "cloud-containers",
       "type": "boss",
       "rarity": "ultra",
-      "title": "A Can't Reach B",
+      "title": "K8s DNS",
       "icons": ["kubernetes"],
       "question": "Service A can't reach service B inside the cluster. How do you debug it?",
       "points": [
@@ -5700,7 +5700,7 @@
       "stack": "cloud-infra",
       "type": "concept",
       "rarity": "common",
-      "title": "Config & Secrets",
+      "title": "App Config",
       "icons": ["docker"],
       "question": "How should an app get its configuration in different environments?",
       "points": [
@@ -5898,7 +5898,7 @@
       "stack": "cloud-infra",
       "type": "concept",
       "rarity": "rare",
-      "title": "What Happens on Enter",
+      "title": "Hit Enter",
       "icons": ["googlecloud"],
       "question": "What happens between typing a URL and seeing the page?",
       "points": [
@@ -5923,7 +5923,7 @@
       "stack": "cloud-infra",
       "type": "tradeoff",
       "rarity": "rare",
-      "title": "Serverless or Not",
+      "title": "Serverless?",
       "icons": ["amazonwebservices", "googlecloud"],
       "question": "Lambda or Cloud Run vs a long-running container service: how do you choose?",
       "points": [
@@ -5948,7 +5948,7 @@
       "stack": "cloud-infra",
       "type": "boss",
       "rarity": "ultra",
-      "title": "PR to Production",
+      "title": "PR to Prod",
       "icons": ["gitlab", "kubernetes"],
       "question": "Design a CI/CD pipeline from pull request to production, including rollback.",
       "points": [
@@ -5974,7 +5974,7 @@
       "stack": "cloud-infra",
       "type": "boss",
       "rarity": "ultra",
-      "title": "The Bill Doubled",
+      "title": "Bill Doubled",
       "icons": ["amazonwebservices", "googlecloud"],
       "question": "This month's cloud bill doubled. How do you find out why and bring it down?",
       "points": [
@@ -6000,7 +6000,7 @@
       "stack": "cloud-infra",
       "type": "boss",
       "rarity": "ultra",
-      "title": "The Region Is Down",
+      "title": "Region Down",
       "icons": ["amazonwebservices", "postgres"],
       "question": "Your cloud region goes down. What should your disaster recovery plan look like?",
       "points": [
@@ -6026,7 +6026,7 @@
       "stack": "cloud-git",
       "type": "syntax",
       "rarity": "common",
-      "title": "Rebase vs Merge",
+      "title": "Rebase",
       "icons": ["git"],
       "question": "git rebase vs git merge?",
       "answer": "git switch feature\ngit rebase main      # replay my commits\n# or\ngit merge main       # merge commit",
@@ -6150,7 +6150,7 @@
       "stack": "quality-testing",
       "type": "concept",
       "rarity": "rare",
-      "title": "Contract Testing",
+      "title": "Contracts",
       "icons": ["openapi"],
       "question": "What is contract testing (Specmatic), and how is it different from integration testing?",
       "points": [
@@ -6327,7 +6327,7 @@
       "stack": "quality-testing",
       "type": "syntax",
       "rarity": "common",
-      "title": "Mocha, Chai, Sinon",
+      "title": "Mocha & Chai",
       "icons": ["mocha"],
       "question": "Write the same kind of test with Mocha, Chai and a Sinon stub.",
       "answer": "describe('sync', () => {\n  it('uses the client', async () => {\n    const stub = sinon\n      .stub(client, 'get')\n      .resolves([])\n    await sync()\n    expect(stub.calledOnce).to.be.true\n    stub.restore()\n  })\n})",
@@ -6375,7 +6375,7 @@
       "stack": "quality-testing",
       "type": "concept",
       "rarity": "common",
-      "title": "Unit vs Integration",
+      "title": "Test Types",
       "icons": ["jest"],
       "question": "Unit vs integration vs end-to-end tests?",
       "points": [
@@ -6549,7 +6549,7 @@
       "stack": "quality-testing",
       "type": "tradeoff",
       "rarity": "rare",
-      "title": "End-to-End Tests",
+      "title": "E2E Tests",
       "icons": ["javascript"],
       "question": "How many end-to-end tests (Playwright, Cypress) should you have?",
       "points": [
@@ -6600,7 +6600,7 @@
       "stack": "quality-testing",
       "type": "boss",
       "rarity": "ultra",
-      "title": "Testing an Integration",
+      "title": "Integrations",
       "icons": ["jest", "openapi"],
       "question": "Design a test strategy for a new Amazon marketplace integration.",
       "points": [
@@ -6626,7 +6626,7 @@
       "stack": "quality-testing",
       "type": "boss",
       "rarity": "ultra",
-      "title": "Testing Workflows",
+      "title": "Flow Tests",
       "icons": ["temporal", "jest"],
       "question": "How do you test Temporal workflows that sleep for days and call flaky APIs?",
       "points": [
@@ -6677,7 +6677,7 @@
       "stack": "quality-observability",
       "type": "concept",
       "rarity": "common",
-      "title": "Dashboards & Alerts",
+      "title": "Alerting",
       "icons": ["grafana"],
       "question": "What would you put on a Grafana dashboard, and alert on, for an integration service?",
       "points": [
@@ -6852,7 +6852,7 @@
       "stack": "quality-observability",
       "type": "concept",
       "rarity": "rare",
-      "title": "Context Propagation",
+      "title": "Propagation",
       "icons": ["opentelemetry"],
       "question": "How does a trace follow a request across services?",
       "answer": "traceparent:\n  00-{trace-id}-{parent-span-id}-01\n\n// 32 hex chars, 16 hex chars,\n// 01 = sampled",
@@ -6877,7 +6877,7 @@
       "stack": "quality-observability",
       "type": "concept",
       "rarity": "rare",
-      "title": "Logs Meet Traces",
+      "title": "Logs + Traces",
       "icons": ["opentelemetry", "grafana"],
       "question": "How do you link logs, metrics and traces so you can jump between them?",
       "points": [
@@ -6902,7 +6902,7 @@
       "stack": "quality-observability",
       "type": "concept",
       "rarity": "rare",
-      "title": "A Good Dashboard",
+      "title": "Dashboards",
       "icons": ["grafana"],
       "question": "How do you lay out a service dashboard?",
       "points": [
@@ -6927,7 +6927,7 @@
       "stack": "quality-observability",
       "type": "boss",
       "rarity": "ultra",
-      "title": "Instrument from Zero",
+      "title": "Instrumenting",
       "icons": ["opentelemetry", "grafana"],
       "question": "A new service is going to production next week with no observability. What do you add?",
       "points": [
@@ -7053,7 +7053,7 @@
       "stack": "quality-reliability",
       "type": "boss",
       "rarity": "ultra",
-      "title": "Orders Stopped Syncing",
+      "title": "Sync Stopped",
       "icons": ["grafana", "kafka"],
       "question": "You are on call. Orders from one marketplace stopped syncing 20 minutes ago. Walk me through it.",
       "points": [
@@ -7105,7 +7105,7 @@
       "stack": "quality-reliability",
       "type": "boss",
       "rarity": "ultra",
-      "title": "Fine Average, Bad p99",
+      "title": "Bad p99",
       "icons": ["grafana", "node"],
       "question": "Average latency looks fine, but p99 tripled after a release. How do you find the cause?",
       "points": [
