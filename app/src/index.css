@@ -231,7 +231,7 @@ body {
   font-size: 10px;
   font-style: italic;
   text-align: center;
-  color: rgb(255 255 255 / 0.55);
+  color: #0b0c10 !important;
 }
 
 .attack {
@@ -1484,9 +1484,13 @@ body {
   --plate: #e6e9ee;
 }
 
-/* Rare: silver rims around black insides */
+/* Rare: silver rims around black insides, charcoal at the top fading to black */
 [data-rarity="ultra"]:not([data-mono]) {
-  --plate: #0c0d10;
+  --plate: #000;
+  --in-1: #3a3d44;
+  --in-2: #1c1e22;
+  --in-3: #050506;
+  --in-4: #111214;
 }
 
 /* type-colored borders (Uncommon), and Full Art's brand-tinted border, get a rim in that color */
@@ -1902,28 +1906,20 @@ body {
 
 /* ---------- Rare: black border, silver pieces, black tile insides ---------- */
 
-/* black text with a white edge on the black tile insides */
+/* white text on the black tile insides (a white outline is too fine to read at this size) */
 [data-rarity="ultra"]:not([data-mono])
   :is(.stat-seg, .stat-seg span, .stat-seg b) {
-  color: #0b0c10 !important;
-  text-shadow:
-    1px 0 0 white,
-    -1px 0 0 white,
-    0 1px 0 white,
-    0 -1px 0 white,
-    0.7px 0.7px 0 white,
-    -0.7px 0.7px 0 white,
-    0.7px -0.7px 0 white,
-    -0.7px -0.7px 0 white !important;
+  color: white !important;
+  text-shadow: 0 1px 1px rgb(0 0 0 / 0.6) !important;
 }
 
-/* difficulty pips: black inside with a white border when filled, a faint border when empty */
+/* difficulty pips in white, like the text: solid when filled, a faint ring when empty */
 [data-rarity="ultra"]:not([data-mono]) .stat-seg .pip {
   border-color: rgb(255 255 255 / 0.4);
 }
 
 [data-rarity="ultra"]:not([data-mono]) .stat-seg .pip-on {
-  background: #0b0c10;
+  background: white;
   border-color: white;
 }
 
@@ -1939,7 +1935,7 @@ body {
 }
 
 [data-rarity="ultra"]:not([data-mono]) {
-  --inner: #0c0d10;
+  --inner: #000;
 }
 
 /* frame and title bar are one piece in the tiles' rim gradient, so the color runs on unbroken */
@@ -1969,28 +1965,20 @@ body {
   border-radius: 5px;
   background: linear-gradient(
     180deg,
-    color-mix(in oklab, var(--rim-1) 30%, var(--inner)),
-    color-mix(in oklab, var(--rim-2) 30%, var(--inner)) 38%,
-    color-mix(in oklab, var(--rim-3) 30%, var(--inner)) 52%,
-    color-mix(in oklab, var(--rim-4) 30%, var(--inner))
+    var(--in-1, color-mix(in oklab, var(--rim-1) 30%, var(--inner))),
+    var(--in-2, color-mix(in oklab, var(--rim-2) 30%, var(--inner))) 38%,
+    var(--in-3, color-mix(in oklab, var(--rim-3) 30%, var(--inner))) 52%,
+    var(--in-4, color-mix(in oklab, var(--rim-4) 30%, var(--inner)))
   );
   box-shadow:
     inset 1.5px 2px 3px rgb(0 0 0 / 0.45),
     inset -0.5px -0.5px 0 rgb(255 255 255 / 0.25);
 }
 
-/* Rare: black text with a white edge on the black inside */
+/* Rare: white text on the black inside */
 [data-rarity="ultra"]:not([data-mono]) .panel .weakness > p:last-child {
-  color: #0b0c10 !important;
-  text-shadow:
-    1px 0 0 white,
-    -1px 0 0 white,
-    0 1px 0 white,
-    0 -1px 0 white,
-    0.7px 0.7px 0 white,
-    -0.7px 0.7px 0 white,
-    0.7px -0.7px 0 white,
-    -0.7px -0.7px 0 white !important;
+  color: white !important;
+  text-shadow: 0 1px 1px rgb(0 0 0 / 0.6) !important;
 }
 
 /* ---------- Set plate under the logo: the ex rule box's shape (see Plate.tsx) ---------- */

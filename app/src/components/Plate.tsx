@@ -116,10 +116,13 @@ function Shape({ d, paint, round }: { d: string; paint: string; round: number })
   return <path d={d} fill={paint} stroke={paint} strokeWidth={round * 2} strokeLinejoin="round" />;
 }
 
-// the border's metal, top to bottom; the inside mixes each stop with the lighter --plate color
+// the border's metal, top to bottom; the inside mixes each stop into the lighter --plate color,
+// unless a palette sets its own inside stops (--in-1 to --in-4)
 function RimGradient({ id, height, inside = false }: { id: string; height: number; inside?: boolean }) {
   const stop = (n: number) =>
-    inside ? `color-mix(in oklab, var(--rim-${n}) 40%, var(--plate))` : `var(--rim-${n})`;
+    inside
+      ? `var(--in-${n}, color-mix(in oklab, var(--rim-${n}) 40%, var(--plate)))`
+      : `var(--rim-${n})`;
   return (
     <linearGradient id={id} x1="0" y1="0" x2="0" y2={height} gradientUnits="userSpaceOnUse">
       <stop offset="0" style={{ stopColor: stop(1) }} />
