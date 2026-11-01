@@ -33,4 +33,5 @@ export const CloseIcon = (p: P) => <Icon d="M6 6l12 12M18 6 6 18" {...p} />
 export const ArrowUpIcon = (p: P) => <Icon d="M12 19V5M5 12l7-7 7 7" {...p} />
 export const CheckIcon = (p: P) => <Icon d="M5 12.5 10 17 19 7" {...p} />
 export const RotateIcon = (p: P) => <Icon d="M3 12a9 9 0 0 1 15.5-6.2L21 8M21 3v5h-5M21 12a9 9 0 0 1-15.5 6.2L3 16M3 21v-5h5" {...p} />
-export const LogoutIcon = (p: P) => <Icon d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 17l5-5-5-5M15 12H3" {...p} />
+// the door on the left, the arrow leaving it
+export const LogoutIcon = (p: P) => <Icon d="M9 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h4M16 17l5-5-5-5M21 12H9" {...p} />

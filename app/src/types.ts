@@ -18,6 +18,9 @@ export interface CardSet {
   icons: string[]
   from: string
   to: string
+  // the set's one signature color, and the text color that reads on it
+  color: string
+  ink: string
 }
 
 export interface Stack {

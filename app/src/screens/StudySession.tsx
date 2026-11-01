@@ -108,25 +108,29 @@ export function StudySession({ pack, label, onDone, onQuit }: Props) {
       <header className="flex w-full max-w-md items-center gap-3">
         <button
           onClick={() => onQuit(results)}
-          className="grid h-10 w-10 place-items-center rounded-full glass text-white/70 hover:text-white"
+          className="grid h-10 w-10 place-items-center rounded-full glass text-[var(--ui-ink-soft)] hover:text-white"
           aria-label="End session"
         >
           <CloseIcon className="h-5 w-5" />
         </button>
         <div className="flex-1">
-          <p className="text-xs font-semibold uppercase tracking-widest text-white/50">{label}</p>
+          <p className="ui-label text-sm text-[var(--ui-ink-soft)]">{label}</p>
           <div className="mt-1.5 flex gap-1">
             {pack.map((p, i) => (
               <span
                 key={p.card.id}
-                className={`h-1.5 flex-1 rounded-full transition-colors ${
-                  i === index ? 'bg-white/60 ring-1 ring-white' : gradedAt[i] ? 'bg-white' : 'bg-white/15'
+                className={`h-2.5 flex-1 rounded-full transition-colors ${
+                  i === index
+                    ? 'bg-[var(--ui-action-hi)] ring-2 ring-[var(--ui-action)]'
+                    : gradedAt[i]
+                      ? 'bg-[var(--ui-action)]'
+                      : 'bg-[#11143a] shadow-[inset_1px_2px_3px_rgb(0_0_0_/_0.6)]'
                 }`}
               />
             ))}
           </div>
         </div>
-        <span className="text-sm tabular-nums text-white/60">
+        <span className="text-sm tabular-nums text-[var(--ui-ink-soft)]">
           {index + 1}/{pack.length}
         </span>
       </header>
@@ -169,7 +173,7 @@ export function StudySession({ pack, label, onDone, onQuit }: Props) {
         {!flipped && (
           <button
             onClick={() => setFlipped(true)}
-            className="flex items-center gap-2 rounded-full glass px-5 py-3 text-sm font-medium text-white/80"
+            className="ui-button ui-button-metal ui-button-sm"
           >
             <RotateIcon className="h-4 w-4" />
             Recall the answer, then double tap to flip
@@ -181,7 +185,7 @@ export function StudySession({ pack, label, onDone, onQuit }: Props) {
             <button
               onClick={() => grade(false)}
               disabled={saving}
-              className="flex items-center justify-center gap-2 rounded-2xl border border-rose-400/40 bg-rose-500/15 py-4 font-display text-base font-bold text-rose-200 transition active:scale-95 disabled:opacity-50"
+              className="ui-button ui-button-bad min-h-14"
             >
               <CloseIcon className="h-5 w-5" />
               Not yet
@@ -189,7 +193,7 @@ export function StudySession({ pack, label, onDone, onQuit }: Props) {
             <button
               onClick={() => grade(true)}
               disabled={saving}
-              className="flex items-center justify-center gap-2 rounded-2xl border border-emerald-400/40 bg-emerald-500/20 py-4 font-display text-base font-bold text-emerald-200 transition active:scale-95 disabled:opacity-50"
+              className="ui-button ui-button-good min-h-14"
             >
               <CheckIcon className="h-5 w-5" />
               Got it
@@ -202,12 +206,12 @@ export function StudySession({ pack, label, onDone, onQuit }: Props) {
             <motion.p
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className={`rounded-full px-4 py-2 font-display text-sm font-bold ${
+              className={`ui-heading rounded-xl px-4 py-2 text-base ${
                 !graded.gotIt
-                  ? 'bg-rose-400/15 text-rose-200'
+                  ? 'bg-[var(--ui-bad)] text-white shadow-[0_4px_0_var(--ui-bad-lip)]'
                   : graded.counted
-                    ? 'bg-emerald-400/20 text-emerald-200'
-                    : 'bg-white/10 text-white/70'
+                    ? 'bg-[var(--ui-good)] text-white shadow-[0_4px_0_var(--ui-good-lip)]'
+                    : 'bg-[var(--ui-panel-hi)] text-[var(--ui-ink-soft)] shadow-[0_4px_0_var(--ui-panel-lip)]'
               }`}
             >
               {!graded.gotIt
@@ -216,7 +220,7 @@ export function StudySession({ pack, label, onDone, onQuit }: Props) {
                   ? `+${graded.xp} XP`
                   : 'Practice · not due yet, so no XP'}
             </motion.p>
-            <button onClick={next} className="flex items-center gap-2 text-sm text-white/60 hover:text-white">
+            <button onClick={next} className="flex items-center gap-2 text-sm text-[var(--ui-ink-soft)] hover:text-white">
               <ArrowUpIcon className="h-4 w-4 animate-bounce" />
               Swipe up for the next card{index > 0 && ', down to go back'}
             </button>

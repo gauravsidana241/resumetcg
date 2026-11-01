@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { TcgCard } from '../components/TcgCard'
+import { UiKitPreview } from './UiKitPreview'
 import { exVersion, getCard } from '../data/catalog'
 import { SPECIAL_COLORS } from '../lib/meta'
 import type { Card, Foil, SpecialColor } from '../types'
@@ -38,6 +39,8 @@ export function DesignPreview() {
 
   return (
     <div className="flex flex-col gap-14 px-4 py-8">
+      <UiKitPreview />
+
       <header>
         <h1 className="font-display text-3xl font-bold">Design preview</h1>
         <p className="text-sm text-white/60">Front and back side by side. Nothing here is live yet.</p>

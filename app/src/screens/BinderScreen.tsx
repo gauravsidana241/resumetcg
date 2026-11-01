@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { CloseIcon } from '../components/Icons'
+import { Counter, HeaderBar, ProgressBar, setVars } from '../components/ui'
 import { CardSleeve, Scaled } from '../components/Scaled'
 import { CARD_WIDTH, TcgCard } from '../components/TcgCard'
 import { cards, exVersion, sets, stacks } from '../data/catalog'
@@ -55,15 +56,17 @@ export function BinderScreen() {
 
   return (
     <div className="mx-auto flex max-w-md flex-col gap-4 pb-28 safe-top">
-      <header className="px-4">
-        <h1 className="font-display text-2xl font-bold">Binder</h1>
-        <p className="text-sm text-white/60">
+      <div className="flex flex-col gap-2 px-4">
+        <HeaderBar title="Binder">
+          <Counter value={`${collected}/${cards.length}`} />
+        </HeaderBar>
+        <p className="text-sm font-semibold text-[var(--ui-ink-soft)]">
           {collected} of {cards.length} cards pulled · {mastery(cards)}% mastered
         </p>
-        {error && <p className="mt-1 text-sm text-rose-300">{error}</p>}
-      </header>
+        {error && <p className="text-sm font-semibold text-[#ff8a98]">{error}</p>}
+      </div>
 
-      <div className="flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none]">
+      <div className="flex gap-2 overflow-x-auto px-4 pb-2 [scrollbar-width:none]">
         {sets.map((s) => {
           const active = s.id === stack.set
           const inSet = cards.filter((c) => stacks.find((st) => st.id === c.stack)?.set === s.id)
@@ -74,31 +77,33 @@ export function BinderScreen() {
                 if (active) el?.scrollIntoView({ inline: 'center', block: 'nearest' })
               }}
               onClick={() => setStackId(stacks.find((st) => st.set === s.id)!.id)}
-              className={`flex-none rounded-full px-3.5 py-2 text-sm font-medium transition ${
-                active ? 'text-white shadow-lg' : 'glass text-white/70'
+              className={`ui-heading flex-none rounded-[10px] px-3.5 py-2 text-[15px] transition ${
+                active ? 'ui-set-face' : 'bg-[var(--ui-panel)] text-[var(--ui-ink-soft)]'
               }`}
-              style={active ? { background: `linear-gradient(120deg, ${s.from}, ${s.to})` } : undefined}
+              style={active ? setVars(s) : { boxShadow: '0 4px 0 var(--ui-panel-lip)' }}
             >
               {s.name}
-              <span className={`ml-1.5 text-xs ${active ? 'text-white/70' : 'text-white/40'}`}>{mastery(inSet)}%</span>
+              <span className={`ml-1.5 text-xs ${active ? 'text-[var(--ui-ink-soft)]' : 'text-[var(--ui-ink-soft)]'}`}>{mastery(inSet)}%</span>
             </button>
           )
         })}
       </div>
 
-      <div className="flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none]">
+      <div className="flex gap-2 overflow-x-auto px-4 pb-2 [scrollbar-width:none]">
         {setStacks.map((s) => {
           const active = s.id === stackId
           return (
             <button
               key={s.id}
               onClick={() => setStackId(s.id)}
-              className={`flex-none rounded-full px-3 py-1.5 text-xs font-medium transition ${
-                active ? 'bg-white text-black' : 'glass text-white/70'
+              className={`ui-heading flex-none rounded-[10px] px-3 py-1.5 text-sm transition ${
+                active
+                  ? 'bg-[var(--ui-action)] text-[var(--ui-ink-dark)] shadow-[0_4px_0_var(--ui-action-lip)]'
+                  : 'bg-[var(--ui-panel)] text-[var(--ui-ink-soft)] shadow-[0_4px_0_var(--ui-panel-lip)]'
               }`}
             >
               {s.name}
-              <span className={`ml-1.5 text-xs ${active ? 'text-black/50' : 'text-white/40'}`}>
+              <span className={`ml-1.5 text-xs ${active ? 'text-black/60' : 'text-[var(--ui-ink-soft)]'}`}>
                 {mastery(cards.filter((c) => c.stack === s.id))}%
               </span>
             </button>
@@ -108,7 +113,7 @@ export function BinderScreen() {
 
       {specialsHere.length > 0 && (
         <section className="flex flex-col gap-2 px-4">
-          <p className="font-display text-lg font-bold">Specials</p>
+          <p className="ui-heading text-lg">Specials</p>
           <div className="flex gap-3 overflow-x-auto pb-2 [scrollbar-width:none]">
             {specialsHere.map((sp) => (
               <button
@@ -130,14 +135,11 @@ export function BinderScreen() {
 
       <div className="px-4">
         <div className="flex items-baseline justify-between">
-          <p className="font-display text-lg font-bold">{stack.name}</p>
-          <p className="text-xs uppercase tracking-widest text-white/40">{stack.kind}</p>
+          <p className="ui-heading text-lg">{stack.name}</p>
+          <p className="ui-label text-xs text-[var(--ui-ink-soft)]">{stack.kind}</p>
         </div>
-        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
-          <div
-            className="h-full rounded-full bg-gradient-to-r from-fuchsia-500 to-cyan-300 transition-all"
-            style={{ width: `${mastery(stackCards)}%` }}
-          />
+        <div className="mt-2">
+          <ProgressBar value={mastery(stackCards) / 100} />
         </div>
       </div>
 
@@ -187,13 +189,13 @@ export function BinderScreen() {
               />
             </motion.div>
             {openProgress && (
-              <p className="text-sm text-white/70">
+              <p className="text-sm text-[var(--ui-ink-soft)]">
                 {FOIL_NAMES[foilForBox(openProgress.box)]} · {nextReview(openProgress.due_at)} · double tap to flip
               </p>
             )}
             <button
               onClick={() => setOpen(null)}
-              className="grid h-11 w-11 place-items-center rounded-full glass text-white/80"
+              className="grid h-11 w-11 place-items-center rounded-full glass text-[var(--ui-ink-soft)]"
               aria-label="Close"
             >
               <CloseIcon className="h-5 w-5" />

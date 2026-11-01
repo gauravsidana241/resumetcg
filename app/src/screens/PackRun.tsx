@@ -48,13 +48,13 @@ export function PackRun({ set, packs, onFinish }: Props) {
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center gap-6 px-6 text-center">
       <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
-        <p className="text-xs font-semibold uppercase tracking-widest text-white/50">
+        <p className="ui-label text-sm text-[var(--ui-ink-soft)]">
           Pack {packIndex + 1} of {packs.length} done
         </p>
-        <h2 className="mt-2 font-display text-3xl font-bold">
+        <h2 className="mt-2 ui-heading text-3xl">
           {correct} of {results.length} answers right so far
         </h2>
-        <p className="mt-2 text-white/60">{packs.length - packIndex - 1} packs left in this session</p>
+        <p className="mt-2 text-[var(--ui-ink-soft)]">{packs.length - packIndex - 1} packs left in this session</p>
       </motion.div>
       <div className="flex w-full max-w-xs flex-col gap-3">
         <button
@@ -62,11 +62,11 @@ export function PackRun({ set, packs, onFinish }: Props) {
             setPackIndex((i) => i + 1)
             setPhase('opening')
           }}
-          className="rounded-full bg-white py-3.5 font-display font-bold text-black"
+          className="ui-button"
         >
           Open pack {packIndex + 2}
         </button>
-        <button onClick={() => onFinish(results)} className="rounded-full glass py-3.5 font-medium text-white/80">
+        <button onClick={() => onFinish(results)} className="ui-button ui-button-metal">
           Finish for now
         </button>
       </div>

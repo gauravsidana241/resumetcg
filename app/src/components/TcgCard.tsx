@@ -151,7 +151,7 @@ export function TcgCard({
               {fullArt ? (
                 <div className="flex-1" />
               ) : (
-                <Plate bow={6} rim={6} rightEnd="mirror" inset className="set-strip set-plate">
+                <Plate rightEnd="mirror" inset className="set-strip set-plate">
                   {stackName(card.stack)} · {rarity.label}
                 </Plate>
               )}
@@ -221,8 +221,9 @@ export function TcgCard({
                 ))}
               </ul>
 
+              {/* Special Art already shows the ex rule on the front, so its back leaves it out */}
               {isEx ? (
-                <ExRule of={card.exOf} />
+                !mono && <ExRule of={card.exOf} />
               ) : (
                 <div className="weakness">
                   <p className="text-[10px] font-semibold uppercase tracking-widest text-rose-300/90">
@@ -247,7 +248,7 @@ export function TcgCard({
 // the front's ex rule: a box with a silver label, like the rule box on a printed card
 function ExRuleBox({ of }: { of?: string }) {
   return (
-    <Plate bow={8} rim={7} rightEnd="mirror" label={{ w: 74, h: 16 }} className="ex-box">
+    <Plate rightEnd="mirror" label={{ w: 82, h: 17 }} className="ex-box">
       <span className="ex-box-label">ex rule</span>
       <p className="ex-box-text">
         The follow-up an interviewer asks after <b>{of}</b>.

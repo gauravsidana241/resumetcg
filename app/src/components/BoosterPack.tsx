@@ -1,7 +1,7 @@
-import type { CSSProperties } from 'react'
 import { motion } from 'motion/react'
 import { getIcon } from '../lib/icons'
 import type { CardSet } from '../types'
+import { setVars } from './ui'
 
 interface Props {
   set: CardSet
@@ -15,7 +15,7 @@ export function BoosterPack({ set, label, torn, onTear }: Props) {
   return (
     <motion.div
       className="booster"
-      style={{ '--pack-from': set.from, '--pack-to': set.to } as CSSProperties}
+      style={setVars(set)}
       animate={torn ? {} : { y: [0, -8, 0], rotate: [-1, 1, -1] }}
       transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
     >
@@ -30,7 +30,7 @@ export function BoosterPack({ set, label, torn, onTear }: Props) {
         transition={{ duration: 0.5, ease: 'easeOut' }}
       >
         <div className="crimp top-0" />
-        <p className="absolute inset-x-0 bottom-1 text-center font-display text-[10px] font-bold tracking-[0.3em] text-white/80">
+        <p className="booster-note absolute inset-x-0 bottom-1 text-center ui-heading text-[10px] tracking-[0.2em]">
           TEAR ›››
         </p>
       </motion.div>
@@ -47,8 +47,9 @@ export function BoosterPack({ set, label, torn, onTear }: Props) {
             const size = set.icons.length > 1 ? 'h-7 w-7' : 'h-16 w-16'
             return (
               icon && (
-                <svg key={slug} viewBox="0 0 24 24" className={`${size} drop-shadow-[0_0_8px_rgba(255,255,255,0.6)]`}>
-                  <path d={icon.path} fill="white" />
+                <svg key={slug} viewBox="0 0 24 24" className={`${size} drop-shadow-[0_2px_0_rgb(0_0_0_/_0.2)]`}>
+                  {/* the set's ink color, so the logos read on light packs too */}
+                  <path d={icon.path} fill="currentColor" />
                 </svg>
               )
             )
@@ -56,18 +57,16 @@ export function BoosterPack({ set, label, torn, onTear }: Props) {
         </div>
         <div>
           <p
-            className={`font-display font-bold leading-none tracking-tight text-shine ${
-              line1.length > 7 ? 'text-2xl' : 'text-3xl'
-            }`}
+            className={`ui-heading booster-title leading-none ${line1.length > 7 ? 'text-3xl' : 'text-4xl'}`}
           >
             {line1}
           </p>
-          <p className="font-display text-3xl font-bold leading-none tracking-tight">{line2}</p>
+          <p className="ui-heading booster-title text-4xl leading-none">{line2}</p>
         </div>
-        <div className="rounded-full bg-black/30 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-white/80">
+        <div className="booster-plate">
           {label}
         </div>
-        <p className="text-[11px] text-white/70">10 cards · 1 Rare or EX slot</p>
+        <p className="booster-note text-[11px] font-semibold">10 cards · 1 Rare or EX slot</p>
         <div className="crimp bottom-0" />
       </motion.div>
     </motion.div>

@@ -64,10 +64,10 @@ export function AuthScreen() {
       </div>
 
       <div className="text-center">
-        <h1 className="font-display text-4xl font-bold tracking-tight">
-          <span className="text-shine">Resume</span> TCG
+        <h1 className="ui-heading text-4xl">
+          <span className="text-shine">Resume</span> <span className="logo-ink">TCG</span>
         </h1>
-        <p className="mt-2 text-white/60">Your resume, as a trading card game.</p>
+        <p className="mt-2 text-[var(--ui-ink-soft)]">Your resume, as a trading card game.</p>
       </div>
 
       <form onSubmit={submit} className="flex w-full flex-col gap-3">
@@ -78,7 +78,7 @@ export function AuthScreen() {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="rounded-2xl glass px-4 py-3.5 text-base outline-none placeholder:text-white/40 focus:border-white/30"
+          className="rounded-xl glass px-4 py-3.5 text-base font-semibold outline-none placeholder:text-[var(--ui-ink-soft)] placeholder:opacity-70"
         />
         <input
           type="password"
@@ -88,14 +88,14 @@ export function AuthScreen() {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="rounded-2xl glass px-4 py-3.5 text-base outline-none placeholder:text-white/40 focus:border-white/30"
+          className="rounded-xl glass px-4 py-3.5 text-base font-semibold outline-none placeholder:text-[var(--ui-ink-soft)] placeholder:opacity-70"
         />
         {message && (
-          <p className={`text-sm ${message.tone === 'error' ? 'text-rose-300' : 'text-emerald-300'}`}>{message.text}</p>
+          <p className={`text-sm ${message.tone === 'error' ? 'font-semibold text-[#ff8a98]' : 'font-semibold text-[#6fe3a3]'}`}>{message.text}</p>
         )}
         <button
           disabled={busy}
-          className="mt-1 rounded-full bg-white py-3.5 font-display font-bold text-black disabled:opacity-60"
+          className="ui-button mt-1"
         >
           {busy ? '...' : mode === 'signin' ? 'Sign in' : 'Create account'}
         </button>
@@ -105,7 +105,7 @@ export function AuthScreen() {
             setMode(mode === 'signin' ? 'signup' : 'signin')
             setMessage(null)
           }}
-          className="text-sm text-white/60 hover:text-white"
+          className="text-sm text-[var(--ui-ink-soft)] hover:text-white"
         >
           {mode === 'signin' ? 'New here? Create an account' : 'Already have an account? Sign in'}
         </button>

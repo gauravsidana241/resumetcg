@@ -8,9 +8,15 @@ const EDGE = 2;
 // joins, which rounds every corner (even the sharp tips of the "(" curves) by the same radius
 const ROUND_OUTER = 2.5;
 const ROUND_INNER = 2;
+// the default end shape as a share of the plate's height, capped for tall boxes
+const BOW_RATIO = 0.35;
+const RIM_RATIO = 0.28;
+const MAX_BOW = 8;
+const MAX_RIM = 7;
 
 interface Props {
-  // how far each "(" end bows left, and how thick the rim is at the middle of each end
+  // how far each "(" end bows left, and how thick the rim is at the middle of each end; both scale
+  // with the plate's height by default, so every plate reads as the same metal at its own size
   bow?: number;
   rim?: number;
   // the right end: "(" curving inward (shallower than the left, so it doesn't pinch),
@@ -28,8 +34,8 @@ interface Props {
 // curves with a thick crescent rim, with a thinner rim along the top and bottom. The rim uses the
 // card's border colors (--rim-1 to --rim-4, top to bottom); the inside is the same gradient, lighter.
 export function Plate({
-  bow = 5,
-  rim = 5,
+  bow,
+  rim,
   rightEnd = "inward",
   label,
   inset = !!label,
@@ -50,7 +56,14 @@ export function Plate({
     return () => observer.disconnect();
   }, []);
 
-  const paths = size && size[0] > 0 ? platePaths(size[0], size[1], bow, rim, rightEnd, label) : null;
+  const paths = size && size[0] > 0 ? platePaths(
+          size[0],
+          size[1],
+          bow ?? Math.min(size[1] * BOW_RATIO, MAX_BOW),
+          rim ?? Math.min(size[1] * RIM_RATIO, MAX_RIM),
+          rightEnd,
+          label,
+        ) : null;
 
   return (
     <div ref={ref} className={`plate ${className}`}>
@@ -170,8 +183,8 @@ function platePaths(
   const i = ROUND_INNER;
   const mirror = rightEnd === "mirror";
   // the inward right end bows less, with a thinner rim, than the left
-  const rb = mirror ? b : 3;
-  const rr = mirror ? rim : 4;
+  const rb = mirror ? b : b * 0.5;
+  const rr = mirror ? rim : rim * 0.8;
 
   const outer = mirror
     ? shape(o, h - o, b + o, o, W - b - o, W - o)
@@ -182,14 +195,16 @@ function platePaths(
     ? shape(EDGE + i, h - EDGE - i, b + EDGE + i, rim + i, W - b - EDGE - i, W - rim - i)
     : shape(EDGE + i, h - EDGE - i, b + EDGE + i, rim + i, W - EDGE - i, W - rb - rr - i);
 
-  // the label tab: from the left rim along the top, ending in a ")" like the box's ends
-  const lb = 4;
+  // the label tab: from the left rim along the top, ending in the type pill's swept S-curve,
+  // from the top-right corner down to a bottom that stops `sw` short
+  const sw = 14;
+  const lh = label ? label.h - 2 * i : 0;
   const tab =
     label &&
     [
       `M ${P(b + i, i)}`,
-      `L ${P(label.w - lb - i, i)}`,
-      `Q ${P(label.w - i + lb, label.h / 2)} ${P(label.w - lb - i, label.h - i)}`,
+      `L ${P(label.w - i, i)}`,
+      `C ${P(label.w - i - 1, i + lh * 0.62)} ${P(label.w - i - sw + 1, i + lh * 0.38)} ${P(label.w - i - sw, label.h - i)}`,
       // the bottom edge runs on into the left rim, so its corner is buried in the matching paint
       `L ${P(i + 1, label.h - i)}`,
       "Z",

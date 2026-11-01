@@ -71,7 +71,7 @@ export function PackOpening({ set, pack, label, onDone }: Props) {
         <>
           <BoosterPack set={set} label={label} torn={phase === 'torn'} onTear={tear} />
           <motion.p
-            className="text-sm text-white/60"
+            className="text-sm text-[var(--ui-ink-soft)]"
             animate={{ opacity: phase === 'torn' ? 0 : 1 }}
           >
             Swipe across the top to tear it open, or tap the pack
@@ -106,7 +106,7 @@ export function PackOpening({ set, pack, label, onDone }: Props) {
                   style={{ zIndex: isRevealed && special ? 50 + i : i }}
                 >
                   {pulled.box === null && isRevealed && (
-                    <span className="absolute -top-6 left-1/2 z-10 -translate-x-1/2 rounded-full bg-emerald-400 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-black">
+                    <span className="absolute -top-6 left-1/2 z-10 -translate-x-1/2 ui-chip [--chip:#2fbf71] [--chip-ink:#0b2a18]">
                       New
                     </span>
                   )}
@@ -147,7 +147,7 @@ export function PackOpening({ set, pack, label, onDone }: Props) {
           <motion.button
             onClick={onDone}
             disabled={phase !== 'ready'}
-            className="rounded-full bg-white px-8 py-3.5 font-display text-base font-bold text-black shadow-[0_0_40px_rgba(168,85,247,0.5)] disabled:opacity-0"
+            className="ui-button px-8 disabled:opacity-0"
             animate={{ opacity: phase === 'ready' ? 1 : 0, y: phase === 'ready' ? 0 : 12 }}
           >
             Start studying
@@ -168,7 +168,7 @@ export function PackOpening({ set, pack, label, onDone }: Props) {
         )}
         {flash === 'ex' && (
           <motion.p
-            className="pointer-events-none fixed inset-x-0 top-[18%] z-[60] text-center font-display text-6xl font-bold italic tracking-tight text-shine drop-shadow-[0_0_24px_rgba(249,115,22,0.9)]"
+            className="pointer-events-none fixed inset-x-0 top-[18%] z-[60] text-center ui-heading text-6xl italic text-shine drop-shadow-[0_0_24px_rgba(249,115,22,0.9)]"
             initial={{ scale: 0.4, opacity: 0, rotate: -8 }}
             animate={{ scale: 1, opacity: 1, rotate: -4 }}
             exit={{ scale: 1.4, opacity: 0 }}
@@ -179,7 +179,7 @@ export function PackOpening({ set, pack, label, onDone }: Props) {
         )}
         {flash === 'special' && (
           <motion.p
-            className="pointer-events-none fixed inset-x-0 top-[16%] z-[60] text-center font-display text-6xl font-bold italic tracking-tight"
+            className="pointer-events-none fixed inset-x-0 top-[16%] z-[60] text-center ui-heading text-6xl italic"
             style={{ color: specialHex, textShadow: `0 0 28px ${specialHex}, 0 2px 0 rgba(0,0,0,0.6)` }}
             initial={{ scale: 0.3, opacity: 0, rotate: -10 }}
             animate={{ scale: 1, opacity: 1, rotate: -4 }}

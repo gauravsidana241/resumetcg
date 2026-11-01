@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { Session } from '@supabase/supabase-js'
 import { BinderIcon, HomeIcon } from './components/Icons'
+import { TabBar } from './components/ui'
 import { openPacks } from './lib/api'
 import { AUTH_ENABLED } from './lib/config'
 import { supabase } from './lib/supabase'
@@ -8,6 +9,7 @@ import { AuthScreen } from './screens/AuthScreen'
 import { BinderScreen } from './screens/BinderScreen'
 import { DeckPreview } from './screens/DeckPreview'
 import { DesignPreview } from './screens/DesignPreview'
+import { ScreensPreview } from './screens/ScreensPreview'
 import { HomeScreen } from './screens/HomeScreen'
 import { PackRun } from './screens/PackRun'
 import { SummaryScreen } from './screens/SummaryScreen'
@@ -32,7 +34,7 @@ export default function App() {
   const [screen, setScreen] = useState<Screen>({ name: 'home' })
 
   useEffect(() => {
-    if (window.location.hash === '#deck' || window.location.hash === '#preview') return
+    if (['#deck', '#preview', '#screens'].includes(window.location.hash)) return
     supabase.auth.getSession().then(async ({ data }) => {
       if (data.session || AUTH_ENABLED) {
         setSession(data.session)
@@ -48,6 +50,7 @@ export default function App() {
 
   if (window.location.hash === '#deck') return <DeckPreview />
   if (window.location.hash === '#preview') return <DesignPreview />
+  if (window.location.hash === '#screens') return <ScreensPreview />
   if (authError) return <AnonymousAuthError message={authError} />
   if (session === undefined || (!session && !AUTH_ENABLED)) return null
   if (!session) return <AuthScreen />
@@ -89,8 +92,8 @@ export default function App() {
 function AnonymousAuthError({ message }: { message: string }) {
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col justify-center gap-3 px-6">
-      <h1 className="font-display text-2xl font-bold">Could not start a session</h1>
-      <p className="text-white/70">
+      <h1 className="ui-heading text-3xl">Could not start a session</h1>
+      <p className="text-[var(--ui-ink-soft)]">
         Sign-in is switched off, so the app signs in anonymously. Turn on anonymous sign-ins in the Supabase
         dashboard (Authentication, Sign In / Providers, Anonymous), or set VITE_AUTH_ENABLED=true.
       </p>
@@ -100,26 +103,16 @@ function AnonymousAuthError({ message }: { message: string }) {
 }
 
 function BottomNav({ current, onChange }: { current: 'home' | 'binder'; onChange: (name: 'home' | 'binder') => void }) {
-  const items = [
-    { name: 'home' as const, label: 'Home', Icon: HomeIcon },
-    { name: 'binder' as const, label: 'Binder', Icon: BinderIcon },
-  ]
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-30 flex justify-center px-4 safe-bottom">
-      <div className="flex gap-1 rounded-full glass p-1.5 shadow-2xl">
-        {items.map(({ name, label, Icon }) => (
-          <button
-            key={name}
-            onClick={() => onChange(name)}
-            className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition ${
-              current === name ? 'bg-white text-black' : 'text-white/70'
-            }`}
-          >
-            <Icon className="h-4.5 w-4.5" />
-            {label}
-          </button>
-        ))}
-      </div>
-    </nav>
+    <div className="fixed inset-x-0 bottom-0 z-30 mx-auto max-w-md px-4 safe-bottom">
+      <TabBar
+        tabs={[
+          { key: 'home', label: 'Home', icon: <HomeIcon className="h-6 w-6" /> },
+          { key: 'binder', label: 'Binder', icon: <BinderIcon className="h-6 w-6" /> },
+        ]}
+        active={current}
+        onChange={onChange}
+      />
+    </div>
   )
 }
